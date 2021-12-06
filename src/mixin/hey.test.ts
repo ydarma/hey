@@ -31,3 +31,11 @@ test("User function", (t) => {
   } else t.fail();
   t.end();
 });
+
+test("Literal", (t) => {
+  const result = hey("12");
+  if (typeof result == "number") {
+    t.equal(result, 12);
+  } else t.fail();
+  t.end();
+});

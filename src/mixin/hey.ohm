@@ -1,6 +1,6 @@
 HeyGrammar {
   Hey =
-    Range | Square | Fun
+    Range | Square | Fun | arg
 
   Range =
     "range" "(" arg arg arg ")"
