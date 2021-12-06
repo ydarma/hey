@@ -1,16 +1,23 @@
 HeyGrammar {
   Hey =
-    Range | Square
+    Range | Square | Fun
 
   Range =
-    "range" "(" number number number ")"
+    "range" "(" arg arg arg ")"
 
   Square =
-    "square" "(" number color ")"
-
-  number =
-    digit+
-
+    "square" "(" arg arg ")"
+    
+  Fun =
+    argList ":" Hey
+    
+  argList = "(" listOf<(arg | argList), " "> ")"
+  arg = number | identifier | color
+    
   color =
     "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
+
+  number = digit+
+
+  identifier = (alnum | "-")+
 }

@@ -12,7 +12,20 @@ test("Square", (t) => {
   if (result instanceof Shape) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
-      side: 3,
+      size: 3,
+      color: "green",
+    });
+  } else t.fail();
+  t.end();
+});
+
+test("User function", (t) => {
+  const fun = hey("(size): square(size green)");
+  if (typeof fun == "function") {
+    const result = fun(3);
+    t.equal(result.name, "square");
+    t.deepEqual(result.props, {
+      size: 3,
       color: "green",
     });
   } else t.fail();
