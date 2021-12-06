@@ -5,7 +5,9 @@ HeyGrammar {
   Def =
     "def" identifier Prog
   
-  Val = Range | Square | Fun | Call | number | identifier | color
+  Val = Literal | Range | Square | Fun | Call | identifier
+  
+  Literal = number | color 
     
   Range =
     "range" "(" Val Val Val ")"
@@ -13,17 +15,17 @@ HeyGrammar {
   Square =
     "square" "(" Val Val ")"
     
-  Call =
-    identifier "(" Val* ")"
-    
   Fun =
     argList ":" Prog
     
+  Call =
+    identifier "(" Val* ")"
+    
   argList = "(" identifier* ")"
 
-  color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
-
   number = digit+
+
+  color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
 
   identifier = (alnum | "-")+
 }
