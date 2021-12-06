@@ -28,16 +28,27 @@ const heySemantics = heyGrammar
     identifier: (id) => id.sourceString,
   });
 
+type H<T extends unknown[]> = {
+  [k in keyof T]: string | T[k];
+};
+
 class Env {
   private static stack: { [id: string]: unknown }[] = [{}];
+
   private pick() {
     return Env.stack[Env.stack.length - 1];
   }
 
-  get<T>(id: string | T): T {
-    return (
-      typeof id == "string" && id in this.pick() ? this.pick()[id] : id
-    ) as T;
+  get<T>(id: string | T): T;
+  get<T extends unknown[]>(...ids: H<T>): T;
+  get<T extends unknown[]>(...ids: H<T>): T {
+    if (ids.length == 1) {
+      const id = ids[0];
+      return (
+        typeof id == "string" && id in this.pick() ? this.pick()[id] : id
+      ) as T;
+    }
+    return ids.map((id) => this.get(id)) as T;
   }
 
   push(local: { [id: string]: unknown }) {
@@ -55,17 +66,14 @@ function range(
   step: string | number,
   env = new Env()
 ) {
-  start = env.get(start);
-  end = env.get(end);
-  step = env.get(step);
+  [start, end, step] = env.get(start, end, step);
   const result = [];
   for (let i = start; i < end; i += step) result.push(i);
   return result;
 }
 
 function square(size: string | number, color: string, env = new Env()) {
-  size = env.get(size);
-  color = env.get(color);
+  [size, color] = env.get(size, color);
   return new Shape("square", { size, color });
 }
 
