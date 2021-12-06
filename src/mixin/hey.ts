@@ -15,7 +15,7 @@ type H<T extends unknown[]> = {
 class Env {
   private stack: { [id: string]: unknown }[] = [{}];
 
-  private pick() {
+  pick() {
     return this.stack[this.stack.length - 1];
   }
 
@@ -50,6 +50,10 @@ export class Shape {
 class HeyActions {
   private env = new Env();
 
+  def(id: string, body: unknown) {
+    this.env.pick()[id] = body;
+  }
+
   range(start: number, end: number, step: number) {
     const result = [];
     for (let i = start; i < end; i += step) result.push(i);
@@ -68,6 +72,10 @@ class HeyActions {
     };
   }
 
+  call(id: string, values: unknown[]) {
+    return this.env.get<(...a: unknown[]) => unknown>(id)(...values);
+  }
+
   value(v: unknown) {
     return this.env.get(v);
   }
@@ -75,6 +83,21 @@ class HeyActions {
 
 function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
   return {
+    Prog: (defs, result) => {
+      defs.children.forEach((c) => c.eval());
+      return result.eval();
+    },
+
+    Def: (def, id, body) => impl.def(id.eval(), body.eval()),
+
+    Val: (v) => impl.value(v.eval()),
+
+    Call: (id, lpar, params, rpar) =>
+      impl.call(
+        id.eval(),
+        params.children.map((p) => p.eval())
+      ),
+
     Range: (call, lpar, start, end, step, rpar) =>
       impl.range(start.eval(), end.eval(), step.eval()),
 
@@ -83,10 +106,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     Fun: (args, colon, body) => impl.fun(args.eval(), () => body.eval()),
 
-    value: (v) => impl.value(v.eval()),
-
-    argList: (lpar, args, rpar) =>
-      args.asIteration().children.map((c: { eval: () => unknown }) => c.eval()),
+    argList: (lpar, args, rpar) => args.children.map((c) => c.eval()),
 
     number: (v) => parseInt(v.sourceString),
 

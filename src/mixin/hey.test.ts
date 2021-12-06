@@ -39,3 +39,15 @@ test("Literal", (t) => {
   } else t.fail();
   t.end();
 });
+
+test("Define", (t) => {
+  const result = hey("def a def b (s): square(s blue) b(1) a");
+  if (result instanceof Shape) {
+    t.equal(result.name, "square");
+    t.deepEqual(result.props, {
+      size: 1,
+      color: "blue",
+    });
+  } else t.fail();
+  t.end();
+});

@@ -1,22 +1,27 @@
 HeyGrammar {
-  Hey =
-    Range | Square | Fun | value
-
+  Prog =
+    Def* Val
+  
+  Def =
+    "def" identifier Prog
+  
+  Val = Range | Square | Fun | Call | number | identifier | color
+    
   Range =
-    "range" "(" value value value ")"
+    "range" "(" Val Val Val ")"
 
   Square =
-    "square" "(" value value ")"
+    "square" "(" Val Val ")"
+    
+  Call =
+    identifier "(" Val* ")"
     
   Fun =
-    argList ":" Hey
+    argList ":" Prog
     
-  argList = "(" listOf<(identifier | argList), " "> ")"
+  argList = "(" identifier* ")"
 
-  value = number | identifier | color
-    
-  color =
-    "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
+  color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
 
   number = digit+
 
