@@ -7,36 +7,15 @@ const heyFile = path.join(__dirname, "/hey.ohm");
 const heyText = fs.readFileSync(heyFile).toString();
 const heyGrammar = ohm.grammar(heyText);
 
-const heySemantics = heyGrammar
-  .createSemantics()
-  .addOperation<unknown>("eval", {
-    Range: (call, lpar, start, end, step, rpar) =>
-      range(start.eval(), end.eval(), step.eval()),
-
-    Square: (call, lpar, size, color, rpar) =>
-      square(size.eval(), color.eval()),
-
-    Fun: (args, colon, body) => fun(args.eval(), body),
-
-    argList: (lpar, args, rpar) =>
-      args.asIteration().children.map((c: { eval: () => unknown }) => c.eval()),
-
-    number: (value) => parseInt(value.sourceString, 10),
-
-    color: (name) => name.sourceString,
-
-    identifier: (id) => id.sourceString,
-  });
-
 type H<T extends unknown[]> = {
   [k in keyof T]: string | T[k];
 };
 
 class Env {
-  private static stack: { [id: string]: unknown }[] = [{}];
+  private stack: { [id: string]: unknown }[] = [{}];
 
   private pick() {
-    return Env.stack[Env.stack.length - 1];
+    return this.stack[this.stack.length - 1];
   }
 
   get<T>(id: string | T): T;
@@ -52,19 +31,45 @@ class Env {
   }
 
   push(local: { [id: string]: unknown }) {
-    Env.stack.push({ ...this.pick(), ...local });
+    this.stack.push({ ...this.pick(), ...local });
   }
 
   pop() {
-    Env.stack.pop();
+    this.stack.pop();
   }
 }
+
+function buildActions(): ohm.ActionDict<unknown> {
+  const env = new Env();
+  return {
+    Range: (call, lpar, start, end, step, rpar) =>
+      range(start.eval(), end.eval(), step.eval(), env),
+
+    Square: (call, lpar, size, color, rpar) =>
+      square(size.eval(), color.eval(), env),
+
+    Fun: (args, colon, body) => fun(args.eval(), body, env),
+
+    argList: (lpar, args, rpar) =>
+      args.asIteration().children.map((c: { eval: () => unknown }) => c.eval()),
+
+    number: (value) => parseInt(value.sourceString, 10),
+
+    color: (name) => name.sourceString,
+
+    identifier: (id) => id.sourceString,
+  };
+}
+
+const heySemantics = heyGrammar
+  .createSemantics()
+  .addOperation<unknown>("eval", buildActions());
 
 function range(
   start: string | number,
   end: string | number,
   step: string | number,
-  env = new Env()
+  env: Env
 ) {
   [start, end, step] = env.get(start, end, step);
   const result = [];
@@ -72,12 +77,12 @@ function range(
   return result;
 }
 
-function square(size: string | number, color: string, env = new Env()) {
+function square(size: string | number, color: string, env: Env) {
   [size, color] = env.get(size, color);
   return new Shape("square", { size, color });
 }
 
-function fun(args: string[], body: ohm.Node, env = new Env()) {
+function fun(args: string[], body: ohm.Node, env: Env) {
   return (...value: unknown[]) => {
     const local = args.reduce((e, a, i) => ({ ...e, [a]: value[i] }), {});
     env.push(local);
