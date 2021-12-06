@@ -1,18 +1,19 @@
 HeyGrammar {
   Hey =
-    Range | Square | Fun | arg
+    Range | Square | Fun | value
 
   Range =
-    "range" "(" arg arg arg ")"
+    "range" "(" value value value ")"
 
   Square =
-    "square" "(" arg arg ")"
+    "square" "(" value value ")"
     
   Fun =
     argList ":" Hey
     
-  argList = "(" listOf<(arg | argList), " "> ")"
-  arg = number | identifier | color
+  argList = "(" listOf<(identifier | argList), " "> ")"
+
+  value = number | identifier | color
     
   color =
     "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"

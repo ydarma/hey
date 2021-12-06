@@ -50,15 +50,13 @@ export class Shape {
 class HeyActions {
   private env = new Env();
 
-  range(start: string | number, end: string | number, step: string | number) {
-    [start, end, step] = this.env.get(start, end, step);
+  range(start: number, end: number, step: number) {
     const result = [];
     for (let i = start; i < end; i += step) result.push(i);
     return result;
   }
 
-  square(size: string | number, color: string) {
-    [size, color] = this.env.get(size, color);
+  square(size: number, color: string) {
     return new Shape("square", { size, color });
   }
 
@@ -68,6 +66,10 @@ class HeyActions {
       this.env.push(local);
       return body();
     };
+  }
+
+  value(v: unknown) {
+    return this.env.get(v);
   }
 }
 
@@ -81,10 +83,12 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     Fun: (args, colon, body) => impl.fun(args.eval(), () => body.eval()),
 
+    value: (v) => impl.value(v.eval()),
+
     argList: (lpar, args, rpar) =>
       args.asIteration().children.map((c: { eval: () => unknown }) => c.eval()),
 
-    number: (value) => parseInt(value.sourceString, 10),
+    number: (v) => parseInt(v.sourceString),
 
     color: (name) => name.sourceString,
 
