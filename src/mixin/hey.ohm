@@ -3,7 +3,7 @@ HeyGrammar {
     Def* Val
   
   Def =
-    "def" identifier Prog
+    "def" identifier ":"? Prog
   
   Val = Literal | Range | Square | Fun | Call | identifier
   
@@ -16,7 +16,7 @@ HeyGrammar {
     "square" "(" Val Val ")"
     
   Fun =
-    argList ":" Prog
+    argList ("->" | ":") Prog
     
   Call =
     identifier "(" Val* ")"

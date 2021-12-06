@@ -88,7 +88,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
       return result.eval();
     },
 
-    Def: (def, id, body) => impl.def(id.eval(), body.eval()),
+    Def: (def, id, colon, body) => impl.def(id.eval(), body.eval()),
 
     Val: (v) => impl.value(v.eval()),
 
@@ -104,7 +104,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
     Square: (call, lpar, size, color, rpar) =>
       impl.square(size.eval(), color.eval()),
 
-    Fun: (args, colon, body) => impl.fun(args.eval(), () => body.eval()),
+    Fun: (args, arrow, body) => impl.fun(args.eval(), () => body.eval()),
 
     argList: (lpar, args, rpar) => args.children.map((c) => c.eval()),
 

@@ -20,7 +20,7 @@ test("Square", (t) => {
 });
 
 test("User function", (t) => {
-  const fun = hey("(size): square(size green)");
+  const fun = hey("(size) -> square(size green)");
   if (typeof fun == "function") {
     const result = fun(3);
     t.equal(result.name, "square");
@@ -40,8 +40,15 @@ test("Literal", (t) => {
   t.end();
 });
 
+const defTestHey = `
+def a:
+  def b: (s) -> square(s blue)
+  b(1)
+a
+`;
+
 test("Define", (t) => {
-  const result = hey("def a def b (s): square(s blue) b(1) a");
+  const result = hey(defTestHey);
   if (result instanceof Shape) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
