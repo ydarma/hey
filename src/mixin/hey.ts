@@ -61,42 +61,39 @@ class HeyActions {
     return new Shape("square", { size, color });
   }
 
-  fun(args: string[], body: ohm.Node) {
+  fun(args: string[], body: () => unknown) {
     return (...value: unknown[]) => {
       const local = args.reduce((e, a, i) => ({ ...e, [a]: value[i] }), {});
       this.env.push(local);
-      return body.eval();
-    };
-  }
-
-  static get(): ohm.ActionDict<unknown> {
-    const impl = new HeyActions();
-    return {
-      Range: (call, lpar, start, end, step, rpar) =>
-        impl.range(start.eval(), end.eval(), step.eval()),
-
-      Square: (call, lpar, size, color, rpar) =>
-        impl.square(size.eval(), color.eval()),
-
-      Fun: (args, colon, body) => impl.fun(args.eval(), body),
-
-      argList: (lpar, args, rpar) =>
-        args
-          .asIteration()
-          .children.map((c: { eval: () => unknown }) => c.eval()),
-
-      number: (value) => parseInt(value.sourceString, 10),
-
-      color: (name) => name.sourceString,
-
-      identifier: (id) => id.sourceString,
+      return body();
     };
   }
 }
 
+function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
+  return {
+    Range: (call, lpar, start, end, step, rpar) =>
+      impl.range(start.eval(), end.eval(), step.eval()),
+
+    Square: (call, lpar, size, color, rpar) =>
+      impl.square(size.eval(), color.eval()),
+
+    Fun: (args, colon, body) => impl.fun(args.eval(), () => body.eval()),
+
+    argList: (lpar, args, rpar) =>
+      args.asIteration().children.map((c: { eval: () => unknown }) => c.eval()),
+
+    number: (value) => parseInt(value.sourceString, 10),
+
+    color: (name) => name.sourceString,
+
+    identifier: (id) => id.sourceString,
+  };
+}
+
 const heySemantics = heyGrammar
   .createSemantics()
-  .addOperation<unknown>("eval", HeyActions.get());
+  .addOperation<unknown>("eval", getActions(new HeyActions()));
 
 export function hey(source: string): unknown {
   const match = heyGrammar.match(source);
