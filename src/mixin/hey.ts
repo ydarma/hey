@@ -7,8 +7,9 @@ const heyFile = path.join(__dirname, "/hey.ohm");
 const heyText = fs.readFileSync(heyFile).toString();
 const heyGrammar = ohm.grammar(heyText);
 
+type K<T> = string | T;
 type H<T extends unknown[]> = {
-  [k in keyof T]: string | T[k];
+  [k in keyof T]: K<T[k]>;
 };
 
 class Env {
@@ -18,14 +19,14 @@ class Env {
     return this.stack[this.stack.length - 1];
   }
 
-  get<T>(id: string | T): T;
+  get<T>(id: K<T>): T;
   get<T extends unknown[]>(...ids: H<T>): T;
-  get<T extends unknown[]>(...ids: H<T>): T {
+  get<T extends unknown[]>(...ids: H<T>): T | T[0] {
     if (ids.length == 1) {
       const id = ids[0];
       return (
         typeof id == "string" && id in this.pick() ? this.pick()[id] : id
-      ) as T;
+      ) as T[0];
     }
     return ids.map((id) => this.get(id)) as T;
   }
