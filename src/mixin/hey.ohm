@@ -1,0 +1,16 @@
+HeyGrammar {
+  Hey =
+    Range | Square
+
+  Range =
+    "range" "(" number number number ")"
+
+  Square =
+    "square" "(" number color ")"
+
+  number =
+    digit+
+
+  color =
+    "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
+}
