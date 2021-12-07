@@ -91,6 +91,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
     Def: (def, id, colon, body) => impl.def(id.eval(), body.eval()),
 
     Val: (v) => impl.value(v.eval()),
+    V: (v) => impl.value(v.eval()),
 
     Call: (id, lpar, params, rpar) =>
       impl.call(
@@ -106,14 +107,41 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     Fun: (args, arrow, body) => impl.fun(args.eval(), () => body.eval()),
 
-    argList: (lpar, args, rpar) => args.children.map((c) => c.eval()),
+    ArgList: (lpar, args, rpar) => args.children.map((c) => c.eval()),
 
     number: (v) => parseInt(v.sourceString),
 
     color: (name) => name.sourceString,
 
-    identifier: (id) => id.sourceString,
+    identifier: (lh, id) => id.sourceString,
   };
+}
+
+declare module "ohm-js" {
+  interface PosInfo {
+    memo: Record<string, unknown>;
+  }
+  interface MatchResult {
+    getRightmostFailurePosition(): number;
+    matcher: Matcher;
+  }
+  interface Matcher {
+    memoTable: PosInfo[];
+  }
+}
+
+function buildError(match: ohm.MatchResult, source: string) {
+  const pos = match.getRightmostFailurePosition();
+  const infos = Object.keys(match.matcher.memoTable[pos].memo);
+  const topRule = infos[infos.length - 1];
+  const sofar = source.substring(0, pos + 1);
+  const lines = sofar.split(/\r\n|\r|\n/g);
+  const error = {
+    line: lines.length,
+    col: lines[lines.length - 1].length,
+    message: `expected ${topRule}, got ${sofar.slice(-1)}`,
+  };
+  return error;
 }
 
 const heySemantics = heyGrammar
@@ -122,5 +150,8 @@ const heySemantics = heyGrammar
 
 export function hey(source: string): unknown {
   const match = heyGrammar.match(source);
+  if (match.failed()) {
+    throw buildError(match, source);
+  }
   return heySemantics(match).eval();
 }

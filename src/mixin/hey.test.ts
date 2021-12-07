@@ -1,14 +1,22 @@
 import test from "tape";
 import { hey, Shape } from "./hey";
 
+const rangeProg = `
+range(1 6 2)
+`;
+
 test("Range", (t) => {
-  const result = hey("range(1 6 2)");
+  const result = hey(rangeProg);
   t.deepEqual(result, [1, 3, 5]);
   t.end();
 });
 
+const squareProg = `
+square(3 green)
+`;
+
 test("Square", (t) => {
-  const result = hey("square(3 green)");
+  const result = hey(squareProg);
   if (result instanceof Shape) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
@@ -19,8 +27,12 @@ test("Square", (t) => {
   t.end();
 });
 
+const funProg = `
+(size) -> square(size green)
+`;
+
 test("User function", (t) => {
-  const fun = hey("(size) -> square(size green)");
+  const fun = hey(funProg);
   if (typeof fun == "function") {
     const result = fun(3);
     t.equal(result.name, "square");
@@ -32,23 +44,27 @@ test("User function", (t) => {
   t.end();
 });
 
+const literalProg = `
+12
+`;
+
 test("Literal", (t) => {
-  const result = hey("12");
+  const result = hey(literalProg);
   if (typeof result == "number") {
     t.equal(result, 12);
   } else t.fail();
   t.end();
 });
 
-const defTestHey = `
+const defTestProg = `
 def a:
   def b: (s) -> square(s blue)
-  b(1)
-a
+  b
+a(1)
 `;
 
 test("Define", (t) => {
-  const result = hey(defTestHey);
+  const result = hey(defTestProg);
   if (result instanceof Shape) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
@@ -58,3 +74,23 @@ test("Define", (t) => {
   } else t.fail();
   t.end();
 });
+
+test("Match error", (t) => {
+  t.throws(
+    () => hey("square(1, black)"),
+    isMatchErr("expected V<color>, got ,", 1, 9)
+  );
+  t.throws(
+    () => hey("def Az 40\n\nsquare(1 black Az)"),
+    isMatchErr("expected rpar, got A", 3, 16)
+  );
+  t.end();
+});
+
+function isMatchErr(
+  msg: string,
+  line: number,
+  col: number
+): (e: { line: number; col: number; message: string }) => boolean {
+  return (e) => e.message == msg && e.line == line && e.col == col;
+}

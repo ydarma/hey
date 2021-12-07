@@ -5,27 +5,35 @@ HeyGrammar {
   Def =
     "def" identifier ":"? Prog
   
+  V<T> = T | Call | identifier
+    
   Val = Literal | Range | Square | Fun | Call | identifier
   
   Literal = number | color 
     
   Range =
-    "range" "(" Val Val Val ")"
+    "range" lpar V<number> V<number> V<number> rpar
 
   Square =
-    "square" "(" Val Val ")"
+    "square" lpar V<number> V<color> rpar
     
   Fun =
-    argList ("->" | ":") Prog
+    ArgList ("->" | ":") Prog
     
   Call =
-    identifier "(" Val* ")"
+    identifier lpar Val* rpar
     
-  argList = "(" identifier* ")"
+  ArgList = lpar identifier* rpar
 
   number = digit+
 
   color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
 
-  identifier = (alnum | "-")+
+  identifier = ~reserved &letter (alnum | "-")+
+  
+  reserved = "range" | "square" | "def"
+  
+  lpar = "("
+
+  rpar = ")"
 }
