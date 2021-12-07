@@ -3,7 +3,7 @@ HeyGrammar {
     Def* Val
   
   Def =
-    "def" identifier ":"? Prog
+    "def" identifier colon? Prog
   
   V<T> = T | Call | identifier
     
@@ -25,6 +25,8 @@ HeyGrammar {
     
   ArgList = lpar identifier* rpar
   
+  colon = ":"
+
   arrow = "->" | ":"
 
   number = digit+

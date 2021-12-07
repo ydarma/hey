@@ -28,7 +28,7 @@ test("Square", (t) => {
 });
 
 const funProg = `
-(size) -> square(size green)
+(size) square(size green)
 `;
 
 test("User function", (t) => {
@@ -57,8 +57,8 @@ test("Literal", (t) => {
 });
 
 const defTestProg = `
-def a:
-  def b: (s) -> square(s blue)
+def a
+  def b(s) square(s blue)
   b
 a(1)
 `;
@@ -93,8 +93,8 @@ test("Eval error", (t) => {
     isMatchErr("expected V<color>, got transparent", 3, 1)
   );
   t.throws(
-    () => hey("def a (s) square(s blue) a(hey)"),
-    isMatchErr("expected V<number>, got hey", 1, 18)
+    () => hey("def a(s) range(s 10 2) a(hey)"),
+    isMatchErr("expected V<number>, got hey", 1, 16)
   );
   t.end();
 });
