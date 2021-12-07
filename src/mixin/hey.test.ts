@@ -87,6 +87,18 @@ test("Match error", (t) => {
   t.end();
 });
 
+test("Eval error", (t) => {
+  t.throws(
+    () => hey("square(\n1\ntransparent\n)"),
+    isMatchErr("expected V<color>, got transparent", 3, 1)
+  );
+  t.throws(
+    () => hey("def a (s) square(s blue) a(hey)"),
+    isMatchErr("expected V<number>, got hey", 1, 18)
+  );
+  t.end();
+});
+
 function isMatchErr(
   msg: string,
   line: number,

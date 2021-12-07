@@ -18,12 +18,14 @@ HeyGrammar {
     "square" lpar V<number> V<color> rpar
     
   Fun =
-    ArgList ("->" | ":") Prog
+    ArgList arrow? Prog
     
   Call =
     identifier lpar Val* rpar
     
   ArgList = lpar identifier* rpar
+  
+  arrow = "->" | ":"
 
   number = digit+
 
