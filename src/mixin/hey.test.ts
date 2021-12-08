@@ -1,5 +1,6 @@
 import test from "tape";
-import { hey, Shape } from "./hey";
+import { Shape } from "./actions";
+import { hey } from "./hey";
 
 function isError(
   msg: string,

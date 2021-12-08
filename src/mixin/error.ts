@@ -1,6 +1,6 @@
 import ohm from "ohm-js";
 
-export type Error = {
+export type HeyError = {
   line: number;
   col: number;
   message: string;
@@ -11,7 +11,7 @@ function error(
   rule: string,
   pos: number,
   symbol?: unknown
-): Error {
+): HeyError {
   const { line, col, tok } = getLineCol(pos);
   return {
     line: line,
@@ -29,7 +29,11 @@ function error(
   }
 }
 
-export function colorError(source: string, pos: number, symbol: string): Error {
+export function colorError(
+  source: string,
+  pos: number,
+  symbol: string
+): HeyError {
   return error(source, "V<color>", pos, symbol);
 }
 
@@ -37,7 +41,7 @@ export function numberError(
   source: string,
   pos: number,
   symbol: string
-): Error {
+): HeyError {
   return error(source, "V<number>", pos, symbol);
 }
 
@@ -45,11 +49,11 @@ export function identifierError(
   source: string,
   pos: number,
   symbol: string
-): Error {
+): HeyError {
   return error(source, "identifier", pos, symbol);
 }
 
-export function matchError(source: string, match: ohm.MatchResult): Error {
+export function matchError(source: string, match: ohm.MatchResult): HeyError {
   const pos = match.getRightmostFailurePosition();
   const infos = Object.keys(match.matcher.memoTable[pos].memo);
   const rule = infos[infos.length - 1];
