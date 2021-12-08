@@ -2,25 +2,7 @@
 import ohm from "ohm-js";
 import fs from "fs";
 import path from "path";
-
-declare module "ohm-js" {
-  interface PosInfo {
-    memo: Record<string, unknown>;
-  }
-  interface MatchResult {
-    getRightmostFailurePosition(): number;
-    matcher: Matcher;
-  }
-  interface Matcher {
-    memoTable: PosInfo[];
-  }
-  interface Alt {
-    terms: { obj: unknown }[];
-  }
-  interface Interval {
-    sourceString: string;
-  }
-}
+import { numberError, colorError, identifierError, matchError } from "./error";
 
 const heyFile = path.join(__dirname, "/hey.ohm");
 const heyText = fs.readFileSync(heyFile).toString();
@@ -74,17 +56,17 @@ class HeyActions {
   }
 
   range(ctx: Context, start: V<number>, end: V<number>, step: V<number>) {
-    if (!isNumber(start)) throw numberError(start, ...ctx.get(0));
-    if (!isNumber(end)) throw numberError(end, ...ctx.get(1));
-    if (!isNumber(step)) throw numberError(step, ...ctx.get(2));
+    if (!isNumber(start)) throw numberError(...ctx.get(0), start);
+    if (!isNumber(end)) throw numberError(...ctx.get(1), end);
+    if (!isNumber(step)) throw numberError(...ctx.get(2), step);
     const result = [];
     for (let i = start; i < end; i += step) result.push(i);
     return result;
   }
 
   square(ctx: Context, size: V<number>, color: V<string>) {
-    if (!isNumber(size)) throw numberError(size, ...ctx.get(0));
-    if (!isColor(color)) throw colorError(color, ...ctx.get(1));
+    if (!isNumber(size)) throw numberError(...ctx.get(0), size);
+    if (!isColor(color)) throw colorError(...ctx.get(1), color);
     return new Shape("square", { size, color });
   }
 
@@ -129,7 +111,7 @@ class HeyActions {
 
   known(ctx: Context, v: unknown) {
     if (this.env.has(v)) return this.env.get(v);
-    throw identifierError(String(v), ...ctx.get(0));
+    throw identifierError(...ctx.get(0), String(v));
   }
 }
 
@@ -219,7 +201,7 @@ const heySemantics = heyGrammar
 export function hey(source: string): unknown {
   const match = heyGrammar.match(source);
   if (match.failed()) {
-    throw matchError(match, source);
+    throw matchError(source, match);
   }
   return heySemantics(match).eval();
 }
@@ -239,77 +221,4 @@ class Context {
   get(idx: number): [string, number] {
     return [this.source, this.pos[idx]];
   }
-}
-
-type Error = {
-  line: number;
-  col: number;
-  message: string;
-};
-
-function error(
-  { rule, val, pos }: { rule: string; val?: unknown; pos: number },
-  source: string
-): Error {
-  const { line, col, value } = getLineCol(pos);
-  return {
-    line: line,
-    col: col,
-    message: `expected ${rule}, got ${val ?? value}`,
-  };
-
-  function getLineCol(pos: number) {
-    const sofar = source.substring(0, pos + 1);
-    const lines = sofar.split(/\r\n|\r|\n/g);
-    const line = lines.length;
-    const col = lines[lines.length - 1].length;
-    const value = sofar.slice(-1);
-    return { line, col, value };
-  }
-}
-
-function colorError(val: string, source: string, pos: number) {
-  return error(
-    {
-      rule: "V<color>",
-      val,
-      pos,
-    },
-    source
-  );
-}
-
-function numberError(val: string, source: string, pos: number) {
-  return error(
-    {
-      rule: "V<number>",
-      val,
-      pos,
-    },
-    source
-  );
-}
-
-function identifierError(val: string, source: string, pos: number) {
-  return error(
-    {
-      rule: "identifier",
-      val,
-      pos,
-    },
-    source
-  );
-}
-
-function matchError(match: ohm.MatchResult, source: string) {
-  const pos = match.getRightmostFailurePosition();
-  const infos = Object.keys(match.matcher.memoTable[pos].memo);
-  const rule = infos[infos.length - 1];
-  return error(
-    {
-      rule,
-      pos,
-    },
-    source
-  );
 }

@@ -139,9 +139,9 @@ test("Elem", (t) => {
 });
 
 const sequenceTestProg = `
-def seq2(x y) range(x y 2)
-def seq3(x y) range(x y 3)
-c(seq2 seq3)(2)(3 10)
+def seq-2(x y) range(x y 2)
+def seq-3(x y) range(x y 3)
+c(seq-2 seq-3)(2)(3 10)
 `;
 
 test("Call sequence", (t) => {
