@@ -106,3 +106,46 @@ function isMatchErr(
 ): (e: { line: number; col: number; message: string }) => boolean {
   return (e) => e.message == msg && e.line == line && e.col == col;
 }
+
+const concatTestProg = `
+c(1 c(2 3) 4)
+`;
+
+test("Concat", (t) => {
+  const result = hey(concatTestProg);
+  t.deepEqual(result, [1, 2, 3, 4]);
+  t.end();
+});
+
+const repeatTestProg = `
+r(4 blue red)
+`;
+
+test("Repeat", (t) => {
+  const result = hey(repeatTestProg);
+  t.deepEqual(result, ["blue", "red", "blue", "red"]);
+  t.end();
+});
+
+const elemTestProg = `
+def a c(1 2 3)
+a(1)
+`;
+
+test("Elem", (t) => {
+  const result = hey(elemTestProg);
+  t.equal(result, 1);
+  t.end();
+});
+
+const sequenceTestProg = `
+def seq2(x y) range(x y 2)
+def seq3(x y) range(x y 3)
+c(seq2 seq3)(2)(3 10)
+`;
+
+test("Call sequence", (t) => {
+  const result = hey(sequenceTestProg);
+  t.deepEqual(result, [3, 6, 9]);
+  t.end();
+});

@@ -1,43 +1,27 @@
 HeyGrammar {
-  Prog =
-    Def* Val
-  
-  Def =
-    "def" identifier colon? Prog
-  
+  Prog = Def* Val
+  Def = "def" identifier colon? Prog
+  Val = Literal | CallSeq | Result | identifier
+
+  CallSeq = Result (lpar Val* rpar)+
+    
+  Result = Range | Square | Concat | Repeat | Fun | Call
+  Range = "range" lpar V<number> V<number> V<number> rpar
+  Square = "square" lpar V<number> V<color> rpar
+  Concat = ("concat" | "c") lpar Val* rpar
+  Repeat = ("repeat" | "r") lpar V<number> Val* rpar
+  Fun = lpar identifier* rpar arrow? Prog
+  Call = identifier lpar Val* rpar
+
+  Literal = number | color 
   V<T> = T | Call | identifier
     
-  Val = Literal | Range | Square | Fun | Call | identifier
-  
-  Literal = number | color 
-    
-  Range =
-    "range" lpar V<number> V<number> V<number> rpar
-
-  Square =
-    "square" lpar V<number> V<color> rpar
-    
-  Fun =
-    ArgList arrow? Prog
-    
-  Call =
-    identifier lpar Val* rpar
-    
-  ArgList = lpar identifier* rpar
-  
-  colon = ":"
-
-  arrow = "->" | ":"
-
-  number = digit+
-
-  color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
-
   identifier = ~reserved &letter (alnum | "-")+
-  
-  reserved = "range" | "square" | "def"
-  
+  number = digit+
+  color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
   lpar = "("
-
   rpar = ")"
+  colon = ":"
+  arrow = "->" | ":"
+  reserved = "range" | "square" | "def" | "concat" | "c" | "repeat" | "r"
 }

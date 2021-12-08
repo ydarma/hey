@@ -68,7 +68,7 @@ class HeyActions {
     this.env.pick()[id] = body;
   }
 
-  range(start: V<number>, end: V<number>, step: V<number>, ctx: Context) {
+  range(ctx: Context, start: V<number>, end: V<number>, step: V<number>) {
     if (!isNumber(start)) throw numberError(start, ...ctx.get(0));
     if (!isNumber(end)) throw numberError(end, ...ctx.get(1));
     if (!isNumber(step)) throw numberError(step, ...ctx.get(2));
@@ -77,10 +77,23 @@ class HeyActions {
     return result;
   }
 
-  square(size: V<number>, color: V<string>, ctx: Context) {
+  square(ctx: Context, size: V<number>, color: V<string>) {
     if (!isNumber(size)) throw numberError(size, ...ctx.get(0));
     if (!isColor(color)) throw colorError(color, ...ctx.get(1));
     return new Shape("square", { size, color });
+  }
+
+  concat(ctx: Context, ...values: unknown[]) {
+    return values.reduce<unknown[]>(
+      (result, v) => [...result, ...(Array.isArray(v) ? v : [v])],
+      []
+    );
+  }
+
+  repeat(ctx: Context, count: number, ...values: unknown[]) {
+    const result = new Array(count);
+    for (let i = 0; i < count; i++) result[i] = values[i % values.length];
+    return result;
   }
 
   fun(args: string[], body: () => unknown) {
@@ -92,7 +105,17 @@ class HeyActions {
   }
 
   call(id: string, values: unknown[]) {
-    return this.env.get<(...a: unknown[]) => unknown>(id)(...values);
+    const callable = this.env.get<(...a: unknown[]) => unknown | unknown[]>(id);
+    return this.callSeq(callable, values);
+  }
+
+  callSeq(
+    callable: (...a: unknown[]) => unknown | unknown[],
+    values: unknown[]
+  ) {
+    return Array.isArray(callable)
+      ? callable[(values[0] as number) - 1]
+      : callable(...values);
   }
 
   value(v: unknown) {
@@ -128,20 +151,45 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         params.children.map((p) => p.eval())
       ),
 
+    CallSeq: (call, lpar, params, rpar) =>
+      params.children.reduce(
+        (seq, args) =>
+          impl.callSeq(
+            seq,
+            args.children.map((p) => p.eval())
+          ),
+        call.eval()
+      ),
+
     Range: (call, lpar, start, end, step, rpar) =>
       impl.range(
+        new Context(start, end, step),
         start.eval(),
         end.eval(),
-        step.eval(),
-        new Context(start, end, step)
+        step.eval()
       ),
 
     Square: (call, lpar, size, color, rpar) =>
-      impl.square(size.eval(), color.eval(), new Context(size, color)),
+      impl.square(new Context(size, color), size.eval(), color.eval()),
 
-    Fun: (args, arrow, body) => impl.fun(args.eval(), () => body.eval()),
+    Concat: (call, lpar, values, rpar) =>
+      impl.concat(
+        new Context(...values.children),
+        ...values.children.map((p) => p.eval())
+      ),
 
-    ArgList: (lpar, args, rpar) => args.children.map((c) => c.eval()),
+    Repeat: (call, lpar, count, values, rpar) =>
+      impl.repeat(
+        new Context(count, ...values.children),
+        count.eval(),
+        ...values.children.map((p) => p.eval())
+      ),
+
+    Fun: (lpar, args, rpar, arrow, body) =>
+      impl.fun(
+        args.children.map((p) => p.eval()),
+        () => body.eval()
+      ),
 
     number: (v) => parseInt(v.sourceString),
 
