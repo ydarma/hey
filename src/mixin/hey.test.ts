@@ -1,6 +1,14 @@
 import test from "tape";
 import { hey, Shape } from "./hey";
 
+function isError(
+  msg: string,
+  line: number,
+  col: number
+): (e: { line: number; col: number; message: string }) => boolean {
+  return (e) => e.message == msg && e.line == line && e.col == col;
+}
+
 const rangeProg = `
 range(1 6 2)
 `;
@@ -78,11 +86,11 @@ test("Define", (t) => {
 test("Match error", (t) => {
   t.throws(
     () => hey("square(1, black)"),
-    isMatchErr("expected V<color>, got ,", 1, 9)
+    isError("expected V<color>, got ,", 1, 9)
   );
   t.throws(
     () => hey("def Az 40\n\nsquare(1 black Az)"),
-    isMatchErr("expected rpar, got A", 3, 16)
+    isError("expected rpar, got A", 3, 16)
   );
   t.end();
 });
@@ -90,22 +98,14 @@ test("Match error", (t) => {
 test("Eval error", (t) => {
   t.throws(
     () => hey("square(\n1\ntransparent\n)"),
-    isMatchErr("expected V<color>, got transparent", 3, 1)
+    isError("expected V<color>, got transparent", 3, 1)
   );
   t.throws(
     () => hey("def a(s) range(s 10 2) a(hey)"),
-    isMatchErr("expected V<number>, got hey", 1, 16)
+    isError("expected identifier, got hey", 1, 26)
   );
   t.end();
 });
-
-function isMatchErr(
-  msg: string,
-  line: number,
-  col: number
-): (e: { line: number; col: number; message: string }) => boolean {
-  return (e) => e.message == msg && e.line == line && e.col == col;
-}
 
 const concatTestProg = `
 c(1 c(2 3) 4)
@@ -147,5 +147,20 @@ c(seq2 seq3)(2)(3 10)
 test("Call sequence", (t) => {
   const result = hey(sequenceTestProg);
   t.deepEqual(result, [3, 6, 9]);
+  t.end();
+});
+
+const unknownTestProg = `
+def k
+  def z 1
+  z
+z
+`;
+
+test("Unknown idetifier", (t) => {
+  t.throws(
+    () => hey(unknownTestProg),
+    isError("expected identifier, got z", 5, 1)
+  );
   t.end();
 });

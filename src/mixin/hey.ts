@@ -34,22 +34,20 @@ export class Shape {
 }
 
 class Env {
-  private stack: { [id: string]: unknown }[] = [{}];
+  private stack: Record<string, unknown>[] = [{}];
 
   pick() {
     return this.stack[this.stack.length - 1];
   }
 
-  get<T>(id: V<T>): T;
-  get<T extends unknown[]>(...ids: H<T>): T;
-  get<T extends unknown[]>(...ids: H<T>): T | T[0] {
-    if (ids.length == 1) {
-      const id = ids[0];
-      return (
-        typeof id == "string" && id in this.pick() ? this.pick()[id] : id
-      ) as T[0];
-    }
-    return ids.map((id) => this.get(id)) as T;
+  has<T>(id: V<T>): boolean {
+    return typeof id == "string" && id in this.pick();
+  }
+
+  get<T>(id: V<T>): T {
+    return (
+      typeof id == "string" && id in this.pick() ? this.pick()[id] : id
+    ) as T;
   }
 
   push(local: { [id: string]: unknown }) {
@@ -62,7 +60,14 @@ class Env {
 }
 
 class HeyActions {
-  private env = new Env();
+  private readonly env = new Env();
+
+  prog(local: Record<string, unknown>, body: () => unknown) {
+    this.env.push(local);
+    const result = body();
+    this.env.pop();
+    return result;
+  }
 
   def(id: string, body: unknown) {
     this.env.pick()[id] = body;
@@ -99,8 +104,8 @@ class HeyActions {
   fun(args: string[], body: () => unknown) {
     return (...value: unknown[]) => {
       const local = args.reduce((e, a, i) => ({ ...e, [a]: value[i] }), {});
-      this.env.push(local);
-      return body();
+      const result = this.prog(local, body);
+      return result;
     };
   }
 
@@ -118,8 +123,13 @@ class HeyActions {
       : callable(...values);
   }
 
-  value(v: unknown) {
+  value(ctx: Context, v: unknown) {
     return this.env.get(v);
+  }
+
+  known(ctx: Context, v: unknown) {
+    if (this.env.has(v)) return this.env.get(v);
+    throw identifierError(String(v), ...ctx.get(0));
   }
 }
 
@@ -135,15 +145,18 @@ function isNumber(num: V<number>): num is number {
 
 function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
   return {
-    Prog: (defs, result) => {
-      defs.children.forEach((c) => c.eval());
-      return result.eval();
-    },
+    Prog: (defs, result) =>
+      impl.prog({}, () => {
+        defs.children.forEach((c) => c.eval());
+        return result.eval();
+      }),
 
     Def: (def, id, colon, body) => impl.def(id.eval(), body.eval()),
 
-    Val: (v) => impl.value(v.eval()),
-    V: (v) => impl.value(v.eval()),
+    Val: (v) => impl.value(new Context(v), v.eval()),
+    V: (v) => impl.value(new Context(v), v.eval()),
+
+    Known: (id) => impl.known(new Context(id), id.eval()),
 
     Call: (id, lpar, params, rpar) =>
       impl.call(
@@ -206,7 +219,7 @@ const heySemantics = heyGrammar
 export function hey(source: string): unknown {
   const match = heyGrammar.match(source);
   if (match.failed()) {
-    throw error(match, source);
+    throw matchError(match, source);
   }
   return heySemantics(match).eval();
 }
@@ -234,22 +247,16 @@ type Error = {
   message: string;
 };
 
-function error(match: ohm.MatchResult, source: string): Error;
 function error(
-  match: { rule: string; val: unknown; pos: number },
-  source: string
-): Error;
-function error(
-  match: ohm.MatchResult | { rule: string; val: unknown; pos: number },
+  { rule, val, pos }: { rule: string; val?: unknown; pos: number },
   source: string
 ): Error {
-  if ("pos" in match) {
-    return build(match.rule, match.pos, match.val);
-  }
-  const pos = match.getRightmostFailurePosition();
-  const infos = Object.keys(match.matcher.memoTable[pos].memo);
-  const rule = infos[infos.length - 1];
-  return build(rule, pos);
+  const { line, col, value } = getLineCol(pos);
+  return {
+    line: line,
+    col: col,
+    message: `expected ${rule}, got ${val ?? value}`,
+  };
 
   function getLineCol(pos: number) {
     const sofar = source.substring(0, pos + 1);
@@ -258,15 +265,6 @@ function error(
     const col = lines[lines.length - 1].length;
     const value = sofar.slice(-1);
     return { line, col, value };
-  }
-
-  function build(rule: string, pos: number, val?: unknown) {
-    const { line, col, value } = getLineCol(pos);
-    return {
-      line: line,
-      col: col,
-      message: `expected ${rule}, got ${val ?? value}`,
-    };
   }
 }
 
@@ -286,6 +284,30 @@ function numberError(val: string, source: string, pos: number) {
     {
       rule: "V<number>",
       val,
+      pos,
+    },
+    source
+  );
+}
+
+function identifierError(val: string, source: string, pos: number) {
+  return error(
+    {
+      rule: "identifier",
+      val,
+      pos,
+    },
+    source
+  );
+}
+
+function matchError(match: ohm.MatchResult, source: string) {
+  const pos = match.getRightmostFailurePosition();
+  const infos = Object.keys(match.matcher.memoTable[pos].memo);
+  const rule = infos[infos.length - 1];
+  return error(
+    {
+      rule,
       pos,
     },
     source
