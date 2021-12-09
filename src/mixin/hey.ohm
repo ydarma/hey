@@ -15,7 +15,7 @@ HeyGrammar {
 
   Literal = number | string | color 
   Known = identifier
-  V<T> = T | Call | identifier
+  V<T> = T | CallSeq | identifier
     
   identifier = ~reserved &letter (alnum | "-")+
   number = digit+
