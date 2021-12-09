@@ -13,7 +13,7 @@ HeyGrammar {
   Fun = lpar identifier* rpar arrow? Prog
   Call = identifier lpar Val* rpar
 
-  Literal = number | color 
+  Literal = number | string | color 
   Known = identifier
   V<T> = T | Call | identifier
     
@@ -24,5 +24,6 @@ HeyGrammar {
   rpar = ")"
   colon = ":"
   arrow = "->" | ":"
-  reserved = "range" | "square" | "def" | "concat" | "c" | "repeat" | "r" | "color"
+  reserved = "range" | "square" | "def" | "concat" | "c" | "repeat" | "r" | color
+  string = "\"" (~"\"" any | "\"\"")* "\""
 }

@@ -17,7 +17,8 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         return result.eval();
       }),
 
-    Def: (def, id, colon, body) => impl.def(id.eval(), body.eval()),
+    Def: (def, id, colon, body) =>
+      impl.def(new Context(id, body), id.eval(), body.eval()),
 
     Val: (v) => impl.value(new Context(v), v.eval()),
     V: (v) => impl.value(new Context(v), v.eval()),
@@ -25,11 +26,20 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
     Known: (id) => impl.known(new Context(id), id.eval()),
 
     Call: (id, lpar, params, rpar) =>
-      impl.call(id.eval(), ...params.children.map((p) => p.eval())),
+      impl.call(
+        new Context(id, ...params.children),
+        id.eval(),
+        ...params.children.map((p) => p.eval())
+      ),
 
     CallSeq: (call, lpar, params, rpar) =>
       params.children.reduce(
-        (seq, args) => impl.callSeq(seq, ...args.children.map((p) => p.eval())),
+        (seq, args) =>
+          impl.callSeq(
+            new Context(call, ...params.children),
+            seq,
+            ...args.children.map((p) => p.eval())
+          ),
         call.eval()
       ),
 
@@ -59,13 +69,16 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     Fun: (lpar, args, rpar, arrow, body) =>
       impl.fun(
+        new Context(...args.children, body),
         args.children.map((p) => p.eval()),
         () => body.eval()
       ),
 
     number: (v) => parseInt(v.sourceString),
 
-    color: (name) => name.sourceString,
+    color: (n) => n.sourceString,
+
+    string: (rquotes, s, lquotes) => s.sourceString,
 
     identifier: (lh, id) => id.sourceString,
   };

@@ -45,6 +45,14 @@ export function numberError(
   return error(source, "V<number>", pos, symbol);
 }
 
+export function callError(
+  source: string,
+  pos: number,
+  symbol?: string
+): HeyError {
+  return error(source, "function or data", pos, symbol);
+}
+
 export function identifierError(
   source: string,
   pos: number,

@@ -1,5 +1,5 @@
 import test from "tape";
-import { colorError, identifierError, numberError } from "./error";
+import { callError, colorError, identifierError, numberError } from "./error";
 
 test("Number error", (t) => {
   t.deepEqual(numberError("\nnumber: e", 9, "e"), {
@@ -24,6 +24,15 @@ test("Identifier error", (t) => {
     line: 3,
     col: 1,
     message: "expected identifier, got $",
+  });
+  t.end();
+});
+
+test("Call error", (t) => {
+  t.deepEqual(callError("a(1)", 1, "a"), {
+    line: 1,
+    col: 2,
+    message: "expected function or data, got a",
   });
   t.end();
 });

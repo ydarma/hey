@@ -165,3 +165,27 @@ test("Unknown idetifier", (t) => {
   );
   t.end();
 });
+
+const textTestProg = `
+def x "hello ""world"""
+x
+`;
+
+test("Text data", (t) => {
+  const result = hey(textTestProg);
+  t.equal(result, 'hello ""world""');
+  t.end();
+});
+
+const notCallTestProg = `
+def a 1
+a(4)
+`;
+
+test("Not callable error", (t) => {
+  t.throws(
+    () => hey(notCallTestProg),
+    isError("expected function or data, got a", 3, 1)
+  );
+  t.end();
+});

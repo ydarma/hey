@@ -24,7 +24,7 @@ test("Program execution", (t) => {
 });
 
 test("Definition", (t) => {
-  actions.def("y", "val");
+  actions.def(new TestContext(), "y", "val");
   t.equal(env.get("y"), "val");
   t.end();
 });
@@ -64,23 +64,23 @@ test("Repeat", (t) => {
 });
 
 test("Function", (t) => {
-  const result = actions.fun(["a"], () => env.get("a"));
+  const result = actions.fun(new TestContext(), ["a"], () => env.get("a"));
   t.equal(result(1), 1);
   t.end();
 });
 
 test("Call", (t) => {
-  const fun = actions.fun(["a"], () => env.get("a"));
-  actions.def("f", fun);
-  const result = actions.call("f", 1);
+  const fun = actions.fun(new TestContext(), ["a"], () => env.get("a"));
+  actions.def(new TestContext(), "f", fun);
+  const result = actions.call(new TestContext(), "f", 1);
   t.equal(result, 1);
   t.notok(env.has("a"));
   t.end();
 });
 
 test("CallSeq", (t) => {
-  const fun = actions.fun(["a"], () => env.get("a"));
-  const result = actions.callSeq(fun, 1);
+  const fun = actions.fun(new TestContext(), ["a"], () => env.get("a"));
+  const result = actions.callSeq(new TestContext(), fun, 1);
   t.equal(result, 1);
   t.notok(env.has("a"));
   t.end();
@@ -104,6 +104,15 @@ test("Known error", (t) => {
   t.throws(
     () => actions.known(new TestContext(), "k"),
     (e: HeyError) => /identifier/.test(e.message)
+  );
+  t.end();
+});
+
+test("Not callable error", (t) => {
+  actions.def(new TestContext(), "a", 1);
+  t.throws(
+    () => actions.call(new TestContext(), "a"),
+    (e: HeyError) => /function or data/.test(e.message)
   );
   t.end();
 });

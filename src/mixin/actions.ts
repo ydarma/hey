@@ -1,5 +1,5 @@
 import { Env, V } from "./env";
-import { numberError, colorError, identifierError } from "./error";
+import { numberError, colorError, identifierError, callError } from "./error";
 
 export interface IContext {
   get(index: number): [string, number];
@@ -22,7 +22,7 @@ export class HeyActions {
     return result;
   }
 
-  def(id: string, body: unknown): void {
+  def(ctx: IContext, id: string, body: unknown): void {
     this.env.pick()[id] = body;
   }
 
@@ -59,7 +59,11 @@ export class HeyActions {
     return result;
   }
 
-  fun(args: string[], body: () => unknown): (...values: unknown[]) => unknown {
+  fun(
+    ctx: IContext,
+    args: string[],
+    body: () => unknown
+  ): (...values: unknown[]) => unknown {
     return (...value: unknown[]) => {
       const local = args.reduce((e, a, i) => ({ ...e, [a]: value[i] }), {});
       const result = this.prog(local, body);
@@ -67,18 +71,19 @@ export class HeyActions {
     };
   }
 
-  call(id: string, ...values: unknown[]): unknown {
+  call(ctx: IContext, id: string, ...values: unknown[]): unknown {
     const callable = this.env.get<(...a: unknown[]) => unknown | unknown[]>(id);
-    return this.callSeq(callable, ...values);
+    return this.callSeq(ctx, callable, ...values);
   }
 
   callSeq(
+    ctx: IContext,
     callable: (...a: unknown[]) => unknown | unknown[],
     ...values: unknown[]
   ): unknown {
-    return Array.isArray(callable)
-      ? callable[(values[0] as number) - 1]
-      : callable(...values);
+    if (isData(callable)) return callable[(values[0] as number) - 1];
+    if (isFunction(callable)) return callable(...values);
+    throw callError(...ctx.get(0));
   }
 
   value(ctx: IContext, v: unknown): unknown {
@@ -106,4 +111,14 @@ function isColor(color: V<string>): color is string {
 
 function isNumber(num: V<number>): num is number {
   return typeof num == "number";
+}
+
+function isFunction(
+  callable: unknown
+): callable is (...a: unknown[]) => unknown {
+  return typeof callable == "function";
+}
+
+function isData(callable: unknown): callable is unknown[] {
+  return Array.isArray(callable);
 }
