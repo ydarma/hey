@@ -3,6 +3,7 @@ import {
   arityError,
   callError,
   colorError,
+  dataError,
   identifierError,
   numberError,
 } from "./error";
@@ -48,6 +49,15 @@ test("Arity error", (t) => {
     line: 1,
     col: 2,
     message: "expected 3 argument(s), got 2",
+  });
+  t.end();
+});
+
+test("dataError", (t) => {
+  t.deepEqual(dataError("s(3, 4)", 2, "3"), {
+    line: 1,
+    col: 3,
+    message: "expected data, got 3",
   });
   t.end();
 });

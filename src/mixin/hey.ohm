@@ -5,11 +5,12 @@ HeyGrammar {
 
   Result = Call (lpar Val* rpar)*
     
-  Call = Range | Square | Concat | Repeat | Function | Known
+  Call = Range | Square | Concat | Repeat | Slice | Function | Known
   Range = "range" lpar Val Val Val rpar
   Square = "square" lpar Val Val rpar
   Concat = ("concat" | "c") lpar Val* rpar
   Repeat = ("repeat" | "r") lpar Val Val* rpar
+  Slice = ("slice" | "s") lpar Val Val Val? rpar
   Function = lpar identifier* rpar arrow? Prog
 
   Literal = number | string | color 
@@ -22,7 +23,7 @@ HeyGrammar {
   rpar = ")"
   colon = ":"
   arrow = "->" | ":"
-  reserved = "range" | "square" | "def" | "concat" | "c" | "repeat" | "r" | color
+  reserved = "range" | "square" | "def" | "concat" | "repeat" | "slice" | color
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"

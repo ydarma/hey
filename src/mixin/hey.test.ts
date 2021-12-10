@@ -211,3 +211,13 @@ test("Arity error", (t) => {
   );
   t.end();
 });
+
+const sliceTestProg = `
+c(s(c(2 4 6) 2) s(c(1 3 5 7) 2 3))
+`;
+
+test("Slice", (t) => {
+  const result = hey(sliceTestProg);
+  t.deepEqual(result, [4, 6, 3, 5]);
+  t.end();
+});

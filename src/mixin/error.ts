@@ -53,6 +53,14 @@ export function callError(
   return error(source, pos, "function or data", symbol);
 }
 
+export function dataError(
+  source: string,
+  pos: number,
+  symbol?: string
+): HeyError {
+  return error(source, pos, "data", symbol);
+}
+
 export function identifierError(
   source: string,
   pos: number,

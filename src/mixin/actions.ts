@@ -5,6 +5,7 @@ import {
   identifierError,
   callError,
   arityError,
+  dataError,
 } from "./error";
 
 export interface IContext {
@@ -63,6 +64,19 @@ export class HeyActions {
     const result = new Array(count);
     for (let i = 0; i < count; i++) result[i] = values[i % values.length];
     return result;
+  }
+
+  slice(
+    ctx: IContext,
+    data: V<unknown[]>,
+    start: V<number>,
+    end?: V<number>
+  ): unknown[] {
+    if (!isData(data)) throw dataError(...ctx.get(0), data);
+    if (!isNumber(start)) throw numberError(...ctx.get(1), start);
+    if (end != undefined && !isNumber(end))
+      throw numberError(...ctx.get(2), end);
+    return data.slice(start - 1, end && end < 0 ? end + 1 : end);
   }
 
   funct(

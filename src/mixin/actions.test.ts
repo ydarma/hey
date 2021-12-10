@@ -116,3 +116,23 @@ test("Arity error", (t) => {
   );
   t.end();
 });
+
+test("Slice", (t) => {
+  const slice1 = actions.slice(new TestContext(), [1, 3, 5, 7], 2);
+  t.deepEqual(slice1, [3, 5, 7]);
+  const slice2 = actions.slice(new TestContext(), [1, 3, 5, 7], 2, 3);
+  t.deepEqual(slice2, [3, 5]);
+  const slice3 = actions.slice(new TestContext(), [1, 3, 5, 7], 2, -2);
+  t.deepEqual(slice3, [3, 5]);
+  const slice4 = actions.slice(new TestContext(), [1, 3, 5, 7], -3, -2);
+  t.deepEqual(slice4, [1, 3, 5]);
+  t.end();
+});
+
+test("Slice error", (t) => {
+  t.throws(
+    () => actions.slice(new TestContext(), "unknown", 1),
+    (e: HeyError) => /data/.test(e.message)
+  );
+  t.end();
+});
