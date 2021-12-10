@@ -77,6 +77,10 @@ oop.inherits(Mode, TextMode);
 export default defineComponent({
   props: {
     program: String,
+    error: Object,
+  },
+  data() {
+    return { marker: 0 };
   },
   name: "HeyEditor",
   emits: ["change"],
@@ -95,11 +99,42 @@ export default defineComponent({
     });
     return { editor };
   },
+  watch: {
+    async error(e) {
+      (await this.editor).session.removeMarker(this.marker);
+      this.marker = 0;
+      if (e) {
+        const range = new ace.Range(
+          e.line - 1,
+          e.col - 1,
+          e.line - 1,
+          e.col + 2
+        );
+        this.marker = (await this.editor).session.addMarker(
+          range,
+          "alert alert-danger err py-2",
+          "text"
+        );
+      }
+    },
+  },
 });
 </script>
 
 <style>
 #editor {
   height: 700px;
+}
+.err:before {
+  content: "~~~~~~~~~~~~";
+  font-size: 1em;
+  font-weight: 900;
+  font-family: Times New Roman, Serif;
+  color: red;
+  width: 100%;
+  position: absolute;
+  top: 0.7em;
+  left: -1px;
+  overflow: hidden;
 }
 </style>

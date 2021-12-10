@@ -1,15 +1,20 @@
 <template>
-  <div v-if="isArray" class="d-flex flex-row flex-wrap">
-    <div class="paren">(</div>
-    <div
-      v-for="(value, ix) in output"
-      :key="ix"
-      class="mx-1"
-      :class="{ 'text-secondary': ix % 2 == 0, 'text-dark': ix % 2 == 1 }"
-    >
-      {{ value }}
+  <div>
+    <b-alert v-if="isError" variant="danger" show>
+      {{ stderr }}
+    </b-alert>
+    <div v-if="isArray" class="d-flex flex-row flex-wrap">
+      <div class="paren">(</div>
+      <div
+        v-for="(value, ix) in stdout"
+        :key="ix"
+        class="mx-1"
+        :class="{ 'text-secondary': ix % 2 == 0, 'text-dark': ix % 2 == 1 }"
+      >
+        {{ value }}
+      </div>
+      <div v-if="isArray" class="paren">)</div>
     </div>
-    <div v-if="isArray" class="paren">)</div>
   </div>
 </template>
 
@@ -17,12 +22,13 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    output: Array,
-  },
+  props: ["stdout", "stderr"],
   computed: {
     isArray() {
-      return Array.isArray(this.output);
+      return !this.isError && Array.isArray(this.stdout);
+    },
+    isError() {
+      return !!this.stderr;
     },
   },
 });

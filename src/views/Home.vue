@@ -10,11 +10,12 @@
         </div>
         <HeyEditor
           :program="program"
+          :error="error"
           @change="program = $event"
           class="p-2 flex-fill"
         />
         <div class="p-2 flex-fill">
-          <HeyOut :output="output" />
+          <HeyOut :stdout="output" :stderr="error" />
         </div>
       </div>
     </div>
@@ -33,11 +34,17 @@ export default defineComponent({
     return {
       program: '; example\ndef greetings r(70 "Hello world" green)\ngreetings',
       output: "" as unknown,
+      error: undefined as unknown,
     };
   },
   methods: {
     exec() {
-      this.output = hey(this.program);
+      this.error = undefined;
+      try {
+        this.output = hey(this.program);
+      } catch (e) {
+        this.error = e;
+      }
     },
   },
   components: {
