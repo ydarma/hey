@@ -189,3 +189,16 @@ test("Not callable error", (t) => {
   );
   t.end();
 });
+
+const commentTestProg = `
+; always return 1
+def a (x) "pass"
+; result
+a("blue")
+`;
+
+test("Comments", (t) => {
+  const result = hey(commentTestProg);
+  t.equal(result, "pass");
+  t.end();
+});

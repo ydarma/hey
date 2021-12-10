@@ -74,6 +74,10 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         () => body.eval()
       ),
 
+    comment: (semiColon, comment, eol) => {
+      //
+    },
+
     number: (v) => parseInt(v.sourceString),
 
     color: (n) => n.sourceString,

@@ -1,5 +1,5 @@
 HeyGrammar {
-  Prog = Def* Val
+  Prog = (Def | comment)* Val
   Def = "def" identifier colon? Prog
   Val = Literal | CallSeq | Result | Known
 
@@ -26,4 +26,6 @@ HeyGrammar {
   arrow = "->" | ":"
   reserved = "range" | "square" | "def" | "concat" | "c" | "repeat" | "r" | color
   string = "\"" (~"\"" any | "\"\"")* "\""
+  comment = ";" (~eol any)* eol
+  eol = "\n" | "\r" | "\u2028" | "\u2029"
 }
