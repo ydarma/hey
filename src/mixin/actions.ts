@@ -1,5 +1,11 @@
 import { Env, V } from "./env";
-import { numberError, colorError, identifierError, callError } from "./error";
+import {
+  numberError,
+  colorError,
+  identifierError,
+  callError,
+  arityError,
+} from "./error";
 
 export interface IContext {
   get(index: number): [string, number];
@@ -63,21 +69,23 @@ export class HeyActions {
     ctx: IContext,
     args: string[],
     body: () => unknown
-  ): (...values: unknown[]) => unknown {
-    return (...value: unknown[]) => {
-      const local = args.reduce((e, a, i) => ({ ...e, [a]: value[i] }), {});
+  ): (ctx: IContext, ...values: unknown[]) => unknown {
+    return (ctx: IContext, ...values: unknown[]) => {
+      if (values.length != args.length)
+        throw arityError(...ctx.get(0), values.length, args.length);
+      const local = args.reduce((e, a, i) => ({ ...e, [a]: values[i] }), {});
       const result = this.prog(local, body);
       return result;
     };
   }
 
-  call(
+  result(
     ctx: IContext,
-    callable: V<(...a: unknown[]) => unknown | unknown[]>,
+    callable: V<(ctx: IContext, ...a: unknown[]) => unknown | unknown[]>,
     ...values: unknown[]
   ): unknown {
     if (isData(callable)) return callable[(values[0] as number) - 1];
-    if (isFunction(callable)) return callable(...values);
+    if (isFunction(callable)) return callable(ctx, ...values);
     throw callError(...ctx.get(0));
   }
 

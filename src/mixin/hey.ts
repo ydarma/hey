@@ -21,14 +21,13 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
       impl.def(new Context(id, body), id.eval(), body.eval()),
 
     Val: (v) => impl.value(new Context(v), v.eval()),
-    V: (v) => impl.value(new Context(v), v.eval()),
 
     Known: (id) => impl.known(new Context(id), id.eval()),
 
     Result: (call, lpar, params, rpar) =>
       params.children.reduce(
         (seq, args) =>
-          impl.call(
+          impl.result(
             new Context(call, ...params.children),
             seq,
             ...args.children.map((p) => p.eval())

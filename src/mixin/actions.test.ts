@@ -65,13 +65,13 @@ test("Repeat", (t) => {
 
 test("Function", (t) => {
   const result = actions.funct(new TestContext(), ["a"], () => env.get("a"));
-  t.equal(result(1), 1);
+  t.equal(result(new TestContext(), 1), 1);
   t.end();
 });
 
 test("Call", (t) => {
   const fun = actions.funct(new TestContext(), ["a"], () => env.get("a"));
-  const result = actions.call(new TestContext(), fun, 1);
+  const result = actions.result(new TestContext(), fun, 1);
   t.equal(result, 1);
   t.notok(env.has("a"));
   t.end();
@@ -102,8 +102,17 @@ test("Known error", (t) => {
 test("Not callable error", (t) => {
   actions.def(new TestContext(), "a", 1);
   t.throws(
-    () => actions.call(new TestContext(), "a", "a"),
+    () => actions.result(new TestContext(), "a", "a"),
     (e: HeyError) => /function or data/.test(e.message)
+  );
+  t.end();
+});
+
+test("Arity error", (t) => {
+  const fun = actions.funct(new TestContext(), ["a"], () => env.get("a"));
+  t.throws(
+    () => actions.result(new TestContext(), fun),
+    (e: HeyError) => /argument/.test(e.message)
   );
   t.end();
 });

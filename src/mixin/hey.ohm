@@ -6,15 +6,14 @@ HeyGrammar {
   Result = Call (lpar Val* rpar)*
     
   Call = Range | Square | Concat | Repeat | Function | Known
-  Range = "range" lpar V<number> V<number> V<number> rpar
-  Square = "square" lpar V<number> V<color> rpar
+  Range = "range" lpar Val Val Val rpar
+  Square = "square" lpar Val Val rpar
   Concat = ("concat" | "c") lpar Val* rpar
-  Repeat = ("repeat" | "r") lpar V<number> Val* rpar
+  Repeat = ("repeat" | "r") lpar Val Val* rpar
   Function = lpar identifier* rpar arrow? Prog
 
   Literal = number | string | color 
   Known = identifier
-  V<T> = T | Result
     
   identifier = ~reserved &letter (alnum | "-")+
   number = digit+

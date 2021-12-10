@@ -1,5 +1,11 @@
 import test from "tape";
-import { callError, colorError, identifierError, numberError } from "./error";
+import {
+  arityError,
+  callError,
+  colorError,
+  identifierError,
+  numberError,
+} from "./error";
 
 test("Number error", (t) => {
   t.deepEqual(numberError("\nnumber: e", 9, "e"), {
@@ -33,6 +39,15 @@ test("Call error", (t) => {
     line: 1,
     col: 2,
     message: "expected function or data, got a",
+  });
+  t.end();
+});
+
+test("Arity error", (t) => {
+  t.deepEqual(arityError("a(1 2)", 1, 2, 3), {
+    line: 1,
+    col: 2,
+    message: "expected 3 argument(s), got 2",
   });
   t.end();
 });

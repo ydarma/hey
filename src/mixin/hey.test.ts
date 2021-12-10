@@ -43,7 +43,7 @@ const funProg = `
 test("User function", (t) => {
   const fun = hey(funProg);
   if (typeof fun == "function") {
-    const result = fun(3);
+    const result = fun(["fake context"], 3);
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
       size: 3,
@@ -86,21 +86,17 @@ test("Define", (t) => {
 
 test("Match error", (t) => {
   t.throws(
-    () => hey("square(1, black)"),
-    isError("expected V<color>, got ,", 1, 9)
-  );
-  t.throws(
     () => hey("def Az 40\n\nsquare(1 black Az)"),
     isError("expected rpar, got A", 3, 16)
+  );
+  t.throws(
+    () => hey("square(\n1\ntransparent\n)"),
+    isError("expected identifier, got transparent", 3, 1)
   );
   t.end();
 });
 
 test("Eval error", (t) => {
-  t.throws(
-    () => hey("square(\n1\ntransparent\n)"),
-    isError("expected identifier, got transparent", 3, 1)
-  );
   t.throws(
     () => hey("def a(s) range(s 10 2) a(hey)"),
     isError("expected identifier, got hey", 1, 26)
@@ -200,5 +196,18 @@ a("blue")
 test("Comments", (t) => {
   const result = hey(commentTestProg);
   t.equal(result, "pass");
+  t.end();
+});
+
+const arityTestProg = `
+def a (a b) b
+a(2)
+`;
+
+test("Arity error", (t) => {
+  t.throws(
+    () => hey(arityTestProg),
+    isError("expected 2 argument(s), got 1", 3, 1)
+  );
   t.end();
 });

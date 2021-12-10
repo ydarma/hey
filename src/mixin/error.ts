@@ -8,8 +8,8 @@ export type HeyError = {
 
 function error(
   source: string,
-  rule: string,
   pos: number,
+  rule: string,
   symbol?: unknown
 ): HeyError {
   const { line, col, tok } = getLineCol(pos);
@@ -34,7 +34,7 @@ export function colorError(
   pos: number,
   symbol: string
 ): HeyError {
-  return error(source, "V<color>", pos, symbol);
+  return error(source, pos, "V<color>", symbol);
 }
 
 export function numberError(
@@ -42,7 +42,7 @@ export function numberError(
   pos: number,
   symbol: string
 ): HeyError {
-  return error(source, "V<number>", pos, symbol);
+  return error(source, pos, "V<number>", symbol);
 }
 
 export function callError(
@@ -50,7 +50,7 @@ export function callError(
   pos: number,
   symbol?: string
 ): HeyError {
-  return error(source, "function or data", pos, symbol);
+  return error(source, pos, "function or data", symbol);
 }
 
 export function identifierError(
@@ -58,12 +58,21 @@ export function identifierError(
   pos: number,
   symbol: string
 ): HeyError {
-  return error(source, "identifier", pos, symbol);
+  return error(source, pos, "identifier", symbol);
+}
+
+export function arityError(
+  source: string,
+  pos: number,
+  actual: number,
+  expected: number
+): HeyError {
+  return error(source, pos, `${expected} argument(s)`, actual);
 }
 
 export function matchError(source: string, match: ohm.MatchResult): HeyError {
   const pos = match.getRightmostFailurePosition();
   const infos = Object.keys(match.matcher.memoTable[pos].memo);
   const rule = infos[infos.length - 1];
-  return error(source, rule, pos);
+  return error(source, pos, rule);
 }
