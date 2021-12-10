@@ -59,7 +59,7 @@ export class HeyActions {
     return result;
   }
 
-  fun(
+  funct(
     ctx: IContext,
     args: string[],
     body: () => unknown
@@ -71,14 +71,9 @@ export class HeyActions {
     };
   }
 
-  call(ctx: IContext, id: string, ...values: unknown[]): unknown {
-    const callable = this.env.get<(...a: unknown[]) => unknown | unknown[]>(id);
-    return this.callSeq(ctx, callable, ...values);
-  }
-
-  callSeq(
+  call(
     ctx: IContext,
-    callable: (...a: unknown[]) => unknown | unknown[],
+    callable: V<(...a: unknown[]) => unknown | unknown[]>,
     ...values: unknown[]
   ): unknown {
     if (isData(callable)) return callable[(values[0] as number) - 1];

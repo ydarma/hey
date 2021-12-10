@@ -1,20 +1,20 @@
 HeyGrammar {
   Prog = (Def | comment)* Val
   Def = "def" identifier colon? Prog
-  Val = Literal | CallSeq | Result | Known
+  Val = Literal | Result
 
-  CallSeq = Result (lpar Val* rpar)+
+  Result = Call (lpar Val* rpar)*
     
-  Result = Range | Square | Concat | Repeat | Fun | Known
+  Call = Range | Square | Concat | Repeat | Function | Known
   Range = "range" lpar V<number> V<number> V<number> rpar
   Square = "square" lpar V<number> V<color> rpar
   Concat = ("concat" | "c") lpar Val* rpar
   Repeat = ("repeat" | "r") lpar V<number> Val* rpar
-  Fun = lpar identifier* rpar arrow? Prog
+  Function = lpar identifier* rpar arrow? Prog
 
   Literal = number | string | color 
   Known = identifier
-  V<T> = T | CallSeq | identifier
+  V<T> = T | Result
     
   identifier = ~reserved &letter (alnum | "-")+
   number = digit+

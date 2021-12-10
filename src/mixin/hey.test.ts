@@ -99,7 +99,7 @@ test("Match error", (t) => {
 test("Eval error", (t) => {
   t.throws(
     () => hey("square(\n1\ntransparent\n)"),
-    isError("expected V<color>, got transparent", 3, 1)
+    isError("expected identifier, got transparent", 3, 1)
   );
   t.throws(
     () => hey("def a(s) range(s 10 2) a(hey)"),

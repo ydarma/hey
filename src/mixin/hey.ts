@@ -25,10 +25,10 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     Known: (id) => impl.known(new Context(id), id.eval()),
 
-    CallSeq: (call, lpar, params, rpar) =>
+    Result: (call, lpar, params, rpar) =>
       params.children.reduce(
         (seq, args) =>
-          impl.callSeq(
+          impl.call(
             new Context(call, ...params.children),
             seq,
             ...args.children.map((p) => p.eval())
@@ -60,8 +60,8 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         ...values.children.map((p) => p.eval())
       ),
 
-    Fun: (lpar, args, rpar, arrow, body) =>
-      impl.fun(
+    Function: (lpar, args, rpar, arrow, body) =>
+      impl.funct(
         new Context(...args.children, body),
         args.children.map((p) => p.eval()),
         () => body.eval()
