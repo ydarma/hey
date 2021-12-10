@@ -213,7 +213,7 @@ test("Arity error", (t) => {
 });
 
 const sliceTestProg = `
-c(s(c(2 4 6) 2) s(c(1 3 5 7) 2 3))
+c(s(c(2 4 6) 2) s(c(1 3 5 7) 2 -2))
 `;
 
 test("Slice", (t) => {

@@ -1,3 +1,4 @@
+export default `
 HeyGrammar {
   Prog = (Def | comment)* Val
   Def = "def" identifier colon? Prog
@@ -18,14 +19,16 @@ HeyGrammar {
     
   identifier = ~reserved name
   name = &letter (alnum | "-")+
-  number = digit+
+  number = sign? digit+
+  sign = "+" | "-"
   color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
   lpar = "("
   rpar = ")"
   colon = ":"
   arrow = "->" | ":"
   reserved = ("range" | "square" | "def" | "concat" | "c" | "repeat" | "r" | "slice" | "s" | color) ~name
-  string = "\"" (~"\"" any | "\"\"")* "\""
+  string = "\\"" (~"\\"" any | "\\"\\"")* "\\""
   comment = ";" (~eol any)* eol
-  eol = "\n" | "\r" | "\u2028" | "\u2029"
+  eol = "\\n" | "\\r" | "\\u2028" | "\\u2029"
 }
+`;

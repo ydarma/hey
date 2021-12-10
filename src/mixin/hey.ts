@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ohm from "ohm-js";
-import fs from "fs";
-import path from "path";
 import { matchError } from "./error";
 import { HeyActions, IContext } from "./actions";
+import heyText from "./hey.ohm";
 
-const heyFile = path.join(__dirname, "/hey.ohm");
-const heyText = fs.readFileSync(heyFile).toString();
 export const heyGrammar = ohm.grammar(heyText);
 
 function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
@@ -78,7 +75,8 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
       //
     },
 
-    number: (v) => parseInt(v.sourceString),
+    number: (sign, v) =>
+      (sign.sourceString == "-" ? -1 : 1) * parseInt(v.sourceString),
 
     color: (n) => n.sourceString,
 
