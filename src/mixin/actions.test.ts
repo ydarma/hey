@@ -38,7 +38,7 @@ test("Range", (t) => {
 test("Range error", (t) => {
   t.throws(
     () => actions.range(new TestContext(), "e", 10, 2),
-    (e: HeyError) => /V<number>/.test(e.message)
+    (e: HeyError) => /number/.test(e.message)
   );
   t.end();
 });
@@ -52,7 +52,7 @@ test("Square", (t) => {
 test("Square error", (t) => {
   t.throws(
     () => actions.square(new TestContext(), 1, "transparent"),
-    (e: HeyError) => /V<color>/.test(e.message)
+    (e: HeyError) => /color/.test(e.message)
   );
   t.end();
 });

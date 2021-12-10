@@ -34,7 +34,7 @@ export function colorError(
   pos: number,
   symbol: string
 ): HeyError {
-  return error(source, pos, "V<color>", symbol);
+  return error(source, pos, "color", symbol);
 }
 
 export function numberError(
@@ -42,7 +42,7 @@ export function numberError(
   pos: number,
   symbol: string
 ): HeyError {
-  return error(source, pos, "V<number>", symbol);
+  return error(source, pos, "number", symbol);
 }
 
 export function callError(
