@@ -84,7 +84,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     string: (rquotes, s, lquotes) => s.sourceString,
 
-    identifier: (lh, id) => id.sourceString,
+    identifier: (id) => id.sourceString,
   };
 }
 
@@ -95,6 +95,7 @@ const heySemantics = heyGrammar
 export function hey(source: string): unknown {
   const match = heyGrammar.match(source);
   if (match.failed()) {
+    console.log(heyGrammar.trace(source).toString());
     throw matchError(source, match);
   }
   return heySemantics(match).eval();

@@ -67,7 +67,7 @@ test("Literal", (t) => {
 
 const defTestProg = `
 def a
-  def b(s) square(s blue)
+  def b(sz) square(sz blue)
   b
 a(1)
 `;
@@ -98,8 +98,8 @@ test("Match error", (t) => {
 
 test("Eval error", (t) => {
   t.throws(
-    () => hey("def a(s) range(s 10 2) a(hey)"),
-    isError("expected identifier, got hey", 1, 26)
+    () => hey("def a(sz) range(sz 10 2) a(hey)"),
+    isError("expected identifier, got hey", 1, 28)
   );
   t.end();
 });
