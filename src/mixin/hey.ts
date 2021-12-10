@@ -25,13 +25,6 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     Known: (id) => impl.known(new Context(id), id.eval()),
 
-    Call: (id, lpar, params, rpar) =>
-      impl.call(
-        new Context(id, ...params.children),
-        id.eval(),
-        ...params.children.map((p) => p.eval())
-      ),
-
     CallSeq: (call, lpar, params, rpar) =>
       params.children.reduce(
         (seq, args) =>

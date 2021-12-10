@@ -5,13 +5,12 @@ HeyGrammar {
 
   CallSeq = Result (lpar Val* rpar)+
     
-  Result = Range | Square | Concat | Repeat | Fun | Call
+  Result = Range | Square | Concat | Repeat | Fun | Known
   Range = "range" lpar V<number> V<number> V<number> rpar
   Square = "square" lpar V<number> V<color> rpar
   Concat = ("concat" | "c") lpar Val* rpar
   Repeat = ("repeat" | "r") lpar V<number> Val* rpar
   Fun = lpar identifier* rpar arrow? Prog
-  Call = Known lpar Val* rpar
 
   Literal = number | string | color 
   Known = identifier
