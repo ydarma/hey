@@ -8,7 +8,7 @@ Code examples are followed by a `Try it` button.
 r(c("Hey is" blue) 7)
 ```
 
-Click the button above to copy the example into the editor. Then you can execute it and modify it at will.
+Click the button above to copy the example into the editor. Then you can execute and modify it at will.
 
 This is another example
 
