@@ -46,12 +46,8 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         ...values.children.map((p) => p.eval())
       ),
 
-    Repeat: (call, lpar, count, values, rpar) =>
-      impl.repeat(
-        new Context(count, ...values.children),
-        count.eval(),
-        ...values.children.map((p) => p.eval())
-      ),
+    Repeat: (call, lpar, values, count, rpar) =>
+      impl.repeat(new Context(count, values), count.eval(), values.eval()),
 
     Slice: (call, lpar, data, start, end, rpar) =>
       impl.slice(

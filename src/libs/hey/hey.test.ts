@@ -5,7 +5,7 @@ import path from "path";
 import { heyLoader } from "./hey";
 
 function localLoader() {
-  const heyFile = path.join(__dirname, "../../public/hey.ohm");
+  const heyFile = path.join(__dirname, "../../../public/hey.ohm");
   return fs.readFileSync(heyFile).toString();
 }
 
@@ -124,7 +124,7 @@ test("Concat", (t) => {
 });
 
 const repeatTestProg = `
-r(4 blue red)
+r(c(blue red) 4)
 `;
 
 test("Repeat", (t) => {

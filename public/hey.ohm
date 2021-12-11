@@ -9,7 +9,7 @@ HeyGrammar {
   Range = "range" lpar Val Val Val rpar
   Square = "square" lpar Val Val rpar
   Concat = ("concat" | "c") lpar Val* rpar
-  Repeat = ("repeat" | "r") lpar Val Val* rpar
+  Repeat = ("repeat" | "r") lpar Val Val rpar
   Slice = ("slice" | "s") lpar Val Val Val? rpar
   Function = lpar identifier* rpar arrow? Prog
 

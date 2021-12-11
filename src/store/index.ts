@@ -3,13 +3,16 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    program: '; example\ndef greetings r(70 "Hello world" green)\ngreetings',
+    program: undefined,
     output: undefined,
     error: undefined,
+    chapter: "intro",
   },
   mutations: {
     setProgram(state, program) {
       state.program = program;
+      state.error = undefined;
+      state.output = undefined;
     },
     setOutput(state, output) {
       state.output = output;
@@ -21,7 +24,7 @@ export default createStore({
   actions: {
     async exec({ state, commit }) {
       try {
-        const output = await hey(state.program);
+        const output = await hey(state.program ?? "");
         commit("setOutput", output);
         commit("setError", undefined);
       } catch (error) {

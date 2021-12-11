@@ -9,6 +9,7 @@ export class Editor {
 
   constructor(container: string) {
     this.editor = ace.edit(container, {
+      minLines: 5,
       maxLines: 20,
       fontSize: 16,
     });
@@ -16,6 +17,7 @@ export class Editor {
   }
 
   setProgram(prog: string): void {
+    this.resetError();
     const current = this.editor.session.getValue();
     if (current != prog) this.editor.session.setValue(prog);
   }
@@ -25,8 +27,7 @@ export class Editor {
   }
 
   setError(err: HeyError): void {
-    this.editor.session.removeMarker(this.marker);
-    this.marker = 0;
+    this.resetError();
     if (err) {
       const range = new ace.Range(
         err.line - 1,
@@ -40,5 +41,10 @@ export class Editor {
         "text"
       );
     }
+  }
+
+  private resetError() {
+    this.editor.session.removeMarker(this.marker);
+    this.marker = 0;
   }
 }

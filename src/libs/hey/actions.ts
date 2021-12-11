@@ -60,7 +60,7 @@ export class HeyActions {
     );
   }
 
-  repeat(ctx: IContext, count: number, ...values: unknown[]): unknown[] {
+  repeat(ctx: IContext, count: number, values: unknown[]): unknown[] {
     const result = new Array(count);
     for (let i = 0; i < count; i++) result[i] = values[i % values.length];
     return result;

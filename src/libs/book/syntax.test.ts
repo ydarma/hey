@@ -1,10 +1,10 @@
 import test from "tape";
 import hljs from "highlight.js/lib/core";
-import hey from "./syntax";
+import syntax from "./syntax";
 
 test("hey keywords", (t) => {
   const source = '; example\ndef val r(70 "hey ""world""" blue)\nval';
-  hljs.registerLanguage("hey", hey);
+  hljs.registerLanguage("hey", syntax);
   const result = hljs.highlight(source, { language: "hey" }).value;
   t.true(/hljs-comment/.test(result));
   t.true(/hljs-def/.test(result));

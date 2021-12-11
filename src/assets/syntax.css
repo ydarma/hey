@@ -1,27 +1,42 @@
+.hljs-def,
 .ace_def {
   color: purple !important;
 }
 
+.hljs-constant,
 .ace_constant {
-  color: orangered!important;
+  color: orangered !important;
 }
 
+.hljs-number,
 .ace_number {
   color: darkblue !important;
 }
 
+.hljs-string,
 .ace_string {
   color: darkgreen !important;
 }
 
+.hljs-keyword,
 .ace_keyword {
-  color:mediumblue !important;
+  color: mediumblue !important;
 }
 
+.hljs-comment,
 .ace_comment {
   color: seagreen !important;
 }
 
+.hljs-operator,
 .ace_operator {
-  color: dimgray !important
+  color: gray !important;
+}
+
+.language-hey,
+.ace_editor {
+  font-family: monospace !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 19px !important;
 }
