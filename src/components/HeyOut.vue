@@ -1,12 +1,12 @@
 <template>
   <div>
     <b-alert v-if="isError" variant="danger" show>
-      {{ stderr }}
+      {{ error }}
     </b-alert>
     <div v-if="isArray" class="d-flex flex-row flex-wrap">
       <div class="paren">(</div>
       <div
-        v-for="(value, ix) in stdout"
+        v-for="(value, ix) in output"
         :key="ix"
         class="mx-1"
         :class="{ 'text-secondary': ix % 2 == 0, 'text-dark': ix % 2 == 1 }"
@@ -20,15 +20,17 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { mapState } from "vuex";
 
 export default defineComponent({
-  props: ["stdout", "stderr"],
+  props: [],
   computed: {
+    ...mapState(["output", "error"]),
     isArray() {
-      return !this.isError && Array.isArray(this.stdout);
+      return !this.isError && Array.isArray(this.output);
     },
     isError() {
-      return !!this.stderr;
+      return !!this.error;
     },
   },
 });

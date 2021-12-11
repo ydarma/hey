@@ -8,14 +8,9 @@
             <b-icon icon="play"></b-icon>run
           </b-button>
         </div>
-        <HeyEditor
-          :program="program"
-          :error="error"
-          @change="program = $event"
-          class="p-2 flex-fill"
-        />
+        <HeyEditor class="p-2 mb-3" />
         <div class="p-2 flex-fill">
-          <HeyOut :stdout="output" :stderr="error" />
+          <HeyOut />
         </div>
       </div>
     </div>
@@ -24,34 +19,14 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ky from "ky";
 import HeyEditor from "@/components/HeyEditor.vue";
 import HeyOut from "@/components/HeyOut.vue";
-import { heyLoader } from "@/mixin/hey";
+import { mapActions } from "vuex";
 
 export default defineComponent({
   name: "Home",
-  data() {
-    return {
-      program: '; example\ndef greetings r(70 "Hello world" green)\ngreetings',
-      output: "" as unknown,
-      error: undefined as unknown,
-    };
-  },
-  computed: {
-    hey() {
-      return heyLoader(() => ky("/hey.ohm").text());
-    },
-  },
   methods: {
-    async exec() {
-      this.error = undefined;
-      try {
-        this.output = (await this.hey)(this.program);
-      } catch (e) {
-        this.error = e;
-      }
-    },
+    ...mapActions(["exec"]),
   },
   components: {
     HeyEditor,
