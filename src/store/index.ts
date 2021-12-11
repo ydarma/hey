@@ -1,4 +1,4 @@
-import { hey } from "@/mixin/hey";
+import hey from "@/composables/hey";
 import { createStore } from "vuex";
 
 export default createStore({
