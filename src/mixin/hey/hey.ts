@@ -84,16 +84,18 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 }
 
 type HeyEval = (source: string) => unknown;
+type HeyEvalPromise = (source: string) => Promise<unknown>;
 
 export function heyLoader(loader: () => string): HeyEval;
-export function heyLoader(loader: () => Promise<string>): Promise<HeyEval>;
+export function heyLoader(loader: () => Promise<string>): HeyEvalPromise;
 export function heyLoader(
   loader: () => Promise<string> | string
-): Promise<HeyEval> | HeyEval {
+): HeyEvalPromise | HeyEval {
   const heySource = loader();
   return typeof heySource == "string"
     ? getHey(heySource)
-    : heySource.then((s) => getHey(s));
+    : (source) =>
+        heySource.then((grammar) => getHey(grammar)).then((h) => h(source));
 }
 
 function getHey(heySource: string) {

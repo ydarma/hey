@@ -9,7 +9,7 @@ import { defineComponent, onMounted } from "vue";
 import ace from "ace-builds";
 import "ace-builds/webpack-resolver";
 import { mapMutations, mapState } from "vuex";
-import { HeyError } from "@/mixin/error";
+import { HeyError } from "@/mixin/hey/error";
 
 const oop = ace.require("ace/lib/oop");
 const TextMode = ace.require("ace/mode/text").Mode;

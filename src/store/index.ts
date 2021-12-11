@@ -1,5 +1,4 @@
-import { heyLoader } from "@/mixin/hey";
-import ky from "ky";
+import { hey } from "@/mixin/hey";
 import { createStore } from "vuex";
 
 export default createStore({
@@ -7,11 +6,6 @@ export default createStore({
     program: '; example\ndef greetings r(70 "Hello world" green)\ngreetings',
     output: undefined,
     error: undefined,
-  },
-  getters: {
-    hey() {
-      return heyLoader(() => ky("/hey.ohm").text());
-    },
   },
   mutations: {
     setProgram(state, program) {
@@ -25,10 +19,9 @@ export default createStore({
     },
   },
   actions: {
-    async exec({ state, commit, getters }) {
-      const hey = await getters.hey;
+    async exec({ state, commit }) {
       try {
-        const output = hey(state.program);
+        const output = await hey(state.program);
         commit("setOutput", output);
         commit("setError", undefined);
       } catch (error) {
