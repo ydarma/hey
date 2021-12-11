@@ -5,12 +5,12 @@
     </div>
     <div class="p-2 w-50">
       <div class="d-flex flex-column h-100">
-        <div class="p-2">
-          <b-button variant="danger" class="px-2" @click="exec()">
-            <b-icon size="2x" icon="play"></b-icon>
+        <HeyEditor class="mb-2" />
+        <div class="mx-3">
+          <b-button variant="danger" pill @click="exec()">
+            <b-icon size="lg" icon="play"></b-icon>
           </b-button>
         </div>
-        <HeyEditor class="p-2 mb-3" />
         <div class="p-2 flex-fill">
           <HeyOut />
         </div>

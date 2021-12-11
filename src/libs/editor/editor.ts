@@ -12,6 +12,9 @@ export class Editor {
       minLines: 5,
       maxLines: 20,
       fontSize: 16,
+      highlightActiveLine: false,
+      placeholder: "type hey code here",
+      printMargin: false,
     });
     this.editor.session.setMode(new Mode());
   }

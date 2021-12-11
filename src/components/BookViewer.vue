@@ -19,20 +19,21 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations(["setProgram"]),
+    async open(title) {
+      this.content = await book.open(title);
+      this.$nextTick(() => {
+        book.tryit((source) => this.setProgram(source));
+      });
+    },
   },
   watch: {
     async chapter(title) {
-      this.content = await book.open(title);
+      await this.open(title);
     },
   },
   async mounted() {
     this.content = null;
-    if (this.chapter) {
-      this.content = await book.open(this.chapter);
-      this.$nextTick(() => {
-        book.tryit((source) => this.setProgram(source));
-      });
-    }
+    if (this.chapter) await this.open(this.chapter);
   },
 });
 </script>
