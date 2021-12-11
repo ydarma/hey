@@ -1,0 +1,27 @@
+.ace_def {
+  color: purple !important;
+}
+
+.ace_constant {
+  color: orangered!important;
+}
+
+.ace_number {
+  color: darkblue !important;
+}
+
+.ace_string {
+  color: darkgreen !important;
+}
+
+.ace_keyword {
+  color:mediumblue !important;
+}
+
+.ace_comment {
+  color: seagreen !important;
+}
+
+.ace_operator {
+  color: dimgray !important
+}

@@ -1,5 +1,6 @@
 import ace from "ace-builds";
 import "ace-builds/webpack-resolver";
+import { syntaxClasses } from "../book/syntaxClasses";
 const oop = ace.require("ace/lib/oop");
 const TextMode = ace.require("ace/mode/text").Mode;
 const TextHighlightRules = ace.require(
@@ -8,52 +9,7 @@ const TextHighlightRules = ace.require(
 
 const HeyHighlightRules = function (this: { $rules: unknown }) {
   this.$rules = {
-    start: [
-      {
-        token: "comment",
-        regex: ";.*$",
-      },
-      {
-        token: "constant.language",
-        regex: /\b(def)\b/,
-      },
-      {
-        token: "constant",
-        regex: /\bgreen|blue|yellow|red|purple|grey|black|white\b/,
-      },
-      {
-        token: "keyword",
-        regex: /\b(range|square|concat|c|repeat|r|slice|s)\b/,
-      },
-      {
-        token: "constant.numeric",
-        regex: /[+-]?\d+/,
-      },
-      {
-        token: "keyword.operator",
-        regex: /[():]|->/,
-      },
-      {
-        token: "string",
-        regex: /"/,
-        next: "qqstring",
-      },
-    ],
-    qqstring: [
-      {
-        token: "string",
-        regex: /""/,
-      },
-      {
-        token: "string",
-        regex: /[^"]+/,
-      },
-      {
-        token: "string",
-        regex: /"/,
-        next: "start",
-      },
-    ],
+    start: syntaxClasses.map((c) => ({ token: c.className, regex: c.regex })),
   };
 };
 

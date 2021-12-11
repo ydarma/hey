@@ -8,6 +8,7 @@
 import { defineComponent } from "vue";
 import { mapMutations, mapState } from "vuex";
 import editor from "@/libs/editor";
+import "@/assets/syntax.css";
 
 export default defineComponent({
   name: "HeyEditor",
