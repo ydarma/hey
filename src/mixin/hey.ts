@@ -2,9 +2,6 @@
 import ohm from "ohm-js";
 import { matchError } from "./error";
 import { HeyActions, IContext } from "./actions";
-import heyText from "./hey.ohm";
-
-export const heyGrammar = ohm.grammar(heyText);
 
 function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
   return {
@@ -86,17 +83,31 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
   };
 }
 
-const heySemantics = heyGrammar
-  .createSemantics()
-  .addOperation<unknown>("eval", getActions(new HeyActions()));
+type HeyEval = (source: string) => unknown;
 
-export function hey(source: string): unknown {
-  const match = heyGrammar.match(source);
-  if (match.failed()) {
-    console.log(heyGrammar.trace(source).toString());
-    throw matchError(source, match);
-  }
-  return heySemantics(match).eval();
+export function heyLoader(loader: () => string): HeyEval;
+export function heyLoader(loader: () => Promise<string>): Promise<HeyEval>;
+export function heyLoader(
+  loader: () => Promise<string> | string
+): Promise<HeyEval> | HeyEval {
+  const heySource = loader();
+  return typeof heySource == "string"
+    ? getHey(heySource)
+    : heySource.then((s) => getHey(s));
+}
+
+function getHey(heySource: string) {
+  const heyGrammar = ohm.grammar(heySource);
+  const heySemantics = heyGrammar
+    .createSemantics()
+    .addOperation<unknown>("eval", getActions(new HeyActions()));
+  return (source: string) => {
+    const match = heyGrammar.match(source);
+    if (match.failed()) {
+      throw matchError(source, match);
+    }
+    return heySemantics(match).eval();
+  };
 }
 
 class Context implements IContext {

@@ -1,6 +1,15 @@
 import test from "tape";
 import { Shape } from "./actions";
-import { hey } from "./hey";
+import fs from "fs";
+import path from "path";
+import { heyLoader } from "./hey";
+
+function localLoader() {
+  const heyFile = path.join(__dirname, "../../public/hey.ohm");
+  return fs.readFileSync(heyFile).toString();
+}
+
+const hey = heyLoader(localLoader);
 
 function isError(
   msg: string,

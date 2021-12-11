@@ -24,9 +24,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import ky from "ky";
 import HeyEditor from "@/components/HeyEditor.vue";
 import HeyOut from "@/components/HeyOut.vue";
-import { hey } from "@/mixin/hey";
+import { heyLoader } from "@/mixin/hey";
 
 export default defineComponent({
   name: "Home",
@@ -37,11 +38,16 @@ export default defineComponent({
       error: undefined as unknown,
     };
   },
+  computed: {
+    hey() {
+      return heyLoader(() => ky("/hey.ohm").text());
+    },
+  },
   methods: {
-    exec() {
+    async exec() {
       this.error = undefined;
       try {
-        this.output = hey(this.program);
+        this.output = (await this.hey)(this.program);
       } catch (e) {
         this.error = e;
       }
