@@ -58,7 +58,7 @@ test("Square error", (t) => {
 });
 
 test("Repeat", (t) => {
-  const result = actions.repeat(new TestContext(), 3, 1, "blue");
+  const result = actions.repeat(new TestContext(), 3, [1, "blue"]);
   t.deepEqual(result, [1, "blue", 1]);
   t.end();
 });
