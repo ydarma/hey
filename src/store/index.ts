@@ -30,6 +30,10 @@ export default createStore({
         commit("setError", error);
       }
     },
+    async clear({ commit }) {
+      commit("setOutput", undefined);
+      commit("setError", undefined);
+    },
   },
   modules: {},
 });
