@@ -2,8 +2,8 @@
   <a
     class="github-fork-ribbon right-top"
     href="https://github.com/ydarma/hey"
-    data-ribbon="Contribute on GitHub"
-    title="Contribute on GitHub"
+    data-ribbon="Contribuer sur GitHub"
+    title="Contribuer sur GitHub"
   >
     Contribute on GitHub
   </a>
