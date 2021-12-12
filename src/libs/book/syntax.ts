@@ -1,5 +1,6 @@
 import { Language } from "highlight.js";
 import { syntaxClasses } from "./syntaxClasses";
+
 export default function (): Language {
   return {
     name: "hey",

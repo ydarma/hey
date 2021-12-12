@@ -5,7 +5,7 @@
 <script>
 import { defineComponent } from "vue";
 import book from "@/libs/book";
-import { mapMutations, mapState } from "vuex";
+import { mapMutations } from "vuex";
 import "@/assets/syntax.css";
 
 export default defineComponent({
@@ -15,12 +15,15 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(["chapter"]),
+    chapter() {
+      const title = this.$route.query.chapter;
+      return title ? title : "1. Introduction";
+    },
   },
   methods: {
     ...mapMutations(["setProgram"]),
-    async open(title) {
-      this.content = await book.open(title);
+    async open() {
+      this.content = await book.open(this.chapter);
       this.$nextTick(() => {
         book.tryit((source) => this.setProgram(source));
         book.solution();
@@ -28,13 +31,12 @@ export default defineComponent({
     },
   },
   watch: {
-    async chapter(title) {
-      await this.open(title);
+    async "$route.query.chapter"() {
+      await this.open();
     },
   },
   async mounted() {
-    this.content = null;
-    if (this.chapter) await this.open(this.chapter);
+    await this.open();
   },
 });
 </script>

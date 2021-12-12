@@ -2,7 +2,6 @@ import $ from "cash-dom";
 
 export function solution(): void {
   const solutions = $(".language-hey").filter((_, e) => {
-    console.log(e.firstChild?.textContent);
     return /^;.*solution$/.test(e.firstChild?.textContent ?? "");
   });
   solutions.each((_, e) => {

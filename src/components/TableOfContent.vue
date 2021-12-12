@@ -23,9 +23,8 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations(["setChapter"]),
-    open(title: string) {
-      this.setChapter(title);
-      if (this.$route.name != "Home") this.$router.push({ name: "Home" });
+    open(chapter: string) {
+      this.$router.push({ path: "/", query: { chapter } });
     },
   },
 });

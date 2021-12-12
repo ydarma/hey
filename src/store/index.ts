@@ -6,7 +6,6 @@ export default createStore({
     program: "",
     output: undefined,
     error: undefined,
-    chapter: "1. Introduction",
   },
   mutations: {
     setProgram(state, program) {
@@ -19,12 +18,6 @@ export default createStore({
     },
     setError(state, error) {
       state.error = error;
-    },
-    setChapter(state, chapter) {
-      state.chapter = chapter;
-      state.program = "";
-      state.error = undefined;
-      state.output = undefined;
     },
   },
   actions: {
