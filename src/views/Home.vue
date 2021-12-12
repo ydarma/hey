@@ -4,7 +4,7 @@
       <book-viewer></book-viewer>
     </div>
     <div class="p-2 w-50">
-      <div class="d-flex flex-column h-100">
+      <div class="d-flex flex-column h-100 exec-pane">
         <HeyEditor class="mb-2 border rounded p-1 flex-fill editor" />
         <div>
           <b-button variant="danger" class="mx-3" pill @click="exec()">
@@ -47,5 +47,23 @@ export default defineComponent({
 .result {
   min-height: 30%;
   max-height: 45%;
+}
+
+.exec-pane {
+  position: fixed;
+  right: 12px;
+  left: 50%;
+  overflow: scroll;
+}
+.exec-pane::-webkit-scrollbar {
+  width: 4px;
+}
+/* Handle */
+.exec-pane::-webkit-scrollbar-thumb {
+  background: rgb(214, 168, 168);
+}
+/* Handle on hover */
+.exec-pane::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

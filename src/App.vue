@@ -8,13 +8,11 @@
     Contribute on GitHub
   </a>
   <div class="d-flex flex-column h-100">
-    <div id="nav">
-      <b-card>
-        <b-button class="mx-1" to="/"><b-icon icon="house"></b-icon></b-button>
-        <table-of-content></table-of-content>
-        <b-button class="mx-1" variant="info" to="/about">A propos</b-button>
-      </b-card>
-    </div>
+    <b-card class="sticky-top">
+      <b-button class="mx-1" to="/"><b-icon icon="house"></b-icon></b-button>
+      <table-of-content></table-of-content>
+      <b-button class="mx-1" variant="info" to="/about">A propos</b-button>
+    </b-card>
     <router-view class="flex-fill" />
   </div>
 </template>
