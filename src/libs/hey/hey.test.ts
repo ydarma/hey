@@ -124,12 +124,12 @@ test("Concat", (t) => {
 });
 
 const repeatTestProg = `
-r(c(blue red) 4)
+r(c(r(blue 1) r(red 2)) 5)
 `;
 
 test("Repeat", (t) => {
   const result = hey(repeatTestProg);
-  t.deepEqual(result, ["blue", "red", "blue", "red"]);
+  t.deepEqual(result, ["blue", "red", "red", "blue", "red"]);
   t.end();
 });
 

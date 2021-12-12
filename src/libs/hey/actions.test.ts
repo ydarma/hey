@@ -57,9 +57,15 @@ test("Square error", (t) => {
   t.end();
 });
 
-test("Repeat", (t) => {
+test("Repeat array", (t) => {
   const result = actions.repeat(new TestContext(), 3, [1, "blue"]);
   t.deepEqual(result, [1, "blue", 1]);
+  t.end();
+});
+
+test("Repeat single value", (t) => {
+  const result = actions.repeat(new TestContext(), 3, 1);
+  t.deepEqual(result, [1, 1, 1]);
   t.end();
 });
 
