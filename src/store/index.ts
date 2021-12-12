@@ -3,7 +3,7 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    program: undefined,
+    program: "",
     output: undefined,
     error: undefined,
     chapter: "1. Introduction",
@@ -22,7 +22,7 @@ export default createStore({
     },
     setChapter(state, chapter) {
       state.chapter = chapter;
-      state.program = undefined;
+      state.program = "";
       state.error = undefined;
       state.output = undefined;
     },

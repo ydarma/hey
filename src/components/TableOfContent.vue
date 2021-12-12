@@ -3,7 +3,7 @@
     <b-dropdown-item-button
       v-for="(chapter, ix) in toc"
       :key="ix"
-      @click="setChapter(chapter)"
+      @click="open(chapter)"
     >
       {{ chapter }}
     </b-dropdown-item-button>
@@ -23,6 +23,10 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations(["setChapter"]),
+    open(title: string) {
+      this.setChapter(title);
+      if (this.$route.name != "Home") this.$router.push({ name: "Home" });
+    },
   },
 });
 </script>

@@ -22,7 +22,7 @@ export class Editor {
   setProgram(prog: string): void {
     this.resetError();
     const current = this.editor.session.getValue();
-    if (prog && current != prog) this.editor.session.setValue(prog);
+    if (current != prog) this.editor.session.setValue(prog ?? "");
   }
 
   onProgramChange(handler: (prog: string) => void): void {
