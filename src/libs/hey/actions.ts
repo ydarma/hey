@@ -7,16 +7,10 @@ import {
   arityError,
   dataError,
 } from "./error";
+import { Shape } from "./shape";
 
 export interface IContext {
   get(index: number): [string, number];
-}
-
-export class Shape {
-  constructor(
-    public name: string,
-    public props: Record<string, number | string>
-  ) {}
 }
 
 export class HeyActions {

@@ -1,5 +1,5 @@
 import test from "tape";
-import { Shape } from "./actions";
+import { Shape } from "./shape";
 import fs from "fs";
 import path from "path";
 import { heyLoader } from "./hey";

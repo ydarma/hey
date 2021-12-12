@@ -1,5 +1,6 @@
 import test from "tape";
-import { HeyActions, IContext, Shape } from "./actions";
+import { HeyActions, IContext } from "./actions";
+import { Shape } from "./shape";
 import { Env } from "./env";
 import { HeyError } from "./error";
 
