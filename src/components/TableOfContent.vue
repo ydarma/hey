@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown id="dropdown-1" text="Table of content" class="m-md-2">
+  <b-dropdown id="dropdown-1" text="Table des matières" class="m-md-2">
     <b-dropdown-item-button
       v-for="(chapter, ix) in toc"
       :key="ix"

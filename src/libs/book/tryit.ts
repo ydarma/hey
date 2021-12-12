@@ -6,7 +6,7 @@ export function tryit(loader: (source: string) => void): void {
     .each((_, e) => {
       $(e).append(
         $("<button/>")
-          .text("Try it")
+          .text("Essayer")
           .addClass("btn btn-outline-primary btn-sm m-2")
           .on({
             click: () => {

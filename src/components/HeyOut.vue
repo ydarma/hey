@@ -15,6 +15,9 @@
       </div>
       <div v-if="isArray" class="paren">)</div>
     </div>
+    <div v-if="isValue">
+      {{ output }}
+    </div>
   </div>
 </template>
 
@@ -28,6 +31,9 @@ export default defineComponent({
     ...mapState(["output", "error"]),
     isArray() {
       return !this.isError && Array.isArray(this.output);
+    },
+    isValue() {
+      return !this.isError && typeof this.output != "object";
     },
     isError() {
       return !!this.error;

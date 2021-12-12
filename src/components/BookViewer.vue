@@ -23,6 +23,7 @@ export default defineComponent({
       this.content = await book.open(title);
       this.$nextTick(() => {
         book.tryit((source) => this.setProgram(source));
+        book.solution();
       });
     },
   },
