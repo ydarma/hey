@@ -57,12 +57,18 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         end.children[0]?.eval()
       ),
 
-    Function: (lpar, args, rpar, arrow, body) =>
-      impl.funct(
+    Function: (lpar, args, rpar, arrow, body) => {
+      const f = impl.funct(
         new Context(...args.children, body),
         args.children.map((p) => p.eval()),
         () => body.eval()
-      ),
+      );
+      f.toString = () =>
+        `(${args.children.map((c) => c.sourceString).join(" ")}) -> ${
+          body.sourceString
+        }`;
+      return f;
+    },
 
     comment: (semiColon, comment, eol) => {
       //

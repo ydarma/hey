@@ -58,6 +58,7 @@ test("User function", (t) => {
       size: 3,
       color: "green",
     });
+    t.equal(fun.toString(), "(size) -> square(size green)");
   } else t.fail();
   t.end();
 });
