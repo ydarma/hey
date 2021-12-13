@@ -3,7 +3,7 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    program: '"Introduction"',
+    program: undefined,
     output: undefined,
     error: undefined,
   },

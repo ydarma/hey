@@ -13,7 +13,7 @@ export class Editor {
       maxLines: 20,
       fontSize: 16,
       highlightActiveLine: false,
-      placeholder: "Entrer du code hey...",
+      placeholder: "editeur de code hey!",
       printMargin: false,
     });
     this.editor.session.setMode(new Mode());
