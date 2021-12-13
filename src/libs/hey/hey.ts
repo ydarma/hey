@@ -6,6 +6,7 @@ import { HeyActions, IContext } from "./actions";
 function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
   const squareFun = sys("square", ["size", "color"]);
   const rangeFun = sys("range", ["start", "end", "step"]);
+  const adaLovelaceFun = sys("adaLovelace", ["n"]);
   const concatFun = sys("concat", ["values"]);
   const repeatFun = sys("repeat", ["data", "count"]);
   const sliceFun = sys("slice", ["data", "start", "end"]);
@@ -70,6 +71,12 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
       f(
         (ctx, start, end, step, ...o) => rangeFun(ctx, start, end, step, ...o),
         rangeFun.toString
+      ),
+
+    AdaLovelace: (call): typeof impl.adaLovelace =>
+      f(
+        (ctx, n, ...o) => adaLovelaceFun(ctx, n, ...o),
+        adaLovelaceFun.toString
       ),
 
     Square: (call): typeof impl.square =>

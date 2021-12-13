@@ -234,3 +234,28 @@ test("Slice", (t) => {
   t.deepEqual(result, [4, 6, 3, 5]);
   t.end();
 });
+
+const adaTestProg = `
+ada-lovelace(13)
+`;
+
+test("Ada", (t) => {
+  const result = hey(adaTestProg);
+  t.deepEqual(result, [
+    "b1...b13",
+    "1/6",
+    "0",
+    "-1/30",
+    "0",
+    "1/42",
+    "0",
+    "-1/30",
+    "0",
+    "5/66",
+    "0",
+    "-691/2730",
+    "0",
+    "7/6",
+  ]);
+  t.end();
+});

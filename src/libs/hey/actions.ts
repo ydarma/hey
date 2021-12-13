@@ -1,3 +1,4 @@
+import { b } from "./bernouilli";
 import { Env, V } from "./env";
 import {
   numberError,
@@ -43,6 +44,17 @@ export class HeyActions {
       throw numberError(...ctx.get(2), step);
     const result = [];
     for (let i = start; i < end; i += step ?? 1) result.push(i);
+    return result;
+  }
+
+  adaLovelace(ctx: IContext, n: V<number>): string[] {
+    if (!isNumber(n)) throw numberError(...ctx.get(0), n);
+    const result = [];
+    result.push(`b1...b${n}`);
+    for (let i = 1; i <= n; i++) {
+      const nb = b(i + 1);
+      result.push(nb[0] == 0 ? "0" : `${nb[0]}/${nb[1]}`);
+    }
     return result;
   }
 

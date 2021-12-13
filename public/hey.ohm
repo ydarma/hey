@@ -5,8 +5,9 @@ HeyGrammar {
 
   Result = Call (lpar Val* rpar)*
     
-  Call = Range | Square | Concat | Repeat | Slice | Function | Known
+  Call = Range | AdaLovelace | Square | Concat | Repeat | Slice | Function | Known
   Range = "range" ~name
+  AdaLovelace = "ada-lovelace" ~name
   Square = "square" ~name
   Concat = ("concat" | "c") ~name
   Repeat = ("repeat" | "r") ~name
@@ -26,7 +27,7 @@ HeyGrammar {
   colon = ":"
   arrow = "->" | ":"
   reserved = ("def" | system | color) ~name
-  system = ("range" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s") ~name
+  system = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s") ~name
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"
