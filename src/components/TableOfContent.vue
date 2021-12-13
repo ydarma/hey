@@ -1,60 +1,79 @@
 <template>
-  <b-dropdown id="dropdown-1" text="Table des matières" class="m-md-2">
-    <b-dropdown-item-button
-      v-for="(chapter, ix) in chapters"
-      :key="'ch' + ix"
-      @click="open(chapter)"
+  <b-button-group class="mx-2">
+    <b-button
+      variant="secondary"
+      :disabled="this.previous === false"
+      @click="open(previous)"
     >
-      {{ chapter }}
-    </b-dropdown-item-button>
-    <b-dropdown-divider></b-dropdown-divider>
-    <b-dropdown-item-button
-      v-for="(appendix, ix) in appendices"
-      :key="'ap' + ix"
-      @click="open(appendix)"
+      <b-icon icon="arrow-left"></b-icon>
+    </b-button>
+    <b-dropdown id="dropdown-1" text="Table des matières">
+      <b-dropdown-item-button
+        v-for="[chapter, ix] in chapters"
+        :key="ix"
+        @click="open(ix)"
+      >
+        {{ chapter }}
+      </b-dropdown-item-button>
+      <b-dropdown-divider></b-dropdown-divider>
+      <b-dropdown-item-button
+        v-for="[appendix, ix] in appendices"
+        :key="'ap' + ix"
+        @click="open(ix)"
+      >
+        {{ appendix }}
+      </b-dropdown-item-button>
+    </b-dropdown>
+    <b-button
+      variant="secondary"
+      :disabled="this.next === false"
+      @click="open(next)"
     >
-      {{ appendix }}
-    </b-dropdown-item-button>
-  </b-dropdown>
+      <b-icon icon="arrow-right"></b-icon>
+    </b-button>
+  </b-button-group>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapMutations } from "vuex";
+import book from "@/libs/book";
 
 export default defineComponent({
   props: [],
+  data: function () {
+    return {
+      current: 0,
+    };
+  },
   computed: {
     chapters() {
-      return this.toc.filter((t) => /^\d/.test(t));
+      return book.toc.filter(([t]) => /^\d/.test(t));
     },
     appendices() {
-      return this.toc.filter((t) => /^[A-Z]/.test(t));
+      return book.toc.filter(([t]) => /^[A-Z]/.test(t));
     },
-  },
-  setup() {
-    const toc = (process.env.VUE_APP_TOC as string)
-      .split("\n")
-      .map((c) => c.replace(/.md$/, ""));
-    return { toc };
+    previous() {
+      return this.current > 0 ? this.current - 1 : false;
+    },
+    next() {
+      return this.current < book.toc.length - 1 ? this.current + 1 : false;
+    },
+    title() {
+      return this.$route.query.title;
+    },
   },
   methods: {
     ...mapMutations(["setChapter"]),
-    open(chapter: string) {
-      this.$router.push({ path: "/", query: { chapter } });
+    open(ix: number) {
+      this.current = ix;
+      this.$router.push({ path: "/", query: { title: book.toc[ix][0] } });
+    },
+  },
+  watch: {
+    title(val) {
+      this.current = book.toc.findIndex(([t]) => t == val);
     },
   },
 });
 </script>
-
-<style>
-table {
-  width: 100%;
-}
-table th,
-table td {
-  border-left: 1px solid #000;
-  border-spacing: 10px;
-  padding-left: 10px;
-}
-</style>

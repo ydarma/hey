@@ -2,6 +2,8 @@
 
 ## Présentation
 
+Cet ouvrage est basé sur le language `hey!`, spécialement conçu.
+
 Le panneau d'exécution ci-contre dispose d'un éditeur de code `hey!`,
 d'un bouton d'exécution ( ▷ ) et bouton d'annulation ( X ).
 
@@ -32,5 +34,6 @@ cela indique au système de masquer le contenu et ne change pas le résultat.*
 
 ## Documentation
 
-La documentation du langage `hey!` est accessble via le menu supérieur.
+La documentation du langage `hey!`  [en (annexe A)](/?title=A+-+hey+documentation) est accessible
+par la table des matières dans la barre supérieure.
 Elle est rédigée en anglais car tous les langages sont documentés en anglais. 

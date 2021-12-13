@@ -9,8 +9,10 @@
   </a>
   <div class="d-flex flex-column h-100">
     <b-card class="sticky-top">
-      <b-button class="mx-1" to="/"><b-icon icon="house"></b-icon></b-button>
-      <table-of-content></table-of-content>
+      <b-button class="mx-1" variant="success" to="/">
+        <b-icon icon="house"></b-icon>
+      </b-button>
+      <table-of-content class="mx-1"></table-of-content>
       <b-button class="mx-1" variant="info" to="/about">A propos</b-button>
     </b-card>
     <router-view class="flex-fill" />

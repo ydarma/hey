@@ -9,7 +9,7 @@ export function solution(): void {
     let hidden = true;
     const button = $("<button/>")
       .text("Montrer la solution")
-      .addClass("btn btn-outline-secondary btn-sm m-2")
+      .addClass("btn btn-outline-warning btn-sm m-2")
       .on({
         click: () => {
           if (hidden) {

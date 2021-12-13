@@ -9,7 +9,12 @@ function open(ref: string): Promise<string> {
     .then((source) => markdown(source));
 }
 
+const toc = (process.env.VUE_APP_TOC as string)
+  .split("\n")
+  .map((c, i) => [c.replace(/.md$/, ""), i] as const);
+
 export default {
+  toc,
   open,
   tryit,
   solution,

@@ -15,15 +15,15 @@ export default defineComponent({
     };
   },
   computed: {
-    chapter() {
-      const title = this.$route.query.chapter;
-      return title ? title : "1. Introduction";
+    title() {
+      const title = this.$route.query.title;
+      return title ? title : book.toc[0][0];
     },
   },
   methods: {
     ...mapMutations(["setProgram"]),
     async open() {
-      this.content = await book.open(this.chapter);
+      this.content = await book.open(this.title);
       this.$nextTick(() => {
         book.tryit((source) => this.setProgram(source));
         book.solution();
@@ -31,7 +31,7 @@ export default defineComponent({
     },
   },
   watch: {
-    async "$route.query.chapter"() {
+    async "$route.query.title"() {
       await this.open();
     },
   },
@@ -40,3 +40,15 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+table {
+  width: 100%;
+}
+table th,
+table td {
+  border-left: 1px solid #000;
+  border-spacing: 10px;
+  padding-left: 10px;
+}
+</style>
