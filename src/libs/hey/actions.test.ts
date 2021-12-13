@@ -18,7 +18,7 @@ class TestContext implements IContext {
 }
 
 test("Program execution", (t) => {
-  const result = actions.prog({ z: 1 }, () => env.get("z"));
+  const result = actions.prog(new TestContext(), { z: 1 }, () => env.get("z"));
   t.equal(result, 1);
   t.notok(env.has("z"));
   t.end();
@@ -59,13 +59,13 @@ test("Square error", (t) => {
 });
 
 test("Repeat array", (t) => {
-  const result = actions.repeat(new TestContext(), 3, [1, "blue"]);
+  const result = actions.repeat(new TestContext(), [1, "blue"], 3);
   t.deepEqual(result, [1, "blue", 1]);
   t.end();
 });
 
 test("Repeat single value", (t) => {
-  const result = actions.repeat(new TestContext(), 3, 1);
+  const result = actions.repeat(new TestContext(), 1, 3);
   t.deepEqual(result, [1, 1, 1]);
   t.end();
 });

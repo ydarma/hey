@@ -45,6 +45,13 @@ test("Square", (t) => {
   t.end();
 });
 
+test("Square as value", (t) => {
+  const result = hey("square");
+  t.equal(typeof result, "function");
+  t.equal(String(result), "(size color) -> square(size color)");
+  t.end();
+});
+
 const funProg = `
 (size) square(size green)
 `;
@@ -94,19 +101,15 @@ test("Define", (t) => {
   t.end();
 });
 
-test("Match error", (t) => {
+test("Error", (t) => {
   t.throws(
     () => hey("def Az 40\n\nsquare(1 black Az)"),
-    isError("expected rpar, got A", 3, 16)
+    isError("expected 2 argument(s), got 3", 3, 1)
   );
   t.throws(
     () => hey("square(\n1\ntransparent\n)"),
     isError("expected identifier, got transparent", 3, 1)
   );
-  t.end();
-});
-
-test("Eval error", (t) => {
   t.throws(
     () => hey("def a(sz) range(sz 10 2) a(hey)"),
     isError("expected identifier, got hey", 1, 28)

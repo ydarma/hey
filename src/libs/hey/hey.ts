@@ -4,9 +4,46 @@ import { matchError } from "./error";
 import { HeyActions, IContext } from "./actions";
 
 function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
+  const squareFun = sys("square", ["size", "color"]);
+  const rangeFun = sys("range", ["start", "end", "step"]);
+  const concatFun = sys("concat", ["values"]);
+  const repeatFun = sys("repeat", ["data", "count"]);
+  const sliceFun = sys("slice", ["data", "start", "end"]);
+
+  type ActionParams<T extends keyof HeyActions> = Parameters<HeyActions[T]>;
+  type ActionResult<T extends keyof HeyActions> = ReturnType<HeyActions[T]>;
+  type Action<T extends keyof HeyActions> = (
+    ...args: ActionParams<T>
+  ) => ActionResult<T>;
+
+  function sys<T extends keyof HeyActions>(
+    name: T,
+    params: string[]
+  ): Action<T> {
+    const fun = impl.funct(new Context(), params, (ctx: IContext) => {
+      const f = impl[name] as Action<T>;
+      const args = [
+        ctx,
+        ...params.map((a) => impl.value(ctx, a)),
+      ] as ActionParams<T>;
+      return f(...args);
+    });
+    fun.toString = () =>
+      `(${params.join(" ")}) -> ${name}(${params.join(" ")})`;
+    return fun;
+  }
+
+  function f<T extends { toString: () => string }>(
+    fun: T,
+    toString: () => string
+  ): T {
+    fun.toString = toString;
+    return fun;
+  }
+
   return {
     Prog: (defs, result) =>
-      impl.prog({}, () => {
+      impl.prog(new Context(...defs.children, result), {}, () => {
         defs.children.forEach((c) => c.eval());
         return result.eval();
       }),
@@ -29,32 +66,31 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         call.eval()
       ),
 
-    Range: (call, lpar, start, end, step, rpar) =>
-      impl.range(
-        new Context(start, end, step),
-        start.eval(),
-        end.eval(),
-        step.eval()
+    Range: (call): typeof impl.range =>
+      f(
+        (ctx, start, end, step, ...o) => rangeFun(ctx, start, end, step, ...o),
+        rangeFun.toString
       ),
 
-    Square: (call, lpar, size, color, rpar) =>
-      impl.square(new Context(size, color), size.eval(), color.eval()),
-
-    Concat: (call, lpar, values, rpar) =>
-      impl.concat(
-        new Context(...values.children),
-        ...values.children.map((p) => p.eval())
+    Square: (call): typeof impl.square =>
+      f(
+        (ctx, size, color, ...o) => squareFun(ctx, size, color, ...o),
+        squareFun.toString
       ),
 
-    Repeat: (call, lpar, values, count, rpar) =>
-      impl.repeat(new Context(count, values), count.eval(), values.eval()),
+    Concat: (call): typeof impl.concat =>
+      f((ctx, ...values) => concatFun(ctx, values), concatFun.toString),
 
-    Slice: (call, lpar, data, start, end, rpar) =>
-      impl.slice(
-        new Context(data, start, end),
-        data.eval(),
-        start.eval(),
-        end.children[0]?.eval()
+    Repeat: (call): typeof impl.repeat =>
+      f(
+        (ctx, data, count, ...o) => repeatFun(ctx, data, count, ...o),
+        repeatFun.toString
+      ),
+
+    Slice: (call): typeof impl.slice =>
+      f(
+        (ctx, data, start, end, ...o) => sliceFun(ctx, data, start, end, ...o),
+        sliceFun.toString
       ),
 
     Function: (lpar, args, rpar, arrow, body) => {
@@ -118,7 +154,7 @@ class Context implements IContext {
   private source: string;
   private pos: number[];
   constructor(...nodes: ohm.Node[]) {
-    this.source = nodes[0].source.sourceString;
+    this.source = nodes[0]?.source.sourceString;
     this.pos = nodes.map((n) => n.source.startIdx);
   }
   get(idx: number): [string, number] {

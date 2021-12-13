@@ -16,9 +16,13 @@ export interface IContext {
 export class HeyActions {
   private readonly env = new Env();
 
-  prog(local: Record<string, unknown>, body: () => unknown): unknown {
+  prog<T>(
+    ctx: IContext,
+    local: Record<string, unknown>,
+    body: (ctx: IContext) => T
+  ): T {
     this.env.push(local);
-    const result = body();
+    const result = body(ctx);
     this.env.pop();
     return result;
   }
@@ -31,13 +35,14 @@ export class HeyActions {
     ctx: IContext,
     start: V<number>,
     end: V<number>,
-    step: V<number>
+    step?: V<number>
   ): number[] {
     if (!isNumber(start)) throw numberError(...ctx.get(0), start);
     if (!isNumber(end)) throw numberError(...ctx.get(1), end);
-    if (!isNumber(step)) throw numberError(...ctx.get(2), step);
+    if (typeof step != "undefined" && !isNumber(step))
+      throw numberError(...ctx.get(2), step);
     const result = [];
-    for (let i = start; i < end; i += step) result.push(i);
+    for (let i = start; i < end; i += step ?? 1) result.push(i);
     return result;
   }
 
@@ -47,15 +52,16 @@ export class HeyActions {
     return new Shape("square", { size, color });
   }
 
-  concat(ctx: IContext, ...values: unknown[]): unknown[] {
+  concat(ctx: IContext, values: unknown[]): unknown[] {
     return values.reduce<unknown[]>(
       (result, v) => [...result, ...(Array.isArray(v) ? v : [v])],
       []
     );
   }
 
-  repeat(ctx: IContext, count: number, values: unknown): unknown[] {
-    const arr = Array.isArray(values) ? values : [values];
+  repeat(ctx: IContext, data: unknown, count: number): unknown[] {
+    if (!isNumber(count)) throw numberError(...ctx.get(1), count);
+    const arr = Array.isArray(data) ? data : [data];
     const result = new Array(count);
     for (let i = 0; i < count; i++) result[i] = arr[i % arr.length];
     return result;
@@ -74,17 +80,16 @@ export class HeyActions {
     return data.slice(start - 1, end && end < 0 ? end + 1 : end);
   }
 
-  funct(
+  funct<T>(
     ctx: IContext,
     args: string[],
-    body: () => unknown
-  ): (ctx: IContext, ...values: unknown[]) => unknown {
+    body: (ctx: IContext) => T
+  ): (ctx: IContext, ...values: unknown[]) => T {
     return (ctx: IContext, ...values: unknown[]) => {
       if (values.length != args.length)
         throw arityError(...ctx.get(0), values.length, args.length);
       const local = args.reduce((e, a, i) => ({ ...e, [a]: values[i] }), {});
-      const result = this.prog(local, body);
-      return result;
+      return this.prog(ctx, local, body);
     };
   }
 
@@ -98,12 +103,17 @@ export class HeyActions {
     throw callError(...ctx.get(0));
   }
 
-  value(ctx: IContext, v: unknown): unknown {
+  value<T>(ctx: IContext, v: V<T>): T {
     return this.env.get(v);
   }
 
   known(ctx: IContext, v: unknown): unknown {
     if (this.env.has(v)) return this.value(ctx, v);
+    throw identifierError(...ctx.get(0), String(v));
+  }
+
+  unknown(ctx: IContext, v: unknown): unknown {
+    if (!this.env.has(v)) return v;
     throw identifierError(...ctx.get(0), String(v));
   }
 }
