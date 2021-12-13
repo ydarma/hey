@@ -56,8 +56,8 @@ const funProg = `
 (size) square(size green)
 `;
 
-test("User function", (t) => {
-  const fun = hey(funProg);
+test("User function", async (t) => {
+  const fun = await hey(funProg);
   if (typeof fun == "function") {
     const result = fun(["fake context"], 3);
     t.equal(result.name, "square");

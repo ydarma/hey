@@ -1,5 +1,10 @@
+const memoize: [number, number][] = [
+  [1, 1],
+  [-1, 2],
+];
+
 export function b(n: number): [number, number] {
-  if (n == 0) return [1, 1];
+  if (n < memoize.length) return memoize[n];
 
   const ix = index(n);
   const bb = ix.map((p) => b(p));
@@ -9,7 +14,9 @@ export function b(n: number): [number, number] {
   const sum = terms.reduce((a, b) =>
     reduce([a[0] * b[1] + b[0] * a[1], a[1] * b[1]])
   );
-  return reduce([-sum[0], sum[1] * (n + 1)]);
+  const bn = reduce([-sum[0], sum[1] * (n + 1)]);
+  memoize.push(bn, [0, 1]);
+  return bn;
 }
 
 function reduce([numerator, denominator]: [number, number]): [number, number] {
