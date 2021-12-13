@@ -6,28 +6,29 @@ HeyGrammar {
   Result = Call (lpar Val* rpar)*
     
   Call = Range | AdaLovelace | Square | Concat | Repeat | Slice | Function | Known
-  Range = "range" ~name
-  AdaLovelace = "ada-lovelace" ~name
-  Square = "square" ~name
-  Concat = ("concat" | "c") ~name
-  Repeat = ("repeat" | "r") ~name
-  Slice = ("slice" | "s") ~name
+  Range = #("range" ~nameEnd)
+  AdaLovelace = #("ada-lovelace" ~nameEnd)
+  Square = #("square" ~nameEnd)
+  Concat = #(("concat" | "c") ~nameEnd)
+  Repeat = #(("repeat" | "r") ~nameEnd)
+  Slice = #(("slice" | "s") ~nameEnd)
   Function = lpar identifier* rpar arrow? Prog
 
   Literal = number | string | color 
   Known = identifier | builtin
     
   identifier = ~reserved name
-  name = &letter (alnum | "-")+
+  name = &letter nameEnd
+  nameEnd =  (alnum | "-")+
   number = sign? digit+
   sign = "+" | "-"
-  color = ("green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white" | "orange") ~(alnum | "-")
+  color = ("green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white" | "orange") ~nameEnd
   lpar = "("
   rpar = ")"
   colon = ":"
   arrow = "->" | ":"
-  reserved = ("def" | builtin | color) ~(alnum | "-")
-  builtin = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s") ~(alnum | "-")
+  reserved = ("def" | builtin | color) ~nameEnd
+  builtin = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s") ~nameEnd
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"

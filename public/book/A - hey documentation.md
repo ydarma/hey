@@ -19,9 +19,9 @@ Functions and keywords reference :
 ada-lovelace(7)
 ```
 
- - <a name="concat"></a> `concat(data...)` | `c(data...)` : builds data built by concatenating data.
+ - <a name="concat"></a> `concat(data...)` | `c(data...)` : builds data built by concatenating and flattening data.
 ```hey
-concat(square 20 orange square(20 orange))
+concat(square c(20 orange) square(20 orange))
 ```
 
  - <a name="def"></a> `def identifier value` : binds a value to an identifier.
