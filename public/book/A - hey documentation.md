@@ -2,14 +2,14 @@
 
 List of builtin functions and keywords
 
-| keywords    | sequences            | data              | functions | shapes                  |
-|-------------|----------------------|-------------------|-----------|-------------------------|
-| [def](#def) | [ada-lovelace](#ada) | [c](#concat)      | map       | circle                  |
-|             | [range](#range)      | [concat](#concat) | reduce    | rectangle               |
-|             |                      | [r](#repeat)      |           | [square](#square)       |
-|             |                      | [repeat](#repeat) |           | triangle                |
-|             |                      | [s](#slice)       |           | wedge                   |
-|             |                      | [slice](#slice)   |           |                         |
+| data construction | data transformation | keywords    | sequences            | shapes                  |
+|-------------------|---------------------|-------------|----------------------|-------------------------|
+| [c](#concat)      | map                 | [def](#def) | [ada-lovelace](#ada) | circle                  |
+| [concat](#concat) | reduce              |             | fibonacci            | rectangle               |
+| [r](#repeat)      | rotate              |             | [range](#range)      | [square](#square)       |
+| [repeat](#repeat) | translate           |             |                      | triangle                |
+| [s](#slice)       |                     |             |                      | wedge                   |
+| [slice](#slice)   |                     |             |                      |                         |
 
 
 Functions and keywords reference :
