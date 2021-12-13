@@ -125,6 +125,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
     string: (rquotes, s, lquotes) => s.sourceString,
 
     identifier: (id) => id.sourceString,
+    builtin: (id) => id.sourceString,
   };
 }
 

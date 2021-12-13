@@ -1,8 +1,10 @@
 # Introduction
 
-## Le panneau d'exécution
+## Présentation
+
 Le panneau d'exécution ci-contre dispose d'un éditeur de code `hey!`,
 d'un bouton d'exécution ( ▷ ) et bouton d'annulation ( X ).
+
 ## Comment utiliser les exemples de code
 Les exemples sont suivis par un bouton "Essayer" pour charger
 l'exemple dans l'éditeur de code `hey!`.
@@ -27,3 +29,8 @@ Produire le message "Ada Lovelace"
 
 *Note: les solutions seront toujours précédées du commentaire `; solution` ;
 cela indique au système de masquer le contenu et ne change pas le résultat.*
+
+## Documentation
+
+La documentation du langage `hey!` est accessble via le menu supérieur.
+Elle est rédigée en anglais car tous les langages sont documentés en anglais. 

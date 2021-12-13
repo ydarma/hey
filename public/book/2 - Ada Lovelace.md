@@ -6,7 +6,7 @@ ada-lovelace(13)
 ```
 
 ###### Exercice
-Calculez la suite des nombres de Bernouilli jusqu'au 21e selon la méthode d'Ada Lovelace
+Produire la suite des nombres de Bernouilli jusqu'au 21e selon la méthode d'Ada Lovelace.
 
 ```hey
 ; solution

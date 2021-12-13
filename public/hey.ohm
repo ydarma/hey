@@ -15,19 +15,19 @@ HeyGrammar {
   Function = lpar identifier* rpar arrow? Prog
 
   Literal = number | string | color 
-  Known = identifier | system
+  Known = identifier | builtin
     
   identifier = ~reserved name
   name = &letter (alnum | "-")+
   number = sign? digit+
   sign = "+" | "-"
-  color = "green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white"
+  color = ("green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white" | "orange") ~(alnum | "-")
   lpar = "("
   rpar = ")"
   colon = ":"
   arrow = "->" | ":"
-  reserved = ("def" | system | color) ~name
-  system = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s") ~name
+  reserved = ("def" | builtin | color) ~(alnum | "-")
+  builtin = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s") ~(alnum | "-")
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"

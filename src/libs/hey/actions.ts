@@ -43,7 +43,7 @@ export class HeyActions {
     if (typeof step != "undefined" && !isNumber(step))
       throw numberError(...ctx.get(2), step);
     const result = [];
-    for (let i = start; i < end; i += step ?? 1) result.push(i);
+    for (let i = start; i <= end; i += step ?? 1) result.push(i);
     return result;
   }
 
@@ -140,6 +140,7 @@ function isColor(color: V<string>): color is string {
     "grey",
     "black",
     "white",
+    "orange",
   ].includes(color);
 }
 

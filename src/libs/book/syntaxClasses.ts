@@ -17,7 +17,8 @@ export const syntaxClasses = [
   },
   {
     className: "constant",
-    regex: /\b(green|blue|yellow|red|purple|grey|black|white)\b/,
+    regex:
+      /\b(green|blue|yellow|red|purple|grey|black|white|orange)\b(?![-0-9])/,
   },
   {
     className: "operator",
@@ -25,6 +26,6 @@ export const syntaxClasses = [
   },
   {
     className: "keyword",
-    regex: /\b(range|square|concat|c|repeat|r|slice|s)\b/,
+    regex: /\b(range|square|concat|c|repeat|r|slice|s)\b(?![-0-9])/,
   },
 ];
