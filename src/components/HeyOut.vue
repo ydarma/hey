@@ -1,7 +1,7 @@
 <template>
-  <transition name="bounce">
-    <b-alert v-if="isError" variant="danger" show>
-      {{ error }}
+  <transition :name="isError ? 'err-bounce' : 'out-bounce'">
+    <b-alert v-if="isError" variant="danger" class="error" show>
+      [{{ error.line }}:{{ error.col }}] {{ error.message }}
     </b-alert>
     <hey-list v-else-if="isArray" :output="output"></hey-list>
     <hey-value v-else-if="isValue" :output="output"></hey-value>
@@ -34,12 +34,25 @@ export default defineComponent({
 
 <style>
 fade-enter-active,
-.bounce-enter-active {
-  animation: bounce-in 0.3s;
-  transition: all 0.3s ease-out;
+.out-bounce-enter-active {
+  animation: bounce-in 0.5s;
 }
-.bounce-enter-from {
+.err-bounce-enter-active,
+.out-bounce-enter-active {
+  transition: transform 0.3s ease-out;
+}
+.err-bounce-leave-active,
+.out-bounce-leave-active {
+  transition: opacity 0.3s ease-out;
+}
+.err-bounce-enter-from,
+.out-bounce-enter-from {
   transform: translateX(200px);
+}
+.err-bounce-enter-from,
+.err-bounce-leave-to,
+.out-bounce-enter-from,
+.out-bounce-leave-to {
   opacity: 0;
 }
 @keyframes bounce-in {
@@ -47,7 +60,7 @@ fade-enter-active,
     background-color: inherit;
   }
   50% {
-    background-color: rgb(236, 246, 246);
+    background-color: rgb(240, 246, 240);
   }
   100% {
     background-color: inherit;
