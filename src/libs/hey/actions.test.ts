@@ -132,7 +132,7 @@ test("Slice", (t) => {
   const slice3 = actions.slice(new TestContext(), [1, 3, 5, 7], 2, -2);
   t.deepEqual(slice3, [3, 5]);
   const slice4 = actions.slice(new TestContext(), [1, 3, 5, 7], -3, -2);
-  t.deepEqual(slice4, [1, 3, 5]);
+  t.deepEqual(slice4, [3, 5]);
   t.end();
 });
 

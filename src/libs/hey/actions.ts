@@ -88,7 +88,10 @@ export class HeyActions {
     if (!isNumber(start)) throw numberError(...ctx.get(1), start);
     if (end != undefined && !isNumber(end))
       throw numberError(...ctx.get(2), end);
-    return data.slice(start - 1, end && end < 0 ? end + 1 : end);
+    return data.slice(
+      start > 0 ? start - 1 : start,
+      end && end < 0 ? end + 1 : end
+    );
   }
 
   funct<T>(
