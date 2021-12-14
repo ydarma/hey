@@ -12,7 +12,7 @@ Les exemples sont suivis par un bouton "Essayer" pour charger
 l'exemple dans l'éditeur de code `hey!`.
 
 ```hey
-"Hey !"
+"Hey!"
 ```
 
 
@@ -34,6 +34,6 @@ cela indique au système de masquer le contenu et ne change pas le résultat.*
 
 ## Documentation
 
-La documentation du langage `hey!`  [en (annexe A)](/?title=A+-+hey+documentation) est accessible
+La documentation du langage `hey!`  [en (annexe A)](/?title=A+-+hey!+documentation) est accessible
 par la table des matières dans la barre supérieure.
 Elle est rédigée en anglais car tous les langages sont documentés en anglais. 
