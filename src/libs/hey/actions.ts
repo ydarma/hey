@@ -50,7 +50,6 @@ export class HeyActions {
   adaLovelace(ctx: IContext, n: V<number>): string[] {
     if (!isNumber(n)) throw numberError(...ctx.get(0), n);
     const result = [];
-    result.push(`b1...b${n}`);
     for (let i = 1; i <= n; i++) {
       const nb = b(i + 1);
       result.push(nb[0] == 0 ? "0" : `${nb[0]}/${nb[1]}`);

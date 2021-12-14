@@ -6,8 +6,8 @@ List of builtin functions and keywords
 |-------------------|---------------------|-------------|----------------------|-------------------------|
 | [c](#concat)      | map                 | [def](#def) | [ada-lovelace](#ada) | circle                  |
 | [concat](#concat) | reduce              |             | fibonacci            | rectangle               |
-| [r](#repeat)      | rotate              |             | [range](#range)      | [square](#square)       |
-| [repeat](#repeat) | translate           |             |                      | triangle                |
+| [r](#repeat)      | rotate              |             | geom                 | [square](#square)       |
+| [repeat](#repeat) | translate           |             | [range](#range)      | triangle                |
 | [s](#slice)       |                     |             |                      | wedge                   |
 | [slice](#slice)   |                     |             |                      |                         |
 

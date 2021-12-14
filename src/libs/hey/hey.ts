@@ -122,7 +122,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     color: (n) => n.sourceString,
 
-    string: (rquotes, s, lquotes) => s.sourceString,
+    string: (rquotes, s, lquotes) => s.sourceString.replace(/""/g, '"'),
 
     identifier: (id) => id.sourceString,
     builtin: (id) => id.sourceString,

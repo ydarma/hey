@@ -146,15 +146,6 @@ test("Slice error", (t) => {
 
 test("Bernouilli", (t) => {
   const result = actions.adaLovelace(new TestContext(), 7);
-  t.deepEqual(result, [
-    "b1...b7",
-    "1/6",
-    "0",
-    "-1/30",
-    "0",
-    "1/42",
-    "0",
-    "-1/30",
-  ]);
+  t.deepEqual(result, ["1/6", "0", "-1/30", "0", "1/42", "0", "-1/30"]);
   t.end();
 });

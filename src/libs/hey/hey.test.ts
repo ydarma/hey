@@ -182,7 +182,7 @@ x
 
 test("Text data", (t) => {
   const result = hey(textTestProg);
-  t.equal(result, 'hello ""world""');
+  t.equal(result, 'hello "world"');
   t.end();
 });
 
@@ -242,7 +242,6 @@ ada-lovelace(13)
 test("Ada", (t) => {
   const result = hey(adaTestProg);
   t.deepEqual(result, [
-    "b1...b13",
     "1/6",
     "0",
     "-1/30",
