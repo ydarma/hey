@@ -1,8 +1,10 @@
 <template>
-  <div v-if="isValue" :class="{ fun: isFunction }">
-    {{ output }}
+  <div>
+    <div v-if="isValue" :class="{ fun: isFunction }">
+      {{ output }}
+    </div>
+    <div v-if="isShape" v-html="output"></div>
   </div>
-  <div v-if="isShape" v-html="output"></div>
 </template>
 
 <script lang="ts">
