@@ -5,7 +5,7 @@ List of builtin functions and keywords
 | data construction | data transformation | keywords    | sequences            | shapes                  |
 |-------------------|---------------------|-------------|----------------------|-------------------------|
 | [c](#concat)      | map                 | [def](#def) | [ada-lovelace](#ada) | circle                  |
-| [concat](#concat) | reduce              |             | fibonacci            | rectangle               |
+| [concat](#concat) | reduce              | [fun](#fun) | fibonacci            | rectangle               |
 | [r](#repeat)      | rotate              |             | geom                 | [square](#square)       |
 | [repeat](#repeat) | translate           |             | [range](#range)      | triangle                |
 | [s](#slice)       |                     |             |                      | wedge                   |
@@ -24,7 +24,14 @@ ada-lovelace(7)
 concat(square c(20 orange) square(20 orange))
 ```
 
- - <a name="def"></a> `def identifier value` : binds a value to an identifier.
+ - <a name="def"></a> `def identifier prog` : binds a program result to an identifier.
+```hey
+def green-square(sz) square(sz green)
+def size 20
+green-square(size)
+```
+
+ - <a name="fun"></a> `fun(...param) prog` : declares a funtion that takes params and evaluate a program.
 ```hey
 def green-square(sz) square(sz green)
 def size 20
