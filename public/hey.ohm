@@ -12,7 +12,7 @@ HeyGrammar {
   Concat = #(("concat" | "c") ~nameEnd)
   Repeat = #(("repeat" | "r") ~nameEnd)
   Slice = #(("slice" | "s") ~nameEnd)
-  Function = lpar identifier* rpar arrow? Prog
+  Function = "fun" lpar identifier* rpar arrow? Prog
 
   Literal = number | string | color 
   Known = identifier | builtin
@@ -27,7 +27,7 @@ HeyGrammar {
   rpar = ")"
   colon = ":"
   arrow = "->" | ":"
-  reserved = ("def" | builtin | color) ~nameEnd
+  reserved = ("def" | "fun" | builtin | color) ~nameEnd
   builtin = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s") ~nameEnd
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol

@@ -53,7 +53,7 @@ test("Square as value", (t) => {
 });
 
 const funProg = `
-(size) square(size green)
+fun(size) square(size green)
 `;
 
 test("User function", async (t) => {
@@ -84,7 +84,7 @@ test("Literal", (t) => {
 
 const defTestProg = `
 def a
-  def b(sz) square(sz blue)
+  def b fun(sz) square(sz blue)
   b
 a(1)
 `;
@@ -111,8 +111,8 @@ test("Error", (t) => {
     isError("expected identifier, got transparent", 3, 1)
   );
   t.throws(
-    () => hey("def a(sz) range(sz 10 2) a(hey)"),
-    isError("expected identifier, got hey", 1, 28)
+    () => hey("def a fun(sz) range(sz 10 2) a(hey)"),
+    isError("expected identifier, got hey", 1, 32)
   );
   t.end();
 });
@@ -149,8 +149,8 @@ test("Elem", (t) => {
 });
 
 const sequenceTestProg = `
-def seq-2(x y) range(x y 2)
-def seq-3(x y) range(x y 3)
+def seq-2 fun(x y) range(x y 2)
+def seq-3 fun(x y) range(x y 3)
 c(seq-2 seq-3)(2)(3 10)
 `;
 
@@ -201,7 +201,7 @@ test("Not callable error", (t) => {
 
 const commentTestProg = `
 ; always return 1
-def a (x) "pass"
+def a fun(x) "pass"
 ; result
 a("blue")
 `;
@@ -213,7 +213,7 @@ test("Comments", (t) => {
 });
 
 const arityTestProg = `
-def a (a b) b
+def a fun(a b) b
 a(2)
 `;
 
@@ -256,5 +256,24 @@ test("Ada", (t) => {
     "0",
     "7/6",
   ]);
+  t.end();
+});
+
+const funToFunTestProg = `
+def name 1
+def first-name 2
+def person fun(name first-name)
+  def data c(name first-name)
+  fun(prop) data(prop)
+
+def john person("Doe" "John")
+def anna person("Doe" "Anna")
+def doe c(john anna)
+c(doe(1)(first-name) doe(2)(first-name) doe(2)(name))
+`;
+
+test("Function that returns a function", (t) => {
+  const result = hey(funToFunTestProg);
+  t.deepEqual(result, ["John", "Anna", "Doe"]);
   t.end();
 });

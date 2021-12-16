@@ -99,10 +99,14 @@ export class HeyActions {
     args: string[],
     body: (ctx: IContext) => T
   ): (ctx: IContext, ...values: unknown[]) => T {
+    const capture = this.env.pick();
     return (ctx: IContext, ...values: unknown[]) => {
       if (values.length != args.length)
         throw arityError(...ctx.get(0), values.length, args.length);
-      const local = args.reduce((e, a, i) => ({ ...e, [a]: values[i] }), {});
+      const local = args.reduce(
+        (e, a, i) => ({ ...e, [a]: values[i] }),
+        capture
+      );
       return this.prog(ctx, local, body);
     };
   }
