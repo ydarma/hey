@@ -18,7 +18,9 @@ class TestContext implements IContext {
 }
 
 test("Program execution", (t) => {
-  const result = actions.prog(new TestContext(), { z: 1 }, () => env.get("z"));
+  const result = actions.prog(new TestContext(), [{ z: 1 }], () =>
+    env.get("z")
+  );
   t.equal(result, 1);
   t.notok(env.has("z"));
   t.end();

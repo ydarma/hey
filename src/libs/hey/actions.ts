@@ -7,6 +7,7 @@ import {
   callError,
   arityError,
   dataError,
+  alreadyDefError,
 } from "./error";
 import { Shape } from "./shape";
 
@@ -19,16 +20,19 @@ export class HeyActions {
 
   prog<T>(
     ctx: IContext,
-    local: Record<string, unknown>,
+    local: Record<string, unknown>[],
     body: (ctx: IContext) => T
   ): T {
-    this.env.push(local);
-    const result = body(ctx);
-    this.env.pop();
-    return result;
+    this.env.push(...local);
+    try {
+      return body(ctx);
+    } finally {
+      this.env.pop(local.length);
+    }
   }
 
   def(ctx: IContext, id: string, body: unknown): void {
+    if (this.env.has(id, "local")) throw alreadyDefError(...ctx.get(0), id);
     this.env.pick()[id] = body;
   }
 
@@ -103,11 +107,8 @@ export class HeyActions {
     return (ctx: IContext, ...values: unknown[]) => {
       if (values.length != args.length)
         throw arityError(...ctx.get(0), values.length, args.length);
-      const local = args.reduce(
-        (e, a, i) => ({ ...e, [a]: values[i] }),
-        capture
-      );
-      return this.prog(ctx, local, body);
+      const local = args.reduce((e, a, i) => ({ ...e, [a]: values[i] }), {});
+      return this.prog(ctx, [capture, local], body);
     };
   }
 

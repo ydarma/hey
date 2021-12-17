@@ -277,3 +277,31 @@ test("Function that returns a function", (t) => {
   t.deepEqual(result, ["John", "Anna", "Doe"]);
   t.end();
 });
+
+const alreadyDefTestProg = `
+def ab 3
+def ab fun() 5
+ab
+`;
+
+test("Already defined error", (t) => {
+  t.throws(
+    () => hey(alreadyDefTestProg),
+    isError("expected new identifier, got ab", 3, 5)
+  );
+  t.end();
+});
+
+const redefGlobalTestProg = `
+def a 3
+def b
+  def a 4
+  a
+b
+`;
+
+test("Can redefine global", (t) => {
+  const result = hey(redefGlobalTestProg);
+  t.equal(result, 4);
+  t.end();
+});

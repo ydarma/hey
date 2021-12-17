@@ -44,7 +44,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
   return {
     Prog: (defs, result) =>
-      impl.prog(new Context(...defs.children, result), {}, () => {
+      impl.prog(new Context(...defs.children, result), [{}], () => {
         defs.children.forEach((c) => c.eval());
         return result.eval();
       }),

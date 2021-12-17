@@ -9,23 +9,26 @@ export class Env {
     return env;
   }
 
-  has<T>(id: V<T>): boolean {
-    return typeof id == "string" && id in this.pick();
+  has<T>(id: V<T>, scope: "local" | "global" = "global"): boolean {
+    if (typeof id != "string") return false;
+    if (scope == "local") return id in this.pick();
+    return this.stack.some((env) => id in env);
   }
 
   get<T>(id: V<T>): T {
-    return (
-      typeof id == "string" && id in this.pick() ? this.pick()[id] : id
+    return this.stack.reduce(
+      (v, env) => (typeof id == "string" && id in env ? (env[id] as T) : v),
+      id
     ) as T;
   }
 
-  push(local: { [id: string]: unknown }): void {
-    this.stack.push({ ...this.pick(), ...local });
+  push(...local: { [id: string]: unknown }[]): void {
+    this.stack.push(...local);
   }
 
-  pop(): Record<string, unknown> {
+  pop(count = 1): Record<string, unknown> {
     const env = this.stack.pop();
     if (typeof env == "undefined") throw "interval error: empty stack";
-    return env;
+    return count == 1 ? env : this.pop(count - 1);
   }
 }

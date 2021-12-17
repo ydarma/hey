@@ -84,3 +84,11 @@ export function matchError(source: string, match: ohm.MatchResult): HeyError {
   const rule = infos[infos.length - 1];
   return error(source, pos, rule);
 }
+
+export function alreadyDefError(
+  source: string,
+  pos: number,
+  symbol: string
+): HeyError {
+  return error(source, pos, "new identifier", symbol);
+}
