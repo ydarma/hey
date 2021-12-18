@@ -15,7 +15,9 @@ export class Editor {
       highlightActiveLine: false,
       placeholder: "editeur de code hey!",
       printMargin: false,
+      autoScrollEditorIntoView: true,
     });
+    this.editor.setAutoScrollEditorIntoView(true);
     this.editor.session.setMode(new Mode());
   }
 
@@ -49,5 +51,14 @@ export class Editor {
   private resetError() {
     this.editor.session.removeMarker(this.marker);
     this.marker = 0;
+  }
+
+  resize(height: number): void {
+    const lh = (this.editor.renderer as unknown as { lineHeight: number })
+      .lineHeight;
+    this.editor.setOptions({
+      minLines: Math.trunc(height / lh),
+      maxLines: Math.trunc(height / lh),
+    });
   }
 }

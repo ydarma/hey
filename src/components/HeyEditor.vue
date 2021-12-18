@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-100" ref="container">
     <div id="editor"></div>
   </div>
 </template>
@@ -14,7 +14,10 @@ export default defineComponent({
   name: "HeyEditor",
   props: [],
   data() {
-    return { marker: 0 };
+    return {
+      marker: 0,
+      height: 0,
+    };
   },
   computed: {
     ...mapState(["error", "program"]),
@@ -25,8 +28,17 @@ export default defineComponent({
   setup() {
     return editor();
   },
+  updated() {
+    this.height = (this.$refs.editor as HTMLElement).clientHeight;
+    console.log(this.height);
+  },
   beforeCreate() {
     this.$nextTick(() => {
+      const resizeObserver = new ResizeObserver(() => {
+        this.resize((this.$refs.container as HTMLElement).clientHeight);
+      });
+
+      resizeObserver.observe(this.$refs.container as HTMLElement);
       this.edit(this.program);
       this.onChange((prog: string | undefined) => this.setProgram(prog));
     });
@@ -37,6 +49,9 @@ export default defineComponent({
     },
     async program(prog) {
       this.edit(prog);
+    },
+    height(val) {
+      this.resize(val);
     },
   },
 });
