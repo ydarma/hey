@@ -12,7 +12,7 @@ HeyGrammar {
   Concat = #(("concat" | "c") ~nameEnd)
   Repeat = #(("repeat" | "r") ~nameEnd)
   Slice = #(("slice" | "s") ~nameEnd)
-  Function = "fun" lpar identifier* rpar arrow? Prog
+  Function = "fun" lpar identifier* rpar arrow? Prog "."?
 
   Literal = number | string | color 
   Known = identifier | builtin

@@ -100,7 +100,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         sliceFun.toString
       ),
 
-    Function: (fun, lpar, args, rpar, arrow, body) => {
+    Function: (fun, lpar, args, rpar, arrow, body, dot) => {
       const f = impl.funct(
         new Context(...args.children, body),
         args.children.map((p) => p.eval()),
