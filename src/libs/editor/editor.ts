@@ -53,7 +53,15 @@ export class Editor {
     this.marker = 0;
   }
 
-  resize(height: number): void {
+  fit(container: HTMLElement): void {
+    const resizeObserver = new ResizeObserver(() => {
+      this.resize((container as HTMLElement).clientHeight);
+    });
+
+    resizeObserver.observe(container as HTMLElement);
+  }
+
+  private resize(height: number): void {
     const lh = (this.editor.renderer as unknown as { lineHeight: number })
       .lineHeight;
     this.editor.setOptions({

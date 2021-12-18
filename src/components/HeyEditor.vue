@@ -34,11 +34,7 @@ export default defineComponent({
   },
   beforeCreate() {
     this.$nextTick(() => {
-      const resizeObserver = new ResizeObserver(() => {
-        this.resize((this.$refs.container as HTMLElement).clientHeight);
-      });
-
-      resizeObserver.observe(this.$refs.container as HTMLElement);
+      this.fit(this.$refs.container as HTMLElement);
       this.edit(this.program);
       this.onChange((prog: string | undefined) => this.setProgram(prog));
     });
@@ -49,9 +45,6 @@ export default defineComponent({
     },
     async program(prog) {
       this.edit(prog);
-    },
-    height(val) {
-      this.resize(val);
     },
   },
 });

@@ -6,7 +6,7 @@ export default function (container = "editor"): {
   edit: (prog: string) => Promise<void>;
   onChange: (handler: (prog: string) => void) => Promise<void>;
   setError: (err: HeyError) => Promise<void>;
-  resize: (lines: number) => Promise<void>;
+  fit: (container: HTMLElement) => Promise<void>;
 } {
   let resolve: (e: Editor) => void;
   const editor: Promise<Editor> = new Promise((r) => (resolve = r));
@@ -27,9 +27,9 @@ export default function (container = "editor"): {
       editor.then((ed) => {
         ed.setError(err);
       }),
-    resize: (lines) =>
+    fit: (container) =>
       editor.then((ed) => {
-        ed.resize(lines);
+        ed.fit(container);
       }),
   };
 }
