@@ -31,7 +31,7 @@
           <HeyEditor />
         </div>
         <div>
-          <b-button variant="danger" class="mx-3" pill @click="exec()">
+          <b-button variant="danger" class="mx-3" pill @click="execute()">
             <b-icon size="lg" icon="play"></b-icon>
           </b-button>
           <b-button variant="secondary" class="mx-3" pill @click="clear()">
@@ -99,6 +99,10 @@ export default defineComponent({
       this.minimizeEditor = true;
       this.minimizeOut = false;
     },
+    execute() {
+      this.exec();
+      this.minimizeOut = false;
+    },
   },
   components: {
     HeyEditor,
@@ -124,8 +128,7 @@ export default defineComponent({
   max-height: 90%;
 }
 .minimize {
-  min-height: 5%;
-  max-height: 15%;
+  display: none;
 }
 
 .balance {
