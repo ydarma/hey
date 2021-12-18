@@ -16,6 +16,8 @@ const toc = (process.env.VUE_APP_TOC as string)
 export default {
   toc,
   open,
-  tryit,
-  solution,
+  initInteractions: (loader: (source: string) => void): void => {
+    tryit(loader);
+    solution();
+  },
 };

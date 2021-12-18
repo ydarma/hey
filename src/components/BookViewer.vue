@@ -25,8 +25,7 @@ export default defineComponent({
     async open() {
       this.content = await book.open(this.title);
       this.$nextTick(() => {
-        book.tryit((source) => this.setProgram(source));
-        book.solution();
+        book.initInteractions((source) => this.setProgram(source));
       });
     },
   },
