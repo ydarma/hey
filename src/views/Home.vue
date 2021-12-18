@@ -1,9 +1,23 @@
 <template>
   <div class="home m-3 d-flex flex-row h-100">
-    <div class="p-2 w-50">
+    <div
+      class="p-2"
+      :class="{
+        'w-50': disposition == 'both',
+        'w-100': disposition == 'book',
+        invisible: disposition == 'editor',
+      }"
+    >
       <book-viewer></book-viewer>
     </div>
-    <div class="p-2 w-50">
+    <div
+      class="p-2"
+      :class="{
+        'w-50': disposition == 'both',
+        'w-100': disposition == 'editor',
+        invisible: disposition == 'book',
+      }"
+    >
       <div class="d-flex flex-column h-100 exec-pane">
         <div
           class="mb-2 border rounded p-1 editor"
@@ -29,15 +43,13 @@
               class="left-pill"
               @click="maximizeEditor()"
             >
-              <b-icon size="lg" icon="arrow-down"></b-icon>
-              <b-icon size="lg" icon="fullscreen"></b-icon>
+              <b-icon size="lg" icon="box-arrow-down"></b-icon>
             </b-button>
             <b-button variant="info" @click="balance()">
-              <b-icon size="lg" icon="fullscreen-exit"></b-icon>
+              <b-icon size="lg" icon="hr"></b-icon>
             </b-button>
             <b-button variant="info" class="right-pill" @click="maximizeOut()">
-              <b-icon size="lg" icon="fullscreen"></b-icon>
-              <b-icon size="lg" icon="arrow-up"></b-icon>
+              <b-icon size="lg" icon="box-arrow-up"></b-icon>
             </b-button>
           </b-button-group>
         </div>
@@ -65,6 +77,7 @@ import BookViewer from "@/components/BookViewer.vue";
 
 export default defineComponent({
   name: "Home",
+  props: ["disposition"],
   data() {
     return {
       minimizeEditor: false,
@@ -120,10 +133,15 @@ export default defineComponent({
   max-height: 50%;
 }
 
+.w-100 > .exec-pane {
+  left: 12px;
+}
+.w-50 > .exec-pane {
+  left: 50%;
+}
 .exec-pane {
   position: fixed;
   right: 12px;
-  left: 50%;
   overflow: scroll;
 }
 .exec-pane::-webkit-scrollbar {
