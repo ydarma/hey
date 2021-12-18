@@ -136,10 +136,47 @@ def Théo
 Théo(taille)
 ```
 
-Dans le programme ci-dessus, le définition `taille` sert :
- - dans le sous-programme à construire la donnée affectée à `Théo`
- - dans le programme global à retrouver la valeur correspondante
+Dans le programme ci-dessus, le définition `taille` à deux utilisations différentes :
+ - dans le sous-programme elle sert à construire la donnée affectée à `Théo`
+ - dans le programme global à elle sert à récupérer la valeur correspondante
 
 Bien définir et nommer les données revêt une importance capitale.
 Cela permet de construire des abstractions qui rendent les programmes lisibles 
 et qui permettent de les réutiliser.
+
+###### Exercice
+A partir de l'exercice précédent ajoute des définitions globales :
+`nom`, `superficie`, `population`, `capitale`.
+Utilise-les pour récupérer et construire une liste des noms de pays suivis des nom de leur capitale.
+
+```hey
+; solution
+def nom 1
+def superficie 2
+def population 3
+def capitale 4
+
+def Allemagne
+  def superficie 357386
+  def population 83149300
+  def capitale "Berlin"
+  c("Allemagne" superficie population capitale)
+
+def Espagne
+  def superficie 505911
+  def population 46934632
+  def capitale "Madrid"
+  c("Espagne" superficie population capitale)
+
+def France
+  def superficie 672051
+  def population 68014000
+  def capitale "Paris"
+  c("France" superficie population capitale)
+
+c(
+  Allemagne(nom) Allemagne(capitale)
+  Espagne(nom) Espagne(capitale)
+  France(nom) France(capitale)
+)
+```
