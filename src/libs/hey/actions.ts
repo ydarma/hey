@@ -122,12 +122,8 @@ export class HeyActions {
     throw callError(...ctx.get(0));
   }
 
-  value<T>(ctx: IContext, v: V<T>): T {
-    return this.env.get(v);
-  }
-
   known(ctx: IContext, v: unknown): unknown {
-    if (this.env.has(v)) return this.value(ctx, v);
+    if (this.env.has(v)) return this.env.get(v);
     throw identifierError(...ctx.get(0), String(v));
   }
 

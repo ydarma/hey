@@ -25,7 +25,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
       const f = impl[name] as Action<T>;
       const args = [
         ctx,
-        ...params.map((a) => impl.value(ctx, a)),
+        ...params.map((a) => impl.known(ctx, a)),
       ] as ActionParams<T>;
       return f(...args);
     });
@@ -52,7 +52,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
     Def: (def, id, colon, body) =>
       impl.def(new Context(id, body), id.eval(), body.eval()),
 
-    Val: (v) => impl.value(new Context(v), v.eval()),
+    Val: (v) => v.eval(),
 
     Known: (id) => impl.known(new Context(id), id.eval()),
 

@@ -88,15 +88,9 @@ test("Call", (t) => {
 
 test("Value from identifier", (t) => {
   env.push({ k: 3 });
-  const result = actions.value(new TestContext(), "k");
+  const result = actions.known(new TestContext(), "k");
   t.equal(result, 3);
   env.pop();
-  t.end();
-});
-
-test("Value from constant", (t) => {
-  const result = actions.value(new TestContext(), 3);
-  t.equal(result, 3);
   t.end();
 });
 

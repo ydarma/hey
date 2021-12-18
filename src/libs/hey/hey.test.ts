@@ -138,13 +138,13 @@ test("Repeat", (t) => {
 });
 
 const elemTestProg = `
-def a c(1 2 3)
+def a c("a" 2 3)
 a(1)
 `;
 
 test("Elem", (t) => {
   const result = hey(elemTestProg);
-  t.equal(result, 1);
+  t.equal(result, "a");
   t.end();
 });
 
@@ -293,11 +293,11 @@ test("Already defined error", (t) => {
 });
 
 const redefGlobalTestProg = `
-def a 3
+def a 1
 def b
   def a 4
-  a
-b
+  c(a 2)
+b(a)
 `;
 
 test("Can redefine global", (t) => {
