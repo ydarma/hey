@@ -15,19 +15,15 @@ def faux 2
 
 def num fun(n) c(vrai r(vrai n))
 
-def and fun(a b)
-  c(r(faux a) r(faux b))(3 vrai)
+def and fun(a b) c(r(faux a) r(faux b))(3 vrai)
   
-def not fun(a)
-  c(faux vrai)(a)
+def not fun(a) c(faux vrai)(a)
     
 def ge fun(a b) a(l(b) faux)
 
-def eq fun(a b)
-  and(ge(a b) ge(b a))
+def eq fun(a b) and(ge(a b) ge(b a))
   
-def ne fun(a b)
-  not(eq(a b))
+def ne fun(a b) not(eq(a b))
   
 ne(num(11) num(12))
 ```
