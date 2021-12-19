@@ -3,6 +3,7 @@ import { Shape } from "./shape";
 import fs from "fs";
 import path from "path";
 import { heyLoader } from "./hey";
+import { HeyError } from ".";
 
 function localLoader() {
   const heyFile = path.join(__dirname, "../../../public/hey.ohm");
@@ -23,8 +24,8 @@ const rangeProg = `
 range(3 1 2)
 `;
 
-test("Range", (t) => {
-  const result = hey(rangeProg);
+test("Range", async (t) => {
+  const result = await hey(rangeProg);
   t.deepEqual(result, [1, 3, 5]);
   t.end();
 });
@@ -33,8 +34,8 @@ const squareProg = `
 square(3 green)
 `;
 
-test("Square", (t) => {
-  const result = hey(squareProg);
+test("Square", async (t) => {
+  const result = await hey(squareProg);
   if (result instanceof Shape) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
@@ -45,8 +46,8 @@ test("Square", (t) => {
   t.end();
 });
 
-test("Square as value", (t) => {
-  const result = hey("square");
+test("Square as value", async (t) => {
+  const result = await hey("square");
   t.equal(typeof result, "function");
   t.equal(String(result), "(size color) -> square(size color)");
   t.end();
@@ -59,7 +60,7 @@ fun(size) square(size green)
 test("User function", async (t) => {
   const fun = await hey(funProg);
   if (typeof fun == "function") {
-    const result = fun(["fake context"], 3);
+    const result = await fun(["fake context"], 3);
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
       size: 3,
@@ -74,8 +75,8 @@ const literalProg = `
 12
 `;
 
-test("Literal", (t) => {
-  const result = hey(literalProg);
+test("Literal", async (t) => {
+  const result = await hey(literalProg);
   if (typeof result == "number") {
     t.equal(result, 12);
   } else t.fail();
@@ -89,8 +90,8 @@ def a
 a(1)
 `;
 
-test("Define", (t) => {
-  const result = hey(defTestProg);
+test("Define", async (t) => {
+  const result = await hey(defTestProg);
   if (result instanceof Shape) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
@@ -101,18 +102,16 @@ test("Define", (t) => {
   t.end();
 });
 
-test("Error", (t) => {
-  t.throws(
-    () => hey("def Az 40\n\nsquare(1 black Az)"),
-    isError("expected 2 argument(s), got 3", 3, 1)
+test("Error", async (t) => {
+  t.plan(3);
+  await hey("def Az 40\n\nsquare(1 black Az)").catch((e: HeyError) =>
+    t.ok(isError("expected 2 argument(s), got 3", 3, 1)(e))
   );
-  t.throws(
-    () => hey("square(\n1\ntransparent\n)"),
-    isError("expected identifier, got transparent", 3, 1)
+  await hey("square(\n1\ntransparent\n)").catch((e: HeyError) =>
+    t.ok(isError("expected identifier, got transparent", 3, 1)(e))
   );
-  t.throws(
-    () => hey("def a fun(sz) range(sz 10 2) a(hey)"),
-    isError("expected identifier, got hey", 1, 32)
+  await hey("def a fun(sz) range(sz 10 2) a(hey)").catch((e: HeyError) =>
+    t.ok(isError("expected identifier, got hey", 1, 32)(e))
   );
   t.end();
 });
@@ -121,8 +120,8 @@ const concatTestProg = `
 c(1 c(2 3) 4)
 `;
 
-test("Concat", (t) => {
-  const result = hey(concatTestProg);
+test("Concat", async (t) => {
+  const result = await hey(concatTestProg);
   t.deepEqual(result, [1, 2, 3, 4]);
   t.end();
 });
@@ -131,8 +130,8 @@ const repeatTestProg = `
 r(c(r(blue 1) r(red 2)) 5)
 `;
 
-test("Repeat", (t) => {
-  const result = hey(repeatTestProg);
+test("Repeat", async (t) => {
+  const result = await hey(repeatTestProg);
   t.deepEqual(result, ["blue", "red", "red", "blue", "red"]);
   t.end();
 });
@@ -141,8 +140,8 @@ const repeatZeroTimesTestProg = `
 r(4 0)
 `;
 
-test("Repeat zero times", (t) => {
-  const result = hey(repeatZeroTimesTestProg);
+test("Repeat zero times", async (t) => {
+  const result = await hey(repeatZeroTimesTestProg);
   t.deepEqual(result, []);
   t.end();
 });
@@ -152,8 +151,8 @@ def a c("a" 2 3)
 a(1)
 `;
 
-test("Elem", (t) => {
-  const result = hey(elemTestProg);
+test("Elem", async (t) => {
+  const result = await hey(elemTestProg);
   t.equal(result, "a");
   t.end();
 });
@@ -163,8 +162,8 @@ def a c("b" 2 3)
 a(4 "a")
 `;
 
-test("Elem Default", (t) => {
-  const result = hey(elemDefaultTestProg);
+test("Elem Default", async (t) => {
+  const result = await hey(elemDefaultTestProg);
   t.equal(result, "a");
   t.end();
 });
@@ -175,8 +174,8 @@ def seq-3 fun(x y) range(y x 3)
 c(seq-2 seq-3)(2)(3 3)
 `;
 
-test("Call sequence", (t) => {
-  const result = hey(sequenceTestProg);
+test("Call sequence", async (t) => {
+  const result = await hey(sequenceTestProg);
   t.deepEqual(result, [3, 6, 9]);
   t.end();
 });
@@ -188,10 +187,10 @@ def k
 z
 `;
 
-test("Unknown idetifier", (t) => {
-  t.throws(
-    () => hey(unknownTestProg),
-    isError("expected identifier, got z", 5, 1)
+test("Unknown idetifier", async (t) => {
+  t.plan(1);
+  await hey(unknownTestProg).catch((e: HeyError) =>
+    t.ok(isError("expected identifier, got z", 5, 1)(e))
   );
   t.end();
 });
@@ -201,8 +200,8 @@ def x "hello ""world"""
 x
 `;
 
-test("Text data", (t) => {
-  const result = hey(textTestProg);
+test("Text data", async (t) => {
+  const result = await hey(textTestProg);
   t.equal(result, 'hello "world"');
   t.end();
 });
@@ -212,10 +211,10 @@ def a 1
 a(4)
 `;
 
-test("Not callable error", (t) => {
-  t.throws(
-    () => hey(notCallTestProg),
-    isError("expected function or data, got a", 3, 1)
+test("Not callable error", async (t) => {
+  t.plan(1);
+  await hey(notCallTestProg).catch((e: HeyError) =>
+    t.ok(isError("expected function or data, got a", 3, 1)(e))
   );
   t.end();
 });
@@ -227,8 +226,8 @@ def a fun(x) "pass"
 a("blue")
 `;
 
-test("Comments", (t) => {
-  const result = hey(commentTestProg);
+test("Comments", async (t) => {
+  const result = await hey(commentTestProg);
   t.equal(result, "pass");
   t.end();
 });
@@ -238,10 +237,10 @@ def a fun(a b) b
 a(2)
 `;
 
-test("Arity error", (t) => {
-  t.throws(
-    () => hey(arityTestProg),
-    isError("expected 2 argument(s), got 1", 3, 1)
+test("Arity error", async (t) => {
+  t.plan(1);
+  await hey(arityTestProg).catch((e: HeyError) =>
+    t.ok(isError("expected 2 argument(s), got 1", 3, 1)(e))
   );
   t.end();
 });
@@ -250,8 +249,8 @@ const sliceTestProg = `
 c(s(c(2 4 6) 2) s(c(1 3 5 7) 2 -2))
 `;
 
-test("Slice", (t) => {
-  const result = hey(sliceTestProg);
+test("Slice", async (t) => {
+  const result = await hey(sliceTestProg);
   t.deepEqual(result, [4, 6, 3, 5]);
   t.end();
 });
@@ -260,8 +259,8 @@ const adaTestProg = `
 ada-lovelace(13)
 `;
 
-test("Ada", (t) => {
-  const result = hey(adaTestProg);
+test("Ada", async (t) => {
+  const result = await hey(adaTestProg);
   t.deepEqual(result, [
     "1/6",
     "0",
@@ -293,8 +292,8 @@ def doe c(john anna)
 c(doe(1)(first-name) doe(2)(first-name) doe(2)(name))
 `;
 
-test("Function that returns a function", (t) => {
-  const result = hey(funToFunTestProg);
+test("Function that returns a function", async (t) => {
+  const result = await hey(funToFunTestProg);
   t.deepEqual(result, ["John", "Anna", "Doe"]);
   t.end();
 });
@@ -305,10 +304,10 @@ def ab fun() 5
 ab
 `;
 
-test("Already defined error", (t) => {
-  t.throws(
-    () => hey(alreadyDefTestProg),
-    isError("expected new identifier, got ab", 3, 5)
+test("Already defined error", async (t) => {
+  t.plan(1);
+  await hey(alreadyDefTestProg).catch((e: HeyError) =>
+    t.ok(isError("expected new identifier, got ab", 3, 5)(e))
   );
   t.end();
 });
@@ -321,8 +320,8 @@ def b
 b(a)
 `;
 
-test("Can redefine global", (t) => {
-  const result = hey(redefGlobalTestProg);
+test("Can redefine global", async (t) => {
+  const result = await hey(redefGlobalTestProg);
   t.equal(result, 4);
   t.end();
 });
@@ -331,8 +330,8 @@ const dataLengthProgTest = `
 l(c(1 2 3))
 `;
 
-test("Data length", (t) => {
-  const result = hey(dataLengthProgTest);
+test("Data length", async (t) => {
+  const result = await hey(dataLengthProgTest);
   t.equal(result, 3);
   t.end();
 });

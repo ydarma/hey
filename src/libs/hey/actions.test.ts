@@ -17,8 +17,8 @@ class TestContext implements IContext {
   }
 }
 
-test("Program execution", (t) => {
-  const result = actions.prog(new TestContext(), [{ z: 1 }], () =>
+test("Program execution", async (t) => {
+  const result = await actions.prog(new TestContext(), [{ z: 1 }], async () =>
     env.get("z")
   );
   t.equal(result, 1);
@@ -72,15 +72,19 @@ test("Repeat single value", (t) => {
   t.end();
 });
 
-test("Function", (t) => {
-  const result = actions.funct(new TestContext(), ["a"], () => env.get("a"));
-  t.equal(result(new TestContext(), 1), 1);
+test("Function", async (t) => {
+  const result = await actions.funct(new TestContext(), ["a"], async () =>
+    env.get("a")
+  );
+  t.equal(await result(new TestContext(), 1), 1);
   t.end();
 });
 
-test("Call", (t) => {
-  const fun = actions.funct(new TestContext(), ["a"], () => env.get("a"));
-  const result = actions.result(new TestContext(), fun, 1);
+test("Call", async (t) => {
+  const fun = await actions.funct(new TestContext(), ["a"], async () =>
+    env.get("a")
+  );
+  const result = await actions.result(new TestContext(), fun, 1);
   t.equal(result, 1);
   t.notok(env.has("a"));
   t.end();
@@ -102,21 +106,23 @@ test("Known error", (t) => {
   t.end();
 });
 
-test("Not callable error", (t) => {
+test("Not callable error", async (t) => {
+  t.plan(1);
   actions.def(new TestContext(), "a", 1);
-  t.throws(
-    () => actions.result(new TestContext(), "a", "a"),
-    (e: HeyError) => /function or data/.test(e.message)
-  );
+  await actions
+    .result(new TestContext(), "a", "a")
+    .catch((e: HeyError) => t.ok(/function or data/.test(e.message)));
   t.end();
 });
 
-test("Arity error", (t) => {
-  const fun = actions.funct(new TestContext(), ["a"], () => env.get("a"));
-  t.throws(
-    () => actions.result(new TestContext(), fun),
-    (e: HeyError) => /argument/.test(e.message)
+test("Arity error", async (t) => {
+  t.plan(1);
+  const fun = await actions.funct(new TestContext(), ["a"], async () =>
+    env.get("a")
   );
+  await actions
+    .result(new TestContext(), fun)
+    .catch((e: HeyError) => t.ok(/argument/.test(e.message)));
   t.end();
 });
 

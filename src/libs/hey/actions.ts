@@ -21,14 +21,12 @@ export class HeyActions {
   prog<T>(
     ctx: IContext,
     local: Record<string, unknown>[],
-    body: (ctx: IContext) => T
-  ): T {
+    body: (ctx: IContext) => Promise<T>
+  ): Promise<T> {
     this.env.push(...local);
-    try {
-      return body(ctx);
-    } finally {
+    return body(ctx).finally(() => {
       this.env.pop(local.length);
-    }
+    });
   }
 
   def(ctx: IContext, id: string, body: unknown): void {
@@ -106,27 +104,28 @@ export class HeyActions {
   funct<T>(
     ctx: IContext,
     args: string[],
-    body: (ctx: IContext) => T
-  ): (ctx: IContext, ...values: unknown[]) => T {
+    body: (ctx: IContext) => Promise<T>
+  ): (ctx: IContext, ...values: unknown[]) => Promise<T> {
     const capture = this.env.pick();
-    return (ctx: IContext, ...values: unknown[]) => {
+    return async (ctx: IContext, ...values: unknown[]) => {
       if (values.length != args.length)
         throw arityError(...ctx.get(0), values.length, args.length);
       const local = args.reduce((e, a, i) => ({ ...e, [a]: values[i] }), {});
-      return this.prog(ctx, [capture, local], body);
+      return await this.prog(ctx, [capture, local], body);
     };
   }
 
-  result(
+  async result(
     ctx: IContext,
     callable: V<(ctx: IContext, ...a: unknown[]) => unknown | unknown[]>,
     ...values: unknown[]
-  ): unknown {
-    if (isData(callable)) {
+  ): Promise<unknown> {
+    const f = await callable;
+    if (isData(f)) {
       const x = values[0] as number;
-      return x > 0 && x <= callable.length ? callable[x - 1] : values[1];
+      return x > 0 && x <= f.length ? f[x - 1] : values[1];
     }
-    if (isFunction(callable)) return callable(ctx, ...values);
+    if (isFunction(f)) return f(ctx, ...values);
     throw callError(...ctx.get(0));
   }
 
