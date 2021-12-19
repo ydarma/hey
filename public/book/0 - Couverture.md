@@ -15,7 +15,9 @@ def faux 2
 
 def num fun(n) c(vrai r(vrai n))
 
-def and fun(a b) c(r(faux a) r(faux b))(3 vrai)
+def and fun(a b) c(a b)(b)
+  
+def or fun(a b) c(a b)(a)
   
 def not fun(a) c(faux vrai)(a)
     
