@@ -10,18 +10,24 @@ incr(num(3))
 ```
 
 ```hey
-def num fun(n) c(1 r(1 n))
+def vrai 1
+def faux 2
+
+def num fun(n) c(vrai r(vrai n))
+
+def and fun(a b)
+  c(r(faux a) r(faux b))(3 vrai)
+  
+def not fun(a)
+  c(faux vrai)(a)
+    
+def ge fun(a b) a(l(b) faux)
 
 def eq fun(a b)
- def f fun(a b) a(l(b) 2)
- def z c(f(a b) f(b a))
- def y c(r(2 z(1)) r(2 z(2)))
- y(3 1)
- 
-c(
-  eq(num(0) num(0))
-  eq(num(0) num(1))
-  eq(num(1) num(0))
-  eq(num(1) num(1))
-)
+  and(ge(a b) ge(b a))
+  
+def ne fun(a b)
+  not(eq(a b))
+  
+ne(num(11) num(12))
 ```
