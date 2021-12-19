@@ -346,6 +346,8 @@ test("Break", async (t) => {
   const result = hey(infiniteLoopTestProg);
   await new Promise<void>((r) => setTimeout(() => r(), 500));
   cancel();
-  await result.catch((e) => t.pass());
+  await result.catch((e) =>
+    t.ok(isError("expected continuation, got interruption", 13, 2))
+  );
   t.end();
 });

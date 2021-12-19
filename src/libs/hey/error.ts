@@ -94,5 +94,5 @@ export function alreadyDefError(
 }
 
 export function interruptionError(source: string, pos: number): HeyError {
-  return error(source, pos, "", "interruption");
+  return error(source, pos, "continuation", "interruption");
 }
