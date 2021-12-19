@@ -28,25 +28,24 @@ export class HeyActions {
     this._cancel = false;
   }
 
-  prog<T>(
+  private async assertContinue(ctx: IContext): Promise<void> {
+    await new Promise((r) => setTimeout(r));
+    if (this._cancel) {
+      this._cancel = false;
+      throw interruptionError(...ctx.get(0));
+    }
+  }
+
+  async prog<T>(
     ctx: IContext,
     local: Record<string, unknown>[],
     body: (ctx: IContext) => Promise<T>
   ): Promise<T> {
     this.env.push(...local);
-    if (this._cancel) {
-      this._cancel = false;
-      throw interruptionError(...ctx.get(0));
-    }
-    return new Promise((r) =>
-      setTimeout(() =>
-        r(
-          body(ctx).finally(() => {
-            this.env.pop(local.length);
-          })
-        )
-      )
-    );
+    await this.assertContinue(ctx);
+    return await body(ctx).finally(() => {
+      this.env.pop(local.length);
+    });
   }
 
   def(ctx: IContext, id: string, body: unknown): void {
@@ -54,25 +53,29 @@ export class HeyActions {
     this.env.pick()[id] = body;
   }
 
-  range(
+  async range(
     ctx: IContext,
     count: V<number>,
     start: V<number>,
     step?: V<number>
-  ): number[] {
+  ): Promise<number[]> {
     if (!isNumber(count)) throw numberError(...ctx.get(0), count);
     if (!isNumber(start)) throw numberError(...ctx.get(1), start);
     if (typeof step != "undefined" && !isNumber(step))
       throw numberError(...ctx.get(2), step);
     const result = [];
-    for (let i = 0; i < count; i++) result.push(i * (step ?? 1) + start);
+    for (let i = 0; i < count; i++) {
+      if (i % 100 == 0) await this.assertContinue(ctx);
+      result.push(i * (step ?? 1) + start);
+    }
     return result;
   }
 
-  adaLovelace(ctx: IContext, n: V<number>): string[] {
+  async adaLovelace(ctx: IContext, n: V<number>): Promise<string[]> {
     if (!isNumber(n)) throw numberError(...ctx.get(0), n);
     const result = [];
     for (let i = 1; i <= n; i++) {
+      if (i % 100 == 0) await this.assertContinue(ctx);
       const nb = b(i + 1);
       result.push(nb[0] == 0 ? "0" : `${nb[0]}/${nb[1]}`);
     }
@@ -85,18 +88,28 @@ export class HeyActions {
     return new Shape("square", { size, color });
   }
 
-  concat(ctx: IContext, values: unknown[]): unknown[] {
-    return values.reduce<unknown[]>(
-      (result, v) => [...result, ...(Array.isArray(v) ? v : [v])],
-      []
-    );
+  async concat(ctx: IContext, values: unknown[]): Promise<unknown[]> {
+    const result: unknown[] = [];
+    for (let i = 0; i < values.length; i++) {
+      if (i % 100 == 0) await this.assertContinue(ctx);
+      const v = values[i];
+      result.push(...(Array.isArray(v) ? v : [v]));
+    }
+    return result;
   }
 
-  repeat(ctx: IContext, data: unknown, count: number): unknown[] {
+  async repeat(
+    ctx: IContext,
+    data: unknown,
+    count: number
+  ): Promise<unknown[]> {
     if (!isNumber(count)) throw numberError(...ctx.get(1), count);
     const arr = Array.isArray(data) ? data : [data];
     const result = new Array(count);
-    for (let i = 0; i < count; i++) result[i] = arr[i % arr.length];
+    for (let i = 0; i < count; i++) {
+      if (i % 100 == 0) await this.assertContinue(ctx);
+      result[i] = arr[i % arr.length];
+    }
     return result;
   }
 
@@ -127,11 +140,11 @@ export class HeyActions {
     body: (ctx: IContext) => Promise<T>
   ): (ctx: IContext, ...values: unknown[]) => Promise<T> {
     const capture = this.env.pick();
-    return async (ctx: IContext, ...values: unknown[]) => {
+    return (ctx: IContext, ...values: unknown[]) => {
       if (values.length != args.length)
         throw arityError(...ctx.get(0), values.length, args.length);
       const local = args.reduce((e, a, i) => ({ ...e, [a]: values[i] }), {});
-      return await this.prog(ctx, [capture, local], body);
+      return this.prog(ctx, [capture, local], body);
     };
   }
 

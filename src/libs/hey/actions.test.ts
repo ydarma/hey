@@ -32,17 +32,17 @@ test("Definition", (t) => {
   t.end();
 });
 
-test("Range", (t) => {
-  const result = actions.range(new TestContext(), 5, 1, 2);
+test("Range", async (t) => {
+  const result = await actions.range(new TestContext(), 5, 1, 2);
   t.deepEqual(result, [1, 3, 5, 7, 9]);
   t.end();
 });
 
-test("Range error", (t) => {
-  t.throws(
-    () => actions.range(new TestContext(), "e", 10, 2),
-    (e: HeyError) => /number/.test(e.message)
-  );
+test("Range error", async (t) => {
+  t.plan(1);
+  await actions
+    .range(new TestContext(), "e", 10, 2)
+    .catch((e: HeyError) => t.ok(/number/.test(e.message)));
   t.end();
 });
 
@@ -60,14 +60,14 @@ test("Square error", (t) => {
   t.end();
 });
 
-test("Repeat array", (t) => {
-  const result = actions.repeat(new TestContext(), [1, "blue"], 3);
+test("Repeat array", async (t) => {
+  const result = await actions.repeat(new TestContext(), [1, "blue"], 3);
   t.deepEqual(result, [1, "blue", 1]);
   t.end();
 });
 
-test("Repeat single value", (t) => {
-  const result = actions.repeat(new TestContext(), 1, 3);
+test("Repeat single value", async (t) => {
+  const result = await actions.repeat(new TestContext(), 1, 3);
   t.deepEqual(result, [1, 1, 1]);
   t.end();
 });
@@ -146,8 +146,8 @@ test("Slice error", (t) => {
   t.end();
 });
 
-test("Bernouilli", (t) => {
-  const result = actions.adaLovelace(new TestContext(), 7);
+test("Bernouilli", async (t) => {
+  const result = await actions.adaLovelace(new TestContext(), 7);
   t.deepEqual(result, ["1/6", "0", "-1/30", "0", "1/42", "0", "-1/30"]);
   t.end();
 });

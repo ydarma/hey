@@ -337,8 +337,7 @@ test("Data length", async (t) => {
 });
 
 const infiniteLoopTestProg = `
-def f fun() f()
-f()
+r(1 2000000000)
 `;
 
 test("Break", async (t) => {
@@ -347,7 +346,7 @@ test("Break", async (t) => {
   await new Promise<void>((r) => setTimeout(() => r(), 500));
   cancel();
   await result.catch((e) =>
-    t.ok(isError("expected continuation, got interruption", 13, 2))
+    t.ok(isError("expected continuation, got interruption", 2, 1)(e))
   );
   t.end();
 });

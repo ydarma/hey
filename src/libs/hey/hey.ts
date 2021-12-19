@@ -3,7 +3,20 @@ import ohm from "ohm-js";
 import { matchError } from "./error";
 import { HeyActions, IContext } from "./actions";
 
-function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
+type ExecActions = Omit<HeyActions, "cancel" | "reset">;
+type ActionParams<T extends keyof ExecActions> = Parameters<ExecActions[T]>;
+type ActionResult<T extends keyof ExecActions> = Promise<
+  ReturnType<ExecActions[T]>
+>;
+type Action<T extends keyof ExecActions> = (
+  ...args: ActionParams<T>
+) => ActionResult<T>;
+
+function getActions(
+  impl: HeyActions
+): ohm.ActionDict<
+  Promise<unknown> | Action<keyof ExecActions> | number | string
+> {
   const squareFun = sys("square", ["size", "color"]);
   const rangeFun = sys("range", ["start", "end", "step"]);
   const adaLovelaceFun = sys("adaLovelace", ["n"]);
@@ -11,15 +24,6 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
   const repeatFun = sys("repeat", ["data", "count"]);
   const sliceFun = sys("slice", ["data", "start", "end"]);
   const lengthFun = sys("length", ["data"]);
-
-  type ExecActions = Omit<HeyActions, "cancel" | "reset">;
-  type ActionParams<T extends keyof ExecActions> = Parameters<ExecActions[T]>;
-  type ActionResult<T extends keyof ExecActions> = Promise<
-    ReturnType<ExecActions[T]>
-  >;
-  type Action<T extends keyof ExecActions> = (
-    ...args: ActionParams<T>
-  ) => ActionResult<T>;
 
   function sys<T extends keyof ExecActions>(
     name: T,
@@ -31,7 +35,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
         ctx,
         ...params.map((a) => impl.known(ctx, a)),
       ] as ActionParams<T>;
-      return f(...args);
+      return f.call(impl, ...args);
     });
     fun.toString = () =>
       `(${params.join(" ")}) -> ${name}(${params.join(" ")})`;
@@ -61,7 +65,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
     Def: async (def, id, colon, body) =>
       impl.def(new Context(id, body), await id.eval(), await body.eval()),
 
-    Val: async (v) => await v.eval(),
+    Val: (v) => v.eval(),
 
     Known: async (id) => impl.known(new Context(id), await id.eval()),
 
@@ -76,74 +80,69 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
         );
       }, await call.eval()),
 
-    Range: async (call): Promise<Action<"range">> =>
-      await f(
+    Range: (call): Action<"range"> =>
+      f(
         (ctx, count, start, step, ...o) =>
           rangeFun(ctx, count, start, step, ...o),
         rangeFun.toString
       ),
 
-    AdaLovelace: async (call): Promise<Action<"adaLovelace">> =>
-      await f(
+    AdaLovelace: (call): Action<"adaLovelace"> =>
+      f(
         (ctx, n, ...o) => adaLovelaceFun(ctx, n, ...o),
         adaLovelaceFun.toString
       ),
 
-    Square: async (call): Promise<Action<"square">> =>
-      await f(
+    Square: (call): Action<"square"> =>
+      f(
         (ctx, size, color, ...o) => squareFun(ctx, size, color, ...o),
         squareFun.toString
       ),
 
-    Concat: async (call): Promise<Action<"concat">> =>
-      await f((ctx, ...values) => concatFun(ctx, values), concatFun.toString),
+    Concat: (call): Action<"concat"> =>
+      f((ctx, ...values) => concatFun(ctx, values), concatFun.toString),
 
-    Repeat: async (call): Promise<Action<"repeat">> =>
-      await f(
+    Repeat: (call): Action<"repeat"> =>
+      f(
         (ctx, data, count, ...o) => repeatFun(ctx, data, count, ...o),
         repeatFun.toString
       ),
 
-    Slice: async (call): Promise<Action<"slice">> =>
-      await f(
+    Slice: (call): Action<"slice"> =>
+      f(
         (ctx, data, start, end, ...o) => sliceFun(ctx, data, start, end, ...o),
         sliceFun.toString
       ),
 
-    Length: async (call): Promise<Action<"length">> =>
-      await f(
-        (ctx, data, ...o) => lengthFun(ctx, data, ...o),
-        lengthFun.toString
-      ),
+    Length: (call): Action<"length"> =>
+      f((ctx, data, ...o) => lengthFun(ctx, data, ...o), lengthFun.toString),
 
     Function: async (fun, lpar, args, rpar, arrow, body, dot) => {
       const argValues = [];
       for (const c of args.children) argValues.push(await c.eval());
-      const f = impl.funct(
-        new Context(...args.children, body),
-        argValues,
-        async () => await body.eval()
+      const f = impl.funct(new Context(...args.children, body), argValues, () =>
+        body.eval()
       );
       f.toString = () =>
         `(${args.children.map((c) => c.sourceString).join(" ")}) -> ${
           body.sourceString
         }`;
-      return await f;
+      return f;
     },
 
-    comment: async (semiColon, comment, eol) => {
-      //
+    comment: (semiColon, comment, eol) => {
+      return comment.sourceString;
     },
 
-    number: async (sign, v) =>
+    number: (sign, v) =>
       (sign.sourceString == "-" ? -1 : 1) * parseInt(v.sourceString),
 
-    color: async (n) => n.sourceString,
+    color: (n) => n.sourceString,
 
-    string: async (rquotes, s, lquotes) => s.sourceString.replace(/""/g, '"'),
+    string: (rquotes, s, lquotes) => s.sourceString.replace(/""/g, '"'),
 
-    identifier: async (id) => id.sourceString,
-    builtin: async (id) => id.sourceString,
+    identifier: (id) => id.sourceString,
+    builtin: (id) => id.sourceString,
   };
 }
 
@@ -172,7 +171,7 @@ function getHey(heySource: string, actions: HeyActions) {
   const heyGrammar = ohm.grammar(heySource);
   const heySemantics = heyGrammar
     .createSemantics()
-    .addOperation<Promise<unknown>>("eval", getActions(actions));
+    .addOperation("eval", getActions(actions));
   return (source: string) => {
     actions.reset();
     const match = heyGrammar.match(source);
