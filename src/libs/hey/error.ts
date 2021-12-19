@@ -92,3 +92,7 @@ export function alreadyDefError(
 ): HeyError {
   return error(source, pos, "new identifier", symbol);
 }
+
+export function interruptionError(source: string, pos: number): HeyError {
+  return error(source, pos, "", "interruption");
+}

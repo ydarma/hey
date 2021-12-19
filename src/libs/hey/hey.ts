@@ -12,15 +12,16 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
   const sliceFun = sys("slice", ["data", "start", "end"]);
   const lengthFun = sys("length", ["data"]);
 
-  type ActionParams<T extends keyof HeyActions> = Parameters<HeyActions[T]>;
-  type ActionResult<T extends keyof HeyActions> = Promise<
-    ReturnType<HeyActions[T]>
+  type ExecActions = Omit<HeyActions, "cancel">;
+  type ActionParams<T extends keyof ExecActions> = Parameters<ExecActions[T]>;
+  type ActionResult<T extends keyof ExecActions> = Promise<
+    ReturnType<ExecActions[T]>
   >;
-  type Action<T extends keyof HeyActions> = (
+  type Action<T extends keyof ExecActions> = (
     ...args: ActionParams<T>
   ) => ActionResult<T>;
 
-  function sys<T extends keyof HeyActions>(
+  function sys<T extends keyof ExecActions>(
     name: T,
     params: string[]
   ): Action<T> {
@@ -46,11 +47,16 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
   }
 
   return {
-    Prog: async (defs, result) =>
-      await impl.prog(new Context(...defs.children, result), [{}], async () => {
-        for (const c of defs.children) await c.eval();
-        return await result.eval();
-      }),
+    Prog: (defs, result) => {
+      return impl.prog(
+        new Context(...defs.children, result),
+        [{}],
+        async () => {
+          for (const c of defs.children) await c.eval();
+          return await result.eval();
+        }
+      );
+    },
 
     Def: async (def, id, colon, body) =>
       impl.def(new Context(id, body), await id.eval(), await body.eval()),
@@ -142,22 +148,31 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
 }
 
 type HeyEvalPromise = (source: string) => Promise<unknown>;
+type HeyCancelation = () => void;
 
-export function heyLoader(
-  loader: () => Promise<string> | string
-): HeyEvalPromise {
+export function heyLoader(loader: () => Promise<string> | string): {
+  hey: HeyEvalPromise;
+  cancel: HeyCancelation;
+} {
+  const actions = new HeyActions();
+  const cancel = () => actions.cancel();
   const heySource = loader();
   return typeof heySource == "string"
-    ? getHey(heySource)
-    : (source) =>
-        heySource.then((grammar) => getHey(grammar)).then((h) => h(source));
+    ? { hey: getHey(heySource, actions), cancel }
+    : {
+        hey: (source) =>
+          heySource
+            .then((grammar) => getHey(grammar, actions))
+            .then((h) => h(source)),
+        cancel,
+      };
 }
 
-function getHey(heySource: string) {
+function getHey(heySource: string, actions: HeyActions) {
   const heyGrammar = ohm.grammar(heySource);
   const heySemantics = heyGrammar
     .createSemantics()
-    .addOperation<Promise<unknown>>("eval", getActions(new HeyActions()));
+    .addOperation<Promise<unknown>>("eval", getActions(actions));
   return (source: string) => {
     const match = heyGrammar.match(source);
     if (match.failed()) {

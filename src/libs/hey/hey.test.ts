@@ -10,7 +10,7 @@ function localLoader() {
   return fs.readFileSync(heyFile).toString();
 }
 
-const hey = heyLoader(localLoader);
+const { hey, cancel } = heyLoader(localLoader);
 
 function isError(
   msg: string,
@@ -333,5 +333,19 @@ l(c(1 2 3))
 test("Data length", async (t) => {
   const result = await hey(dataLengthProgTest);
   t.equal(result, 3);
+  t.end();
+});
+
+const infiniteLoopTestProg = `
+def f fun() f()
+f()
+`;
+
+test("Break", async (t) => {
+  t.plan(1);
+  const result = hey(infiniteLoopTestProg);
+  await new Promise<void>((r) => setTimeout(() => r(), 500));
+  cancel();
+  await result.catch((e) => t.pass());
   t.end();
 });

@@ -8,6 +8,7 @@ import {
   arityError,
   dataError,
   alreadyDefError,
+  interruptionError,
 } from "./error";
 import { Shape } from "./shape";
 
@@ -17,6 +18,11 @@ export interface IContext {
 
 export class HeyActions {
   private readonly env = new Env();
+  private _cancel = false;
+
+  cancel(): void {
+    this._cancel = true;
+  }
 
   prog<T>(
     ctx: IContext,
@@ -24,9 +30,19 @@ export class HeyActions {
     body: (ctx: IContext) => Promise<T>
   ): Promise<T> {
     this.env.push(...local);
-    return body(ctx).finally(() => {
-      this.env.pop(local.length);
-    });
+    if (this._cancel) {
+      this._cancel = false;
+      throw interruptionError(...ctx.get(0));
+    }
+    return new Promise((r) =>
+      setTimeout(() =>
+        r(
+          body(ctx).finally(() => {
+            this.env.pop(local.length);
+          })
+        )
+      )
+    );
   }
 
   def(ctx: IContext, id: string, body: unknown): void {
