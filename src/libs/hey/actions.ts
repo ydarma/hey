@@ -24,6 +24,10 @@ export class HeyActions {
     this._cancel = true;
   }
 
+  reset(): void {
+    this._cancel = false;
+  }
+
   prog<T>(
     ctx: IContext,
     local: Record<string, unknown>[],

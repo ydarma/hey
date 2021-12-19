@@ -12,7 +12,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<Promise<unknown>> {
   const sliceFun = sys("slice", ["data", "start", "end"]);
   const lengthFun = sys("length", ["data"]);
 
-  type ExecActions = Omit<HeyActions, "cancel">;
+  type ExecActions = Omit<HeyActions, "cancel" | "reset">;
   type ActionParams<T extends keyof ExecActions> = Parameters<ExecActions[T]>;
   type ActionResult<T extends keyof ExecActions> = Promise<
     ReturnType<ExecActions[T]>
@@ -174,6 +174,7 @@ function getHey(heySource: string, actions: HeyActions) {
     .createSemantics()
     .addOperation<Promise<unknown>>("eval", getActions(actions));
   return (source: string) => {
+    actions.reset();
     const match = heyGrammar.match(source);
     if (match.failed()) {
       throw matchError(source, match);

@@ -1,4 +1,4 @@
-import { hey } from "@/libs/hey";
+import { hey, cancel } from "@/libs/hey";
 import { createStore } from "vuex";
 
 export default createStore({
@@ -31,6 +31,7 @@ export default createStore({
       }
     },
     async clear({ commit }) {
+      cancel();
       commit("setOutput", undefined);
       commit("setError", undefined);
     },
