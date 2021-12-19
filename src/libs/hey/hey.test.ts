@@ -367,7 +367,7 @@ def sum-step fun(init iter)
 def sum-seq fun(n)
   nest(sum-step n n)
   
-sum-seq(10)
+sum-seq(5)
 `;
 
 test("Recursion", async (t) => {
