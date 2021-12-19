@@ -23,6 +23,12 @@ def not fun(a) c(faux vrai)(a)
     
 def ge fun(a b) a(l(b) faux)
 
+def le fun(a b) b(l(a) faux)
+
+def gt fun(a b) ge(b a)
+
+def lt fun(a b) le(b a)
+
 def eq fun(a b) and(ge(a b) ge(b a))
   
 def ne fun(a b) not(eq(a b))
