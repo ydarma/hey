@@ -21,27 +21,78 @@ c(1 2 3 4 5 6)(3)
 ```
 *Note: l'index commence à 1, `liste(1)` est le premier élément de la liste.*
 
+On peut, en plus de l'index passer une valeur par défaut qui est produite si l'index n'est pas dans la liste.
+```hey
+c(1 2 3 4 5 6)(8 88)
+```
+
 ###### Exercices
-Constrtuire la liste suivante
- - Les
- - 40 (numérique
- - voleurs
+ - Constrtuire la liste suivante
+   - Les
+   - 40 (numérique)
+   - voleurs
 
 ```hey
 ;solution
 c("Les" 40 "voleurs")
 ```
 
-Extraire de la liste précédente la seconde valeur
+ - Extraire de la liste précédente la seconde valeur
+
 ```hey
 ;solution
 c("Les" 40 "voleurs")(2)
 ```
 
-Quel est le résultat de `c(1 c(2 4) c(8 16))(3)` ?
+ - Quel est le résultat de `c(1 c(2 4) c(8 16))(3)` ?
+
 ```hey
 ; solution
 c(1 c(2 4) c(8 16))(3)
+```
+
+- Considérons ces deux listes : `c(1 1 1 1 1 1 1 1 1)` et `c(1 1 1 1 1 1 1 1 1 1)` ;
+on souhaite savoir laquelle est la plus longue. Complète le programme suivant pour qu'il produise :
+  - `2` si la seconde liste est plus longue que la première
+  - `1` sinon
+
+```hey
+c(1 1 1 1 1 1 1 1 1)(?(c(1 1 1 1 1 1 1 1 1 1)) ?)
+```
+```hey
+; solution
+c(1 1 1 1 1 1 1 1 1)(l(c(1 1 1 1 1 1 1 1 1 1)) 2)
+```
+
+- Le programme suivant définit `a` et `b` qui peuvent valoir soit `1` soit `2`
+Compléter le programme suivant pour qu'il produise :
+  - `1` si `a` et `b` valent `1`
+  - `2` si `a` ou `b` vaut `2`
+
+```hey
+def a ... ; 1 ou 2
+def b ... ; 1 ou 2
+
+c(? ?)(?)
+```
+```hey
+; solution
+def a 1 ; 1 ou 2
+def b 2 ; 1 ou 2
+
+c(a b)(b)
+```
+
+- Même énoncé qu'à l'exercice précédent mais on veut produire :
+  - `1` si `a` ou `b` vaut `1`
+  - `2` si `a` et `b` valent `2`
+
+```hey
+; solution
+def a 1 ; 1 ou 2
+def b 2 ; 1 ou 2
+
+c(a b)(a)
 ```
 
 ## Autres méthodes de construction
