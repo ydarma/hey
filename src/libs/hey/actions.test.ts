@@ -33,7 +33,7 @@ test("Definition", (t) => {
 });
 
 test("Range", (t) => {
-  const result = actions.range(new TestContext(), 1, 10, 2);
+  const result = actions.range(new TestContext(), 5, 1, 2);
   t.deepEqual(result, [1, 3, 5, 7, 9]);
   t.end();
 });

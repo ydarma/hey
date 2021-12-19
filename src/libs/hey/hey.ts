@@ -10,6 +10,7 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
   const concatFun = sys("concat", ["values"]);
   const repeatFun = sys("repeat", ["data", "count"]);
   const sliceFun = sys("slice", ["data", "start", "end"]);
+  const lengthFun = sys("length", ["data"]);
 
   type ActionParams<T extends keyof HeyActions> = Parameters<HeyActions[T]>;
   type ActionResult<T extends keyof HeyActions> = ReturnType<HeyActions[T]>;
@@ -69,7 +70,8 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
 
     Range: (call): typeof impl.range =>
       f(
-        (ctx, start, end, step, ...o) => rangeFun(ctx, start, end, step, ...o),
+        (ctx, count, start, step, ...o) =>
+          rangeFun(ctx, count, start, step, ...o),
         rangeFun.toString
       ),
 
@@ -99,6 +101,9 @@ function getActions(impl: HeyActions): ohm.ActionDict<unknown> {
         (ctx, data, start, end, ...o) => sliceFun(ctx, data, start, end, ...o),
         sliceFun.toString
       ),
+
+    Length: (call): typeof impl.length =>
+      f((ctx, data, ...o) => lengthFun(ctx, data, ...o), lengthFun.toString),
 
     Function: (fun, lpar, args, rpar, arrow, body, dot) => {
       const f = impl.funct(

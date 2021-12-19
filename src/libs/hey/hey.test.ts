@@ -20,7 +20,7 @@ function isError(
 }
 
 const rangeProg = `
-range(1 6 2)
+range(3 1 2)
 `;
 
 test("Range", (t) => {
@@ -137,6 +137,16 @@ test("Repeat", (t) => {
   t.end();
 });
 
+const repeatZeroTimesTestProg = `
+r(4 0)
+`;
+
+test("Repeat zero times", (t) => {
+  const result = hey(repeatZeroTimesTestProg);
+  t.deepEqual(result, []);
+  t.end();
+});
+
 const elemTestProg = `
 def a c("a" 2 3)
 a(1)
@@ -148,10 +158,21 @@ test("Elem", (t) => {
   t.end();
 });
 
+const elemDefaultTestProg = `
+def a c("b" 2 3)
+a(4 "a")
+`;
+
+test("Elem Default", (t) => {
+  const result = hey(elemDefaultTestProg);
+  t.equal(result, "a");
+  t.end();
+});
+
 const sequenceTestProg = `
-def seq-2 fun(x y) range(x y 2)
-def seq-3 fun(x y) range(x y 3)
-c(seq-2 seq-3)(2)(3 10)
+def seq-2 fun(x y) range(y x 2)
+def seq-3 fun(x y) range(y x 3)
+c(seq-2 seq-3)(2)(3 3)
 `;
 
 test("Call sequence", (t) => {
@@ -303,5 +324,15 @@ b(a)
 test("Can redefine global", (t) => {
   const result = hey(redefGlobalTestProg);
   t.equal(result, 4);
+  t.end();
+});
+
+const dataLengthProgTest = `
+l(c(1 2 3))
+`;
+
+test("Data length", (t) => {
+  const result = hey(dataLengthProgTest);
+  t.equal(result, 3);
   t.end();
 });

@@ -38,16 +38,16 @@ export class HeyActions {
 
   range(
     ctx: IContext,
+    count: V<number>,
     start: V<number>,
-    end: V<number>,
     step?: V<number>
   ): number[] {
-    if (!isNumber(start)) throw numberError(...ctx.get(0), start);
-    if (!isNumber(end)) throw numberError(...ctx.get(1), end);
+    if (!isNumber(count)) throw numberError(...ctx.get(0), count);
+    if (!isNumber(start)) throw numberError(...ctx.get(1), start);
     if (typeof step != "undefined" && !isNumber(step))
       throw numberError(...ctx.get(2), step);
     const result = [];
-    for (let i = start; i <= end; i += step ?? 1) result.push(i);
+    for (let i = 0; i < count; i++) result.push(i * (step ?? 1) + start);
     return result;
   }
 
@@ -98,6 +98,11 @@ export class HeyActions {
     );
   }
 
+  length(ctx: IContext, data: V<unknown[]>): number {
+    if (!isData(data)) throw dataError(...ctx.get(0), data);
+    return data.length;
+  }
+
   funct<T>(
     ctx: IContext,
     args: string[],
@@ -117,7 +122,10 @@ export class HeyActions {
     callable: V<(ctx: IContext, ...a: unknown[]) => unknown | unknown[]>,
     ...values: unknown[]
   ): unknown {
-    if (isData(callable)) return callable[(values[0] as number) - 1];
+    if (isData(callable)) {
+      const x = values[0] as number;
+      return x > 0 && x <= callable.length ? callable[x - 1] : values[1];
+    }
     if (isFunction(callable)) return callable(ctx, ...values);
     throw callError(...ctx.get(0));
   }
