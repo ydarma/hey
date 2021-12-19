@@ -7,7 +7,10 @@
     >
       <b-icon icon="arrow-left"></b-icon>
     </b-button>
-    <b-dropdown id="dropdown-1" text="Table des matières">
+    <b-dropdown id="dropdown-1">
+      <template #button-content>
+        <b-icon size="lg" icon="book"></b-icon>
+      </template>
       <b-dropdown-item-button
         v-for="[chapter, ix] in chapters"
         :key="ix"

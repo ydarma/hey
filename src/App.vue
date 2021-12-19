@@ -10,12 +10,20 @@
   <b-card class="fixed-top menu">
     <div class="d-flex">
       <div class="w-50">
-        <b-button class="mx-1 d-none d-lg-inline" variant="success" to="/">
-          <b-icon icon="house"></b-icon>
+        <b-button
+          class="m-1 d-none d-lg-inline py-2 px-3"
+          variant="success"
+          to="/"
+        >
+          <b-icon size="lg" icon="house"></b-icon>
         </b-button>
         <table-of-content class="mx-1"></table-of-content>
-        <b-button class="mx-1 d-none d-lg-inline" variant="info" to="/about">
-          A propos
+        <b-button
+          class="m-1 d-none d-lg-inline py-2 px-3"
+          variant="info"
+          to="/about"
+        >
+          <b-icon size="lg" icon="info-circle"></b-icon>
         </b-button>
       </div>
       <div>

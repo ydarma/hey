@@ -350,3 +350,28 @@ test("Break", async (t) => {
   );
   t.end();
 });
+
+const recursionTestProg = `
+def decr fun(n) l(s(r(1 n) 2))
+
+def nest fun(f init iter)
+  def terminate fun() init
+  def recurse fun()
+    def next decr(iter)
+    nest(f f(init next) next)
+  c(terminate)(iter recurse)()
+
+def sum-step fun(init iter)
+  l(c(r(1 init) r(1 iter)))
+
+def sum-seq fun(n)
+  nest(sum-step n n)
+  
+sum-seq(10)
+`;
+
+test("Recursion", async (t) => {
+  const result = await hey(recursionTestProg);
+  t.equal(result, 15);
+  t.end();
+});

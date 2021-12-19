@@ -23,9 +23,9 @@ export default createStore({
   actions: {
     async exec({ state, commit }) {
       try {
+        commit("setError", undefined);
         const output = await hey(state.program ?? "");
         commit("setOutput", output);
-        commit("setError", undefined);
       } catch (error) {
         commit("setError", error);
       }
