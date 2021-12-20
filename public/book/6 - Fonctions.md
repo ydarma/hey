@@ -176,31 +176,31 @@ La fonction `gt` reçoit deux listes, `a` et `b` et se comporte différemment su
  - si une des deux listes est vide c'est la plus courte
  - si les deux listes sont vides elles sont égales
 
-Par exemple : si on veut comparer les longueurs des deux listes `c(1 1 1 1)` et `c(1 1 1)` :
+Par exemple : si on veut comparer les longueurs des deux listes `c(1 1 1)` et `c(1 1 1 1)` :
 | appel      | paramètres                 | cas                     | décision      | valeurs                           |
 |------------|----------------------------|-------------------------|---------------|-----------------------------------|
-| premier    | `c(1 1 1 1)` et `c(1 1 1)` | aucune liste n'est vide | rappeler `gt` | `c(1 1 1)` et `c(1 1)`            |
-| deuxième   | `c(1 1 1)` et `c(1 1)`     | aucune liste n'est vide | rappeler `gt` | `c(1 1)` et `c(1)`                |
-| troisième  | `c(1 1)` et `c(1)`         | aucune liste n'est vide | rappeler `gt` | `c(1)` et `c()`                   |
-| quatrième  | `c(1)`et `c()`             | deuxième liste est vide | résultat      | la première liste est plus longue |
+| premier    | `c(1 1 1)` et `c(1 1 1 1)` | aucune liste n'est vide | rappeler `gt` | `c(1 1)` et `c(1 1 1)`            |
+| deuxième   | `c(1 1)` et `c(1 1 1)`     | aucune liste n'est vide | rappeler `gt` | `c(1)` et `c(1 1)`                |
+| troisième  | `c(1)` et `c(1 1)`         | aucune liste n'est vide | rappeler `gt` | `c()` et `c(1)`                   |
+| quatrième  | `c()`et `c(1)`             | deuxième liste est vide | résultat      | la première liste est plus longue |
 
 
 <pre class="ascii h-100 my-5">
-          premier appel
-              +
-              | deuxième appel
-              |   +
-              |   | troisième appel
-              |   |   +
-              v   v   | quatrième appel : liste b est vide
-          +---------------+
-liste a   | 1 | 1 | 1 | 1 |
-          +---------------+
-              |   |   |
-              v   v   |
-          +-----------+
-liste b   | 1 | 1 | 1 |
-          +-----------+
+        premier appel
+            +
+            | deuxième appel
+            |   +
+            |   | troisième appel
+            |   |   +
+            v   v   v quatrième appel : liste a est vide
+          +------------  |
+liste a   | 1 | 1 | 1 |  |
+          +------------  |
+              |   |   |  |
+              v   v   |  v
+          +-----------+---+
+liste b   | 1 | 1 | 1 | 1 |
+          +-----------+---+
 </pre>
 
 Nous allons d'abord définir les deux valeurs suivantes
@@ -295,7 +295,7 @@ def gt fun(liste-1 liste-2)
   def cas-1 deux-non-vides(liste-1 liste-2)
   if(cas-1 recursion resultat)
   
-gt(c(vrai vrai vrai vrai) c(vrai vrai vrai))
+gt(c(vrai vrai vrai) c(vrai vrai vrai vrai))
 ```
 
 Nous avons appliqué littéralement l'énoncé donné plus haut :
