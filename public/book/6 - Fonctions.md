@@ -301,3 +301,19 @@ gt(c(vrai vrai vrai vrai) c(vrai vrai vrai))
 Nous avons appliqué littéralement l'énoncé donné plus haut :
 dans le cas 1, c'est à dire quand les deux listes ne sont pas vides, on rapelle `gt` avec les deux listes plus courtes.
 dans l'autre cas on produit le résultat.
+
+```hey
+def est-pair fun(l)
+  def est-non-vide l(1 2)
+  def recursion fun() est-impair(s(l 2))
+  def resultat fun() 1
+  c(recursion resultat)(est-non-vide)()
+  
+def est-impair fun(l)
+  def est-non-vide l(1 2)
+  def recursion fun() est-pair(s(l 2))
+  def resultat fun() 2
+  c(recursion resultat)(est-non-vide)()
+  
+est-pair(c(1 1 1))
+```
