@@ -50,4 +50,8 @@ table td {
   border-spacing: 10px;
   padding-left: 10px;
 }
+.ascii {
+  line-height: 0.8em;
+  overflow: visible;
+}
 </style>

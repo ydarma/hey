@@ -6,7 +6,9 @@ export function markdown(source: string): string {
   hljs.registerLanguage("hey", syntax);
   const result = marked.setOptions({
     highlight: (code, language) => {
-      return hljs.highlight(code, { language }).value;
+      return hljs.listLanguages().includes(language)
+        ? hljs.highlight(code, { language }).value
+        : code;
     },
   })(source);
   return result;

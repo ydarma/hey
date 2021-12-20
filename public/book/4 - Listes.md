@@ -60,14 +60,14 @@ Compléter le programme suivant pour qu'il produise :
 def a ... ; 1 ou 2
 def b ... ; 1 ou 2
 
-c(? ?)(?)
+c(? ?)(?) ; 1 si a ET b = 1
 ```
 ```hey
 ; solution
 def a 1 ; 1 ou 2
 def b 2 ; 1 ou 2
 
-c(a b)(b)
+c(a b)(b) ; 1 si a ET b = 1
 ```
 
 - Même énoncé qu'à l'exercice précédent mais on veut produire :
@@ -79,7 +79,7 @@ c(a b)(b)
 def a 1 ; 1 ou 2
 def b 2 ; 1 ou 2
 
-c(a b)(a)
+c(a b)(a) ; 1 si a OU b = 1
 ```
 
 ## Autres méthodes de construction
