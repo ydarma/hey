@@ -193,9 +193,9 @@ Par exemple : si on veut comparer les longueurs des deux listes `c(1 1 1)` et `c
             |   | troisième appel
             |   |   +
             v   v   v quatrième appel : liste a est vide
-          +------------  |
-liste a   | 1 | 1 | 1 |  |
-          +------------  |
+          +-----------+  |
+liste a   | 1 | 1 | 1 |  x
+          +-----------+  |
               |   |   |  |
               v   v   |  v
           +-----------+---+
