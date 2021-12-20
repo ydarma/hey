@@ -6,11 +6,9 @@ List of builtin functions and keywords
 |-------------------|---------------------|-------------|----------------------|-------------------------|
 | [c](#concat)      | map                 | [def](#def) | [ada-lovelace](#ada) | circle                  |
 | [concat](#concat) | reduce              | [fun](#fun) | fibonacci            | rectangle               |
-| [l](#slice)       | rotate              |             | geom                 | [square](#square)       |
-| [length](#length) | translate           |             | [range](#range)      | triangle                |
-| [r](#repeat)      |                     |             |                      | wedge                   |
-| [repeat](#repeat) |                     |             |                      |                         |
-| [s](#slice)       |                     |             |                      |                         |
+| [r](#repeat)      | rotate              |             | geom                 | [square](#square)       |
+| [repeat](#repeat) | translate           |             | [range](#range)      | triangle                |
+| [s](#slice)       |                     |             |                      | wedge                   |
 | [slice](#slice)   |                     |             |                      |                         |
 
 
@@ -38,11 +36,6 @@ green-square(size)
 def green-square(sz) square(sz green)
 def size 20
 green-square(size)
-```
-
- - <a name="length"></a> `length(data)` : gives the number of elements in data.
-```hey
-length(concat(2 10 2))
 ```
 
  - <a name="range"></a> `range(count start step?)` : builds a sequence of count numbers which first element is the given start number.

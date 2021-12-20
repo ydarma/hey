@@ -23,7 +23,6 @@ function getActions(
   const concatFun = sys("concat", ["values"]);
   const repeatFun = sys("repeat", ["data", "count"]);
   const sliceFun = sys("slice", ["data", "start", "end"]);
-  const lengthFun = sys("length", ["data"]);
 
   function sys<T extends keyof ExecActions>(
     name: T,
@@ -113,9 +112,6 @@ function getActions(
         (ctx, data, start, end, ...o) => sliceFun(ctx, data, start, end, ...o),
         sliceFun.toString
       ),
-
-    Length: (call): Action<"length"> =>
-      f((ctx, data, ...o) => lengthFun(ctx, data, ...o), lengthFun.toString),
 
     Function: async (fun, lpar, args, rpar, arrow, body, dot) => {
       const argValues = [];

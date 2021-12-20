@@ -5,14 +5,13 @@ HeyGrammar {
 
   Result = Call (lpar Val* rpar)*
     
-  Call = Range | AdaLovelace | Square | Concat | Repeat | Slice | Length | Function | Known
+  Call = Range | AdaLovelace | Square | Concat | Repeat | Slice | Function | Known
   Range = #("range" ~nameEnd)
   AdaLovelace = #("ada-lovelace" ~nameEnd)
   Square = #("square" ~nameEnd)
   Concat = #(("concat" | "c") ~nameEnd)
   Repeat = #(("repeat" | "r") ~nameEnd)
   Slice = #(("slice" | "s") ~nameEnd)
-  Length = #(("lentgh" | "l") ~nameEnd)
   Function = "fun" lpar identifier* rpar arrow? Prog "."?
 
   Literal = number | string | color 
@@ -29,7 +28,7 @@ HeyGrammar {
   colon = ":"
   arrow = "->" | ":"
   reserved = ("def" | "fun" | builtin | color) ~nameEnd
-  builtin = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s" | "length" | "l") ~nameEnd
+  builtin = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s" ) ~nameEnd
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"

@@ -326,23 +326,13 @@ test("Can redefine global", async (t) => {
   t.end();
 });
 
-const dataLengthProgTest = `
-l(c(1 2 3))
-`;
-
-test("Data length", async (t) => {
-  const result = await hey(dataLengthProgTest);
-  t.equal(result, 3);
-  t.end();
-});
-
-const infiniteLoopTestProg = `
+const cancelTestProg = `
 r(1 2000000000)
 `;
 
 test("Break", async (t) => {
   t.plan(1);
-  const result = hey(infiniteLoopTestProg);
+  const result = hey(cancelTestProg);
   await new Promise<void>((r) => setTimeout(() => r(), 500));
   cancel();
   await result.catch((e) =>
@@ -352,26 +342,29 @@ test("Break", async (t) => {
 });
 
 const recursionTestProg = `
-def decr fun(n) l(s(r(1 n) 2))
+def true 1
+def false 2
 
-def nest fun(f init iter)
-  def terminate fun() init
-  def recurse fun()
-    def next decr(iter)
-    nest(f f(init next) next)
-  c(terminate)(iter recurse)()
+def num fun(n) c(true r(true n))
 
-def sum-step fun(init iter)
-  l(c(r(1 init) r(1 iter)))
+def not fun(a) c(false true)(a)
 
-def sum-seq fun(n)
-  nest(sum-step n n)
+def and fun(a b) c(a b)(b)
+
+def if fun(p f-1 f-2) c(f-1 f-2)(p)()
+
+def gt fun(a b)
+  def ha a(1 2)
+  def hb b(1 2)
+  def f1 fun() gt(s(a 2) s(b 2))
+  def f2 fun() ha
+  if(and(ha hb) f1 f2)
   
-sum-seq(5)
+gt(num(3) num(2))
 `;
 
 test("Recursion", async (t) => {
   const result = await hey(recursionTestProg);
-  t.equal(result, 15);
+  t.equal(result, 1);
   t.end();
 });

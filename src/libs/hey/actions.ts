@@ -129,11 +129,6 @@ export class HeyActions {
     );
   }
 
-  length(ctx: IContext, data: V<unknown[]>): number {
-    if (!isData(data)) throw dataError(...ctx.get(0), data);
-    return data.length;
-  }
-
   funct<T>(
     ctx: IContext,
     args: string[],

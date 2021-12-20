@@ -53,29 +53,6 @@ def n fun(a) r(1 a)
 incr(n(3))
 ```
 
- - Dans un chapitre précédent [Listes](/?title=4+-+Listes#compare-l) nous avons résolu un exercice
-qui produisait `1` ou `2` selon que la première liste était plus longue ou plus courte que la seconde.
-```hey
-c(1 1 1 1 1 1 1 1 1)(l(c(1 1 1 1 1 1 1 1 1 1)) 2)
-```
-Inspire-toi de cet exercice pour construire la fonction `ge` qui produit le même résultat pour deux listes passées en paramètre
-
-```hey
-def n fun(a) r(1 a)
-def ge fun... ; complète !
-
-ge(n(9) n(10))
-```
-
-```hey
-; solution
-def n fun(a) r(1 a)
-def ge fun(a b) a(l(b) 2)
-
-ge(n(9) n(10))
-```
-
-
 Les fonctions sont des valeurs, au même titre qu'un nombre, un texte ou une liste.
 Elle peuvent donc être pasées comme paramètre d'une fonction. Par exemple :
 
@@ -171,4 +148,28 @@ def Espagne pays("Espagne" 505911 46934632 "Madrid")
 def France pays("France" 672051 68014000 "Paris")
 
 c(pays-nom(Allemagne) pays-nom(Espagne) pays-nom(France))
+```
+
+## Récursivité
+
+```hey
+def true 1
+def false 2
+
+def num fun(n) c(true r(true n))
+
+def not fun(a) c(false true)(a)
+
+def and fun(a b) c(a b)(b)
+
+def if fun(p f-1 f-2) c(f-1 f-2)(p)()
+
+def ge fun(a b)
+  def ha a(1 2)
+  def hb b(1 2)
+  def f1 fun() ge(s(a 2) s(b 2))
+  def f2 fun() ha
+  if(and(ha hb) f1 f2)
+  
+ge(num(30) num(30))
 ```
