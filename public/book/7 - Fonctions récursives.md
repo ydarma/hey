@@ -2,22 +2,25 @@
 
 Une fonction peut s'appeler elle-même. Cela s'appelle la récursion.
 
-dans ce chapitre, nous allons systématiquement recourir à la fonction `tail`
-déjà construite au chapitre précédent ete qui renvoie les éléments d'une liste en ôtant le premier :
-
-```hey
-def tail fun(liste) s(liste 2)
-
-tail(c(1 1 1 2))
-```
 Dans la suite nous considérerons qu'un résultat égal à `1` est vrai et `2` est faux.
 Définissons les deux valeurs suivantes, par commodité
+
+Dans ce chapitre, nous allons systématiquement recourir aux fonctions `tail` et `if`
+déjà construites au chapitre précédent:
+  - tail renvoie les éléments d'une liste en ôtant le premier
+  - if renvoie le résultat la fonction `si-vrai` si le paramètre `predicat` vaut `1`
+  sinon renvoie le résultat de la fonction `si-faux`
 
 ```hey
 def vrai 1
 def faux 2
 
-c(vrai faux)
+def tail fun(liste) s(liste 2)
+
+def if fun(predicat f-si-vrai f-si-faux)
+  c(f-si-vrai f-si-faux)(predicat)()
+
+c(vrai faux tail if)
 ```
 
 Nous allons dans les exemples et exercices qui suivent travailler avec des listes de la forme :
@@ -82,7 +85,7 @@ zero? (c(1 1 2))
 ```
 *Note: la fonction zero? renverra aussi 2 (faux) quand le premier élément n'est ni `1` ni `2`*
 
-En s'appuyant sur la fonction `if` construite au chapitre précédent nous allons construire la récursion
+En s'appuyant sur les fonctions `if` et `tail` nous allons construire la récursion
 en suivant exactement l'énoncé donné plus haut :
 
 ```hey
@@ -164,27 +167,16 @@ def or fun(a b) c(a b)(a)
 
 def zero? fun(liste) c(faux vrai)(liste(1) faux)
 
-def une-zero? fun(liste-1 liste-2)
-  or(zero?(liste-1) zero?(liste-2))
+def une-zero? fun(a b) or(zero?(a) zero?(b))
 
 une-zero?(c(1 2) c(2))
 ```
 
-Si aucune liste n'est *zero* il faut rappeler `gt` avec deux listes plus courtes.
-
-Si une liste est *zero* le résultat est trouvé : si la premère liste n'est pas *zero*
-elle est plus longue que la seconde, sinon elle est plus longue.
-
-Nous pouvons maintenant construire notre récursion de la façon suivante, en s'appuyant sur la fonction
-`if` construite plus haut :
+Nous pouvons construire la récurtionn en suivant littéralement l'énoncé donné plus haut :
 
 ```hey
 def vrai 1
 def faux 2
-
-def not fun(a) c(faux vrai)(a)
-
-def or fun(a b) c(a b)(a)
 
 def if fun(predicat f-si-vrai f-si-faux)
   c(f-si-vrai f-si-faux)(predicat)()
@@ -193,27 +185,27 @@ def tail fun(liste) s(liste 2)
 
 def zero? fun(liste) c(faux vrai)(liste(1) faux)
 
-def une-zero? fun(liste-1 liste-2)
-  or(zero?(liste-1) zero?(liste-2))
+def not fun(a) c(faux vrai)(a)
 
-def cas-1 fun(liste-1) not(zero?(liste-1))
+def or fun(a b) c(a b)(a)
 
-def cas-2 fun(liste-1 liste-2)
-  gt(tail(liste-1) tail(liste-2))
+def une-zero? fun(a b) or(zero?(a) zero?(b))
 
-def gt fun(liste-1 liste-2)
-  if (
-    une-zero?(liste-1 liste-2)
-    fun() cas-1(liste-1)
-    fun() cas-2(liste-1 liste-2)
-  )
+def cas-1 fun(a) not(zero?(a))
+
+def cas-2 fun(a b)
+  def a2 tail(a)
+  def b2 tail(b)
+  gt(a2 b2)
+
+def gt fun(a b) if (
+  une-zero?(a b)
+  fun() cas-1(a)
+  fun() cas-2(a b)
+)
 
 gt(c(1 1 2) c(1 1 1 2))
 ```
-
-Nous avons appliqué littéralement l'énoncé :
-si une des deux liste est *zero* la première est la plus longue si elle n'est pas *zero* (car alors c'est forcément le cas de la seconde) ;
-dans le cas contraire il faut comparer les listes diminuées de leur premier élément.
 
 ###### Exercice
 Le but est d'écrire une fonction récursive qui vérifie si une liste est de type 1*2.
