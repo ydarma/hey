@@ -312,3 +312,73 @@ def paire? fun(liste) if (
 
 paire?(c(1 1 1 2))
 ```
+
+###### Exercice
+
+Considérons maintenant des listes de la forme `c(1 1 1 2 1 2 1 1 1 1 2 ... 2)`
+composées de plusieurs suites 1\*2 concaténées. Nous les apellerons (1\*2)\*.
+
+ - Redige en français le fonctionnement de la fonction récursive `head1*2`
+   - Quel résultat produit-elle ?
+   - Dans quel cas la récursion est effectuée ?
+
+```hey
+def vrai 1
+def faux 2
+
+def zero? fun(liste) c(faux vrai)(liste(1) faux)
+
+def if fun(predicat f-si-vrai f-si-faux)
+  c(f-si-vrai f-si-faux)(predicat)()
+  
+def tail fun(liste) s(liste 2)
+
+def head1*2 fun(liste) if(
+  zero?(liste)
+  fun() c(2)
+  fun() c(1 head1*2(tail(liste)))
+)
+  
+head1*2(c(1 2 1 1 1 2 1 2))
+```
+
+```hey
+; solution
+; * cas 1: si la liste est *zero*, la première liste 1*2 de la liste (1*2)*
+;          est la liste *zero*
+; * cas 2: sinon ajoute un `1` au début de la première liste 1*2
+;          de la liste (1*2)* diminuée de son premier élément
+;
+; le résultat final est la première liste 1*2 de la liste (1*2)* reçue en paramètre
+```
+
+*Note : cette récursion ne fonctionne pas comme les précédentes : l'appel récursif 
+est effectué AVANT la constitution du résultat*
+
+Ecris maintemant la fonction `tail1*2` qui supprime la première liste 1\*2
+de la liste (1\*2)\* reçue en paramètre, et renvoie la fin.
+
+```
+ex: tail1*2(c(1 2 1 1 1 2 1 2)) -> c(1 1 1 2 1 2)
+```
+
+```hey
+; solution
+def vrai 1
+def faux 2
+
+def zero? fun(liste) c(faux vrai)(liste(1) faux)
+
+def if fun(predicat f-si-vrai f-si-faux)
+  c(f-si-vrai f-si-faux)(predicat)()
+  
+def tail fun(liste) s(liste 2)
+
+def tail1*2 fun(liste) if(
+  zero?(liste)
+  fun() tail(liste)
+  fun() tail1*2(tail(liste))
+)
+  
+tail1*2(c(1 2 1 1 1 2 1 2))
+```
