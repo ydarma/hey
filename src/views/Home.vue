@@ -1,24 +1,14 @@
 <template>
   <div class="home m-3 d-flex flex-row h-100">
     <div
-      class="p-2"
+      class="px-5 sandbox"
       :class="{
-        'w-50': disposition == 'both',
-        'w-100': disposition == 'book',
-        invisible: disposition == 'editor',
+        'w-50': disposition == 'balance',
+        'w-100': disposition == 'right',
+        invisible: disposition == 'left',
       }"
     >
-      <book-viewer></book-viewer>
-    </div>
-    <div
-      class="p-2"
-      :class="{
-        'w-50': disposition == 'both',
-        'w-100': disposition == 'editor',
-        invisible: disposition == 'book',
-      }"
-    >
-      <div class="d-flex flex-column h-100 exec-pane">
+      <div class="d-flex flex-column h-100">
         <div
           class="mb-2 border rounded p-1 editor"
           :class="{
@@ -64,6 +54,17 @@
           <HeyOut />
         </div>
       </div>
+    </div>
+
+    <div
+      class="px-5 book"
+      :class="{
+        'w-50': disposition == 'balance',
+        'w-100': disposition == 'left',
+        invisible: disposition == 'right',
+      }"
+    >
+      <book-viewer></book-viewer>
     </div>
   </div>
 </template>
@@ -113,6 +114,9 @@ export default defineComponent({
 </script>
 
 <style>
+.book.w-50 {
+  width: 60% !important;
+}
 .left-pill {
   border-top-left-radius: 50rem !important;
   border-bottom-left-radius: 50rem !important;
@@ -136,26 +140,31 @@ export default defineComponent({
   max-height: 50%;
 }
 
-.w-100 > .exec-pane {
-  left: 12px;
+.sandbox.w-50 {
+  width: 40% !important;
 }
-.w-50 > .exec-pane {
-  left: 50%;
+
+.sandbox.w-50 > div {
+  right: 60%;
 }
-.exec-pane {
+.sandbox.w-100 > div {
+  right: 20px;
+}
+
+.sandbox > div {
   position: fixed;
-  right: 12px;
+  left: 20px;
   overflow: scroll;
 }
-.exec-pane::-webkit-scrollbar {
+.sandbox > div::-webkit-scrollbar {
   width: 4px;
 }
 /* Handle */
-.exec-pane::-webkit-scrollbar-thumb {
+.sandbox > div::-webkit-scrollbar-thumb {
   background: rgb(214, 168, 168);
 }
 /* Handle on hover */
-.exec-pane::-webkit-scrollbar-thumb:hover {
+.sandbox > div::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 </style>

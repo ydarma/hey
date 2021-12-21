@@ -19,7 +19,7 @@ HeyGrammar {
     
   identifier = ~reserved name
   name = &letter nameEnd
-  nameEnd =  (alnum | "-")+
+  nameEnd =  (alnum | "-" | "?" | "*")+
   number = sign? digit+
   sign = "+" | "-"
   color = ("green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white" | "orange") ~nameEnd

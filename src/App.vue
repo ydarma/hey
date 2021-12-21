@@ -31,17 +31,17 @@
           <b-button
             variant="success"
             class="left-pill"
-            @click="disposition = 'editor'"
+            @click="disposition = 'left'"
           >
             <b-icon size="lg" icon="box-arrow-left"></b-icon>
           </b-button>
-          <b-button variant="success" @click="disposition = 'both'">
+          <b-button variant="success" @click="disposition = 'balance'">
             <b-icon size="lg" icon="vr"></b-icon>
           </b-button>
           <b-button
             variant="success"
             class="right-pill"
-            @click="disposition = 'book'"
+            @click="disposition = 'right'"
           >
             <b-icon size="lg" icon="box-arrow-right"></b-icon>
           </b-button>
@@ -62,7 +62,7 @@ import TableOfContent from "@/components/TableOfContent.vue";
 export default defineComponent({
   data() {
     return {
-      disposition: "both",
+      disposition: "balance",
     };
   },
   components: {

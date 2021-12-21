@@ -51,7 +51,8 @@ def n fun(a) r(1 a)
 incr(n(3))
 ```
 
-  - Construis deux fonctions, `and` et `or` qui reçoivent deux paramètres, `a` et `b` :
+  - Construis les deux fonctions `and` et `or` qui reçoivent deux paramètres,
+  `a` et `b` qui peuvent prendre les valeur `1` ou `2` :
     - `and` renvoie `1` si `a` ET `b` valent `1` et renvoie `2` dans les autres cas
     - `or` renvoie `1` si `a` OU `b` valent `1` et renvoie `2` dans les autres cas
     
@@ -64,6 +65,17 @@ def and fun(a b) c(a b)(a)
 c(and(1 2) or(1 2))
 ```
 
+  - Construis la fonction `not` reçoit un paramètre, `a` 
+  qui prend la valeur `1` ou `2` et renvoie `1` si `a` vaut `2` et `2` sinon.
+  
+```hey
+; solution
+def not fun(a) c(2 1)(a)
+
+c(not(1) not(2))
+```
+
+  
 Les fonctions sont des valeurs, au même titre qu'un nombre, un texte ou une liste.
 Une fonction peut aussi être le résultat d'une fonction.
 Reprenons l'exemple du chapitre [Définitions](/?title=5+-+Définitions)
