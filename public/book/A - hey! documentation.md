@@ -50,9 +50,8 @@ repeat(c(blue 3 green) 8)
 ```
 
  - <a name="slice"></a> `slice(data start end)` : builds data by slicing data between start and end positions.
-   If given positions are negative, effective position are computed from the end of the data.
 ```hey
-slice(ada-lovelace(15) 4 -2)
+slice(ada-lovelace(15) 3 5)
 ```
 
  - <a name="square"></a> `square(size color)` : draws a square with given size and color.

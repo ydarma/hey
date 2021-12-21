@@ -10,23 +10,6 @@
   <b-card class="fixed-top menu">
     <div class="d-flex">
       <div class="w-50">
-        <b-button
-          class="m-1 d-none d-lg-inline py-2 px-3"
-          variant="success"
-          to="/"
-        >
-          <b-icon size="lg" icon="house"></b-icon>
-        </b-button>
-        <table-of-content class="mx-1"></table-of-content>
-        <b-button
-          class="m-1 d-none d-lg-inline py-2 px-3"
-          variant="info"
-          to="/about"
-        >
-          <b-icon size="lg" icon="info-circle"></b-icon>
-        </b-button>
-      </div>
-      <div>
         <b-button-group>
           <b-button
             variant="success"
@@ -46,6 +29,23 @@
             <b-icon size="lg" icon="box-arrow-right"></b-icon>
           </b-button>
         </b-button-group>
+      </div>
+      <div class="w-50">
+        <b-button
+          class="m-1 d-none d-lg-inline py-2 px-3"
+          variant="success"
+          to="/"
+        >
+          <b-icon size="lg" icon="house"></b-icon>
+        </b-button>
+        <table-of-content class="mx-1"></table-of-content>
+        <b-button
+          class="m-1 d-none d-lg-inline py-2 px-3"
+          variant="info"
+          to="/about"
+        >
+          <b-icon size="lg" icon="info-circle"></b-icon>
+        </b-button>
       </div>
     </div>
   </b-card>

@@ -95,17 +95,11 @@ repeat(c("rouge" "bleu" "vert") 7)
 r(r(c("rouge" "bleu" "vert") 4) 9)
 ```
 
-
 Les fonctions `slice` et `s` permettent de construire une liste par extraction d'une partie d'une autre liste.
 Les troisième et quatrième arguments donnent les position de départ et d'arrêt de l'extraction.
 
 ```hey
 slice(c("rouge" "bleu" "vert" "jaune" "marron") 2 4)
-```
-
-Les positions peuvent être données à partir de la fin en utilisant des nombres négatifs.
-```hey
-s(c("rouge" "bleu" "vert" "jaune" "marron") -4 -2)
 ```
 
 ###### Exercices
