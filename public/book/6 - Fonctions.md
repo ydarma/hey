@@ -46,7 +46,7 @@ incr(n(3))
 ```hey
 ; solution
 def n fun(a) r(1 a)
-def n fun(a) r(1 a)
+def incr fun(a) c(1 a)
 
 incr(n(3))
 ```
