@@ -85,6 +85,7 @@ export default defineComponent({
   top: 100px;
   bottom: 0;
   overflow: scroll;
+  width: 100%;
 }
 
 .menu {
