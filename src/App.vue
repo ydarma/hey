@@ -81,7 +81,10 @@ export default defineComponent({
 }
 
 .main {
-  margin-top: 100px;
+  position: fixed;
+  top: 100px;
+  bottom: 0;
+  overflow: scroll;
 }
 
 .menu {

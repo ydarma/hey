@@ -1,5 +1,15 @@
 # Fonctions récursives
 
+ - [Introduction](#introduction)
+ - [Premier exemple : `mul-2`](#premier-exemple--mul-2)
+ - [Deuxième exemple : `gt`](#deuxième-exemple--gt)
+ - [Exercice : `is-1*2`](#exercice--is-12)
+ - [Exercice : `paire?` / `impaire?`](#exercice--paire--impaire)
+ - [Exercice : `head-1*2` / `tail-1*2`](#exercice--head-12--tail-12)
+ - [Exercice : `while`](#exercice--while)
+
+#### Introduction
+
 Une fonction peut s'appeler elle-même. Cela s'appelle la récursion.
 
 Dans la suite nous considérerons qu'un résultat égal à `1` est vrai et `2` est faux.
@@ -32,7 +42,8 @@ Nous allons dans les exemples et exercices qui suivent travailler avec des liste
 
 Nous les appelerons les listes 1\*2.
 
-**Premier exemple** de fonction récursive : `mul-2` reçoit en paramètre une liste 1\*2
+#### Premier exemple : `mul-2`
+La fonction récursive `mul-2` reçoit en paramètre une liste 1\*2
 et renvoie une autre liste 1\*2 avec le double de nombres `1`.
 <pre>
  c(2)     ->  c(2)
@@ -114,7 +125,8 @@ def mul-2 fun(l) if(
 mul-2(c(1 1 2))
 ```
 
-**Deuxième exemple** chercher si une liste 1\*2 est plus longue qu'une autre.
+#### Deuxième exemple : `gt`
+La fonction `gt` vérifie si une liste 1\*2 est plus longue qu'une autre.
 
 La fonction `gt` reçoit deux listes, `a` et `b` et renvoie `1` si `a` est plus longue que `b`, `2` sinon.
 `gt` se comporte différemment suivant les deux cas :
@@ -207,7 +219,7 @@ def gt fun(a b) if (
 gt(c(1 1 2) c(1 1 1 2))
 ```
 
-###### Exercice
+###### Exercice : `is-1*2`
 Le but est d'écrire une fonction récursive qui vérifie si une liste est de type 1*2.
 Rédige en français les deux cas possibles : celui qui produit un résultat et celui qui entraine la récursion.
 *indice : le premier cas contient 2 possibilités de résultat*
@@ -261,7 +273,7 @@ def is-1*2? fun(liste) if (
 is-1*2?(c(1 1 1 3 1 2))
 ```
 
-###### Exercice
+###### Exercice : `paire?` / `impaire?`
 Dans cet exercice nous allons chercher si une liste 1\*2 contient un nombre pair de `1`.
 Par commodité nous dirons qu'une liste 1\*2 est paire si elle contient un nombre pair de `1`
 et sinon qu'elle est impaire.
@@ -378,7 +390,7 @@ def paire? fun(liste) if (
 paire?(c(1 1 1 2))
 ```
 
-###### Exercice
+###### Exercice : `head-1\*2` / `tail-1\*2`
 
 Considérons maintenant des listes de la forme `c(1 1 1 2 1 2 1 1 1 1 2 ... 2)`
 composées de plusieurs suites 1\*2 concaténées. Nous les apellerons listes UR
@@ -448,7 +460,7 @@ def tail-1*2 fun(liste) if(
 tail-1*2(c(1 2 1 1 1 2 1 2))
 ```
 
-###### Exemple
+###### Exercice : `while`
 
 La fonction `while` prend trois paramètres :
   - `test` : une fonction du type `(liste) -> vrai ou faux`
