@@ -22,11 +22,11 @@ A patir de là nous avons construit :
     - `eg` (`eq(a b)` = `and(ge(a b) le(a b))`
 
   - Les opérations sur les listes UR :
-    - `ur-head`
-    - `ur-tail`
+    - `ur-head` cf. chapitre 7
+    - `ur-tail` cf. chapitre 7
 
   - Les opération de flux :
-    - `if`
-    - `while`
+    - `if` cf. chapitre 7
+    - `while` cf. chapitre 7
     
 Grâce aux 5 instructions de base nous avons un langage qui est complet.
