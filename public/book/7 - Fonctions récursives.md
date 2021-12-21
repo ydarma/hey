@@ -33,6 +33,31 @@ def if fun(predicat f-si-vrai f-si-faux)
 c(vrai faux tail if)
 ```
 
+Une fonction récursive doit toujours comporter deux cas :
+  1. elle s'arrête et renvoie un résultat
+  2. elle continue et s'appelle elle-même
+
+Sans le premier cas la fonction s'appellerait continuellement !
+La fonction doit donc tester quel cas s'applique à chaque appel. Pour cela elle utilise la fonction `if` :
+```hey
+def test fun(args) ...      ; critère d'arrêt
+
+def cas-1 fun(args) ... ; arrêt
+
+def cas-2 fun(args)     ; récurstion
+  ...f-recursive(...)
+
+def f-recursive(args) if(
+  test(args)
+  fun cas-1(args)
+  fun cas-2(args)
+)
+```
+Il est important de noter que la fonction `if` reçoit deux fonctions,
+dont une seule sera exécutée en fonction du résultat du test (appelé critère d'arrêt) ;
+en effet, si les deux étaient systématiquement exécutées, la fonction s'appelerait continuellement,
+puisque l'une d'entre elle entraine la récursion.
+
 Nous allons dans les exemples et exercices qui suivent travailler avec des listes de la forme :
  - `c(2)`
  - `c(1 2)`
