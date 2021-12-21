@@ -12,14 +12,14 @@
 
 Une fonction peut s'appeler elle-même. Cela s'appelle la récursion.
 
-Dans la suite nous considérerons qu'un résultat égal à `1` est vrai et `2` est faux.
-Définissons les deux valeurs suivantes, par commodité
-
 Dans ce chapitre, nous allons systématiquement recourir aux fonctions `tail` et `if`
 déjà construites au chapitre précédent:
   - tail renvoie les éléments d'une liste en ôtant le premier
   - if renvoie le résultat la fonction `si-vrai` si le paramètre `predicat` vaut `1`
   sinon renvoie le résultat de la fonction `si-faux`
+
+Dans la suite nous considérerons qu'un résultat égal à `1` est vrai et `2` est faux.
+Définissons aussi ces deux valeurs par commodité:
 
 ```hey
 def vrai 1
