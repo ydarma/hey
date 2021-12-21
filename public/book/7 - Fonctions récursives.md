@@ -5,7 +5,7 @@
  - [Deuxième exemple : `gt`](#deuxième-exemple--gt)
  - [Exercice : `is-1*2`](#exercice--is-12)
  - [Exercice : `paire?` / `impaire?`](#exercice--paire--impaire)
- - [Exercice : `head-1*2` / `tail-1*2`](#exercice--head-12--tail-12)
+ - [Exercice : `ur-head` / `ur-tail`](#exercice--ur-head--ur-tail)
  - [Exercice : `while`](#exercice--while)
 
 #### Introduction
@@ -415,7 +415,7 @@ def paire? fun(liste) if (
 paire?(c(1 1 1 2))
 ```
 
-###### Exercice : `head-1\*2` / `tail-1\*2`
+###### Exercice : `ur-head` / `ur-tail`
 
 Considérons maintenant des listes de la forme `c(1 1 1 2 1 2 1 1 1 1 2 ... 2)`
 composées de plusieurs suites 1\*2 concaténées. Nous les apellerons listes UR
@@ -434,16 +434,16 @@ def tail fun(liste) s(liste 2)
 
 def zero? fun(liste) c(faux vrai)(liste(1) faux)
 
-def head-1*2 fun(liste) if(
+def ur-head fun(liste) if(
   zero?(liste)
   fun() c(2)
-  fun() c(1 head-1*2(tail(liste)))
+  fun() c(1 ur-head(tail(liste)))
 )
 
-head-1*2(c(1 2 1 1 1 2 1 2))
+ur-head(c(1 2 1 1 1 2 1 2))
 ```
 
- - Redige en français le fonctionnement de la fonction récursive `head-1*2`
+ - Redige en français le fonctionnement de la fonction récursive `ur-head`
    - Quel résultat produit-elle ?
    - Dans quel cas la récursion est effectuée ?
 
@@ -457,11 +457,11 @@ head-1*2(c(1 2 1 1 1 2 1 2))
 ; le résultat final est la première liste 1*2 de la liste UR reçue en paramètre
 ```
 
-  - Ecris maintemant la fonction `tail-1*2` qui supprime la première liste 1\*2
+  - Ecris maintemant la fonction `ur-tail` qui supprime la première liste 1\*2
   de la liste (1\*2)\* reçue en paramètre, et renvoie la fin.
 
 <pre>
-ex: tail-1*2(c(1 2 1 1 1 2 1 2)) -> c(1 1 1 2 1 2)
+ex: ur-tail(c(1 2 1 1 1 2 1 2)) -> c(1 1 1 2 1 2)
 </pre>
 
 ```hey
@@ -476,13 +476,13 @@ def tail fun(liste) s(liste 2)
 
 def zero? fun(liste) c(faux vrai)(liste(1) faux)
 
-def tail-1*2 fun(liste) if(
+def ur-tail fun(liste) if(
   zero?(liste)
   fun() tail(liste)
-  fun() tail-1*2(tail(liste))
+  fun() ur-tail(tail(liste))
 )
 
-tail-1*2(c(1 2 1 1 1 2 1 2))
+ur-tail(c(1 2 1 1 1 2 1 2))
 ```
 
 ###### Exercice : `while`
