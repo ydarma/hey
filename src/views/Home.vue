@@ -11,8 +11,8 @@
       class="mb-2 border rounded p-1 editor"
       :class="{
         even: layout == 'even',
-        min: layout == 'top',
-        max: layout == 'bottom',
+        min: layout == 'bottom',
+        max: layout == 'top',
       }"
     >
       <HeyEditor />
@@ -21,9 +21,9 @@
       <exec-commands @exec="balance()"> </exec-commands>
       <layout-commands
         direction="v"
-        @expand-down="layout = 'bottom'"
+        @expand-down="layout = 'top'"
         @even="layout = 'even'"
-        @expand-up="layout = 'top'"
+        @expand-up="layout = 'bottom'"
       >
       </layout-commands>
     </div>
@@ -31,8 +31,8 @@
       class="p-2 result out"
       :class="{
         even: layout == 'even',
-        min: layout == 'bottom',
-        max: layout == 'top',
+        min: layout == 'top',
+        max: layout == 'bottom',
       }"
     >
       <HeyOut />
@@ -90,7 +90,7 @@ export default defineComponent({
 }
 
 .book.even {
-  left: 20%;
+  left: 40%;
 }
 
 .book.min {
@@ -115,7 +115,7 @@ export default defineComponent({
 }
 
 .sandbox.max {
-  right: 40px;
+  right: 20px;
 }
 
 .editor.max,

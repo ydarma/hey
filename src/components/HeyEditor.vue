@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100" ref="container">
+  <div ref="container">
     <div id="editor"></div>
   </div>
 </template>

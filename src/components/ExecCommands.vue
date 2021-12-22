@@ -1,5 +1,5 @@
 <template>
-  <b-button variant="danger" class="mx-3" pill @click="execute()">
+  <b-button variant="danger" class="mx-3 my-1" pill @click="execute()">
     <b-icon size="lg" icon="play"></b-icon>
   </b-button>
   <b-button variant="secondary" class="mx-3" pill @click="cancel()">
