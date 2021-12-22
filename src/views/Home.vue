@@ -114,7 +114,7 @@ export default defineComponent({
 
 .sandbox.min,
 .book.min {
-  display: none;
+  display: none !important;
 }
 
 .editor.even {
