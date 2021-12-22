@@ -55,10 +55,10 @@ export class Editor {
 
   fit(container: HTMLElement): void {
     const resizeObserver = new ResizeObserver(() => {
-      this.resize((container as HTMLElement).clientHeight);
+      this.resize(container.clientHeight);
     });
 
-    resizeObserver.observe(container as HTMLElement);
+    resizeObserver.observe(container);
   }
 
   private resize(height: number): void {

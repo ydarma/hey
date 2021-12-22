@@ -1,6 +1,6 @@
 <template>
   <a
-    class="github-fork-ribbon right-top"
+    class="github-fork-ribbon right-top d-none d-md-inline"
     href="https://github.com/ydarma/hey"
     data-ribbon="Contribuer sur GitHub"
     title="Contribuer sur GitHub"

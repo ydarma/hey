@@ -2,6 +2,7 @@
   <b-button-group class="mx-2">
     <b-button
       variant="secondary"
+      class="d-none d-md-inline"
       :disabled="this.previous === false"
       @click="open(previous)"
     >
@@ -29,6 +30,7 @@
     </b-dropdown>
     <b-button
       variant="secondary"
+      class="d-none d-md-inline"
       :disabled="this.next === false"
       @click="open(next)"
     >

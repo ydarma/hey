@@ -1,5 +1,5 @@
 <template>
-  <div ref="container">
+  <div id="container" ref="container" class="h-100">
     <div id="editor"></div>
   </div>
 </template>
@@ -32,12 +32,10 @@ export default defineComponent({
     this.height = (this.$refs.editor as HTMLElement).clientHeight;
     console.log(this.height);
   },
-  beforeCreate() {
-    this.$nextTick(() => {
-      this.fit(this.$refs.container as HTMLElement);
-      this.edit(this.program);
-      this.onChange((prog: string | undefined) => this.setProgram(prog));
-    });
+  mounted() {
+    this.fit(this.$refs.container as HTMLElement);
+    this.edit(this.program);
+    this.onChange((prog: string | undefined) => this.setProgram(prog));
   },
   watch: {
     async error(err) {

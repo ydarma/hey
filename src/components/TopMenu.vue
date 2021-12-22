@@ -31,6 +31,7 @@ import TableOfContent from "@/components/TableOfContent.vue";
 import LayoutCommands from "@/components/LayoutCommands.vue";
 
 export default defineComponent({
+  emits: ["even", "expand-left", "expand-right"],
   components: {
     LayoutCommands,
     TableOfContent,

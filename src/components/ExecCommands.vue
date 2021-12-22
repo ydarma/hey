@@ -12,6 +12,7 @@ import { defineComponent } from "vue";
 import { mapActions } from "vuex";
 
 export default defineComponent({
+  emits: ["exec", "cancel"],
   methods: {
     ...mapActions(["exec", "clear"]),
     execute() {

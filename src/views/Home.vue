@@ -128,6 +128,7 @@ export default defineComponent({
 .editor.max,
 .out.max {
   flex-grow: 1;
+  height: 100%;
 }
 
 .editor.min,

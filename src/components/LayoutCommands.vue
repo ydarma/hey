@@ -3,7 +3,12 @@
     <b-button :variant="color" class="left-pill" @click="clickLeft()">
       <b-icon size="lg" :icon="leftIcon"></b-icon>
     </b-button>
-    <b-button :variant="color" @click="clickMiddle()">
+    <b-button
+      :variant="color"
+      @click="clickMiddle()"
+      class="d-none d-md-inline"
+      ref="middle"
+    >
       <b-icon size="lg" :icon="middleIcon"></b-icon>
     </b-button>
     <b-button :variant="color" class="right-pill" @click="clickRight()">
@@ -17,6 +22,12 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   props: ["direction"],
+  emits: ["even", "expand-left", "expand-right", "expand-up", "expand-down"],
+  data() {
+    return {
+      mode: "three",
+    };
+  },
   computed: {
     leftIcon() {
       return this.direction == "h" ? "box-arrow-left" : "box-arrow-up";
@@ -40,6 +51,27 @@ export default defineComponent({
     },
     clickRight() {
       this.$emit(this.direction == "h" ? "expand-right" : "expand-down");
+    },
+  },
+  mounted() {
+    const middle = (this.$refs.middle as { $el: HTMLElement }).$el;
+    const changeMode = () => {
+      this.mode = getComputedStyle(middle).display == "none" ? "two" : "three";
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      changeMode();
+    });
+
+    resizeObserver.observe(middle);
+    changeMode();
+  },
+  watch: {
+    mode(val) {
+      if (val == "two") {
+        this.$emit("expand-left");
+        this.$emit("expand-down");
+      }
     },
   },
 });
