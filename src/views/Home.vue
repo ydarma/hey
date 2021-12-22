@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d-flex flex-column h-100 sandbox"
+    class="d-flex flex-column sandbox"
     :class="{
       even: disposition == 'even',
       max: disposition == 'right',
@@ -93,10 +93,6 @@ export default defineComponent({
   left: 40%;
 }
 
-.book.min {
-  display: none;
-}
-
 .book.max {
   left: 0;
 }
@@ -104,35 +100,39 @@ export default defineComponent({
 .sandbox {
   position: fixed;
   left: 20px;
+  top: 100px;
+  bottom: 0;
 }
 
 .sandbox.even {
   right: 60%;
 }
 
-.book.min {
-  display: none;
-}
-
 .sandbox.max {
   right: 20px;
 }
 
+.sandbox.min,
+.book.min {
+  display: none;
+}
+
+.editor.even {
+  height: 60%;
+}
+
+.out.even {
+  height: 40%;
+}
+
 .editor.max,
 .out.max {
-  min-height: 80%;
-  max-height: 90%;
+  flex-grow: 1;
 }
 
 .editor.min,
 .out.min {
   display: none;
-}
-
-.editor.even,
-.out.even {
-  min-height: 40%;
-  max-height: 50%;
 }
 
 .out {
