@@ -24,17 +24,13 @@
       <b-button variant="secondary" class="mx-3" pill @click="clear()">
         <b-icon size="lg" icon="x"></b-icon>
       </b-button>
-      <b-button-group class="mx-3">
-        <b-button variant="info" class="left-pill" @click="maximizeEditor()">
-          <b-icon size="lg" icon="box-arrow-down"></b-icon>
-        </b-button>
-        <b-button variant="info" @click="balance()">
-          <b-icon size="lg" icon="hr"></b-icon>
-        </b-button>
-        <b-button variant="info" class="right-pill" @click="maximizeOut()">
-          <b-icon size="lg" icon="box-arrow-up"></b-icon>
-        </b-button>
-      </b-button-group>
+      <layout-commands
+        direction="v"
+        @expand-down="maximizeEditor()"
+        @balance="balance()"
+        @expand-up="maximizeOut()"
+      >
+      </layout-commands>
     </div>
     <div
       class="p-2 result out"
@@ -66,6 +62,7 @@ import HeyEditor from "@/components/HeyEditor.vue";
 import HeyOut from "@/components/HeyOut.vue";
 import { mapActions } from "vuex";
 import BookViewer from "@/components/BookViewer.vue";
+import LayoutCommands from "@/components/LayoutCommands.vue";
 
 export default defineComponent({
   name: "Home",
@@ -97,6 +94,7 @@ export default defineComponent({
     },
   },
   components: {
+    LayoutCommands,
     HeyEditor,
     HeyOut,
     BookViewer,
@@ -128,7 +126,7 @@ export default defineComponent({
 }
 
 .sandbox.full {
-  right: 20px;
+  right: 40px;
 }
 
 .editor.maximize,

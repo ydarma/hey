@@ -9,25 +9,12 @@
   </a>
   <b-card class="menu">
     <div class="d-flex justify-content-between align-items-center">
-      <b-button-group>
-        <b-button
-          variant="success"
-          class="left-pill"
-          @click="disposition = 'left'"
-        >
-          <b-icon size="lg" icon="box-arrow-left"></b-icon>
-        </b-button>
-        <b-button variant="success" @click="disposition = 'balance'">
-          <b-icon size="lg" icon="vr"></b-icon>
-        </b-button>
-        <b-button
-          variant="success"
-          class="right-pill"
-          @click="disposition = 'right'"
-        >
-          <b-icon size="lg" icon="box-arrow-right"></b-icon>
-        </b-button>
-      </b-button-group>
+      <layout-commands
+        direction="h"
+        @expand-left="disposition = 'left'"
+        @balance="disposition = 'balance'"
+        @expand-right="disposition = 'right'"
+      ></layout-commands>
       <div class="toc mx-5 d-flex align-items-center">
         <b-button class="m-1 d-none d-lg-inline px-3" variant="success" to="/">
           <b-icon size="lg" icon="house"></b-icon>
@@ -41,25 +28,7 @@
           <b-icon size="lg" icon="info-circle"></b-icon>
         </b-button>
       </div>
-      <div class="license d-flex align-items-center">
-        <a
-          rel="license"
-          href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-          ><img
-            alt="Creative Commons License"
-            style="border-width: 0"
-            src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"
-        /></a>
-        <span class="d-none d-xl-inline">
-          This work is licensed under a
-          <a
-            rel="license"
-            href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-            >Creative Commons Attribution-NonCommercial-ShareAlike 4.0
-            International License</a
-          ></span
-        >
-      </div>
+      <license-panel class="license"></license-panel>
     </div>
   </b-card>
   <div class="main">
@@ -71,6 +40,8 @@
 import { defineComponent } from "vue";
 import "github-fork-ribbon-css/gh-fork-ribbon.css";
 import TableOfContent from "@/components/TableOfContent.vue";
+import LayoutCommands from "@/components/LayoutCommands.vue";
+import LicensePanel from "@/components/LicensePanel.vue";
 
 export default defineComponent({
   data() {
@@ -79,22 +50,14 @@ export default defineComponent({
     };
   },
   components: {
+    LayoutCommands,
     TableOfContent,
+    LicensePanel,
   },
 });
 </script>
 
 <style>
-.left-pill {
-  border-top-left-radius: 50rem !important;
-  border-bottom-left-radius: 50rem !important;
-}
-
-.right-pill {
-  border-top-right-radius: 50rem !important;
-  border-bottom-right-radius: 50rem !important;
-}
-
 .main {
   position: fixed;
   top: 100px;
@@ -114,12 +77,6 @@ export default defineComponent({
 }
 
 .license {
-  max-width: 37em;
-  font-size: 80%;
   margin-right: 60px;
-}
-
-.license img {
-  margin-right: 3px;
 }
 </style>
