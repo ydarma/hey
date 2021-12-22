@@ -2,42 +2,37 @@
   <div
     class="d-flex flex-column h-100 sandbox"
     :class="{
-      balance: disposition == 'balance',
-      full: disposition == 'right',
-      invisible: disposition == 'left',
+      even: disposition == 'even',
+      max: disposition == 'right',
+      min: disposition == 'left',
     }"
   >
     <div
       class="mb-2 border rounded p-1 editor"
       :class="{
-        minimize: minimizeEditor,
-        balance: !minimizeEditor && !minimizeOut,
-        maximize: minimizeOut,
+        even: layout == 'even',
+        min: layout == 'top',
+        max: layout == 'bottom',
       }"
     >
       <HeyEditor />
     </div>
     <div class="mb-1">
-      <b-button variant="danger" class="mx-3" pill @click="execute()">
-        <b-icon size="lg" icon="play"></b-icon>
-      </b-button>
-      <b-button variant="secondary" class="mx-3" pill @click="clear()">
-        <b-icon size="lg" icon="x"></b-icon>
-      </b-button>
+      <exec-commands @exec="balance()"> </exec-commands>
       <layout-commands
         direction="v"
-        @expand-down="maximizeEditor()"
-        @balance="balance()"
-        @expand-up="maximizeOut()"
+        @expand-down="layout = 'bottom'"
+        @even="layout = 'even'"
+        @expand-up="layout = 'top'"
       >
       </layout-commands>
     </div>
     <div
       class="p-2 result out"
       :class="{
-        minimize: minimizeOut,
-        balance: !minimizeEditor && !minimizeOut,
-        maximize: minimizeEditor,
+        even: layout == 'even',
+        min: layout == 'bottom',
+        max: layout == 'top',
       }"
     >
       <HeyOut />
@@ -47,9 +42,9 @@
   <div
     class="px-5 book"
     :class="{
-      balance: disposition == 'balance',
-      full: disposition == 'left',
-      invisible: disposition == 'right',
+      even: disposition == 'even',
+      max: disposition == 'left',
+      min: disposition == 'right',
     }"
   >
     <book-viewer></book-viewer>
@@ -60,37 +55,22 @@
 import { defineComponent } from "vue";
 import HeyEditor from "@/components/HeyEditor.vue";
 import HeyOut from "@/components/HeyOut.vue";
-import { mapActions } from "vuex";
 import BookViewer from "@/components/BookViewer.vue";
 import LayoutCommands from "@/components/LayoutCommands.vue";
+import ExecCommands from "@/components/ExecCommands.vue";
 
 export default defineComponent({
   name: "Home",
   props: ["disposition"],
   data() {
     return {
-      minimizeEditor: false,
-      minimizeOut: false,
+      layout: "even",
       editorHeight: 0,
     };
   },
   methods: {
-    ...mapActions(["exec", "clear"]),
-    maximizeEditor() {
-      this.minimizeEditor = false;
-      this.minimizeOut = true;
-    },
     balance() {
-      this.minimizeEditor = false;
-      this.minimizeOut = false;
-    },
-    maximizeOut() {
-      this.minimizeEditor = true;
-      this.minimizeOut = false;
-    },
-    execute() {
-      this.exec();
-      this.minimizeOut = false;
+      if (this.layout == "top") this.layout = "even";
     },
   },
   components: {
@@ -98,6 +78,7 @@ export default defineComponent({
     HeyEditor,
     HeyOut,
     BookViewer,
+    ExecCommands,
   },
 });
 </script>
@@ -108,11 +89,15 @@ export default defineComponent({
   right: 0;
 }
 
-.book.balance {
+.book.even {
   left: 20%;
 }
 
-.book.full {
+.book.min {
+  display: none;
+}
+
+.book.max {
   left: 0;
 }
 
@@ -121,27 +106,31 @@ export default defineComponent({
   left: 20px;
 }
 
-.sandbox.balance {
+.sandbox.even {
   right: 60%;
 }
 
-.sandbox.full {
+.book.min {
+  display: none;
+}
+
+.sandbox.max {
   right: 40px;
 }
 
-.editor.maximize,
-.out.maximize {
+.editor.max,
+.out.max {
   min-height: 80%;
   max-height: 90%;
 }
 
-.editor.minimize,
-.out.minimize {
+.editor.min,
+.out.min {
   display: none;
 }
 
-.editor.balance,
-.out.balance {
+.editor.even,
+.out.even {
   min-height: 40%;
   max-height: 50%;
 }
@@ -149,6 +138,7 @@ export default defineComponent({
 .out {
   overflow-y: scroll;
 }
+
 .out::-webkit-scrollbar {
   width: 4px;
 }

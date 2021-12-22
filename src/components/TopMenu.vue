@@ -4,7 +4,7 @@
       <layout-commands
         direction="h"
         @expand-left="$emit('expand-left')"
-        @balance="$emit('balance')"
+        @even="$emit('even')"
         @expand-right="$emit('expand-right')"
       ></layout-commands>
       <div class="toc mx-5 d-flex align-items-center">

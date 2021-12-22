@@ -8,7 +8,7 @@
   <div class="menu">
     <top-menu
       @expand-left="disposition = 'left'"
-      @balance="disposition = 'balance'"
+      @even="disposition = 'even'"
       @expand-right="disposition = 'right'"
     >
       <license-panel class="license"></license-panel>
@@ -26,7 +26,7 @@ import LicensePanel from "@/components/LicensePanel.vue";
 export default defineComponent({
   data() {
     return {
-      disposition: "balance",
+      disposition: "even",
     };
   },
   components: {

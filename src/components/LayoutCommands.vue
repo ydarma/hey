@@ -36,7 +36,7 @@ export default defineComponent({
       this.$emit(this.direction == "h" ? "expand-left" : "expand-up");
     },
     clickMiddle() {
-      this.$emit("balance");
+      this.$emit("even");
     },
     clickRight() {
       this.$emit(this.direction == "h" ? "expand-right" : "expand-down");
