@@ -1,71 +1,62 @@
 <template>
-  <div class="home m-3 d-flex flex-row h-100">
+  <div
+    class="d-flex flex-column h-100 sandbox"
+    :class="{
+      balance: disposition == 'balance',
+      full: disposition == 'right',
+      invisible: disposition == 'left',
+    }"
+  >
     <div
-      class="px-5 sandbox"
+      class="mb-2 border rounded p-1 editor"
       :class="{
-        'w-50': disposition == 'balance',
-        'w-100': disposition == 'right',
-        invisible: disposition == 'left',
+        minimize: minimizeEditor,
+        balance: !minimizeEditor && !minimizeOut,
+        maximize: minimizeOut,
       }"
     >
-      <div class="d-flex flex-column h-100">
-        <div
-          class="mb-2 border rounded p-1 editor"
-          :class="{
-            minimize: minimizeEditor,
-            balance: !minimizeEditor && !minimizeOut,
-            maximize: !minimizeEditor,
-          }"
-          ref="editor"
-        >
-          <HeyEditor />
-        </div>
-        <div>
-          <b-button variant="danger" class="mx-3" pill @click="execute()">
-            <b-icon size="lg" icon="play"></b-icon>
-          </b-button>
-          <b-button variant="secondary" class="mx-3" pill @click="clear()">
-            <b-icon size="lg" icon="x"></b-icon>
-          </b-button>
-          <b-button-group class="mx-3">
-            <b-button
-              variant="info"
-              class="left-pill"
-              @click="maximizeEditor()"
-            >
-              <b-icon size="lg" icon="box-arrow-down"></b-icon>
-            </b-button>
-            <b-button variant="info" @click="balance()">
-              <b-icon size="lg" icon="hr"></b-icon>
-            </b-button>
-            <b-button variant="info" class="right-pill" @click="maximizeOut()">
-              <b-icon size="lg" icon="box-arrow-up"></b-icon>
-            </b-button>
-          </b-button-group>
-        </div>
-        <div
-          class="p-2 result"
-          :class="{
-            minimize: minimizeOut,
-            balance: !minimizeEditor && !minimizeOut,
-            maximize: !minimizeOut,
-          }"
-        >
-          <HeyOut />
-        </div>
-      </div>
+      <HeyEditor />
     </div>
+    <div class="mb-1">
+      <b-button variant="danger" class="mx-3" pill @click="execute()">
+        <b-icon size="lg" icon="play"></b-icon>
+      </b-button>
+      <b-button variant="secondary" class="mx-3" pill @click="clear()">
+        <b-icon size="lg" icon="x"></b-icon>
+      </b-button>
+      <b-button-group class="mx-3">
+        <b-button variant="info" class="left-pill" @click="maximizeEditor()">
+          <b-icon size="lg" icon="box-arrow-down"></b-icon>
+        </b-button>
+        <b-button variant="info" @click="balance()">
+          <b-icon size="lg" icon="hr"></b-icon>
+        </b-button>
+        <b-button variant="info" class="right-pill" @click="maximizeOut()">
+          <b-icon size="lg" icon="box-arrow-up"></b-icon>
+        </b-button>
+      </b-button-group>
+    </div>
+    <div
+      class="p-2 result out"
+      :class="{
+        minimize: minimizeOut,
+        balance: !minimizeEditor && !minimizeOut,
+        maximize: minimizeEditor,
+      }"
+    >
+      <HeyOut />
+    </div>
+  </div>
 
-    <div
-      class="px-5 book"
-      :class="{
-        'w-50': disposition == 'balance',
-        'w-100': disposition == 'left',
-        invisible: disposition == 'right',
-      }"
-    >
-      <book-viewer></book-viewer>
-    </div>
+  <div
+    class="px-5 book"
+    :class="{
+      balance: disposition == 'balance',
+      full: disposition == 'left',
+      invisible: disposition == 'right',
+    }"
+  >
+    <book-viewer></book-viewer>
   </div>
 </template>
 
@@ -114,57 +105,61 @@ export default defineComponent({
 </script>
 
 <style>
-.book.w-50 {
-  width: 60% !important;
-}
-.left-pill {
-  border-top-left-radius: 50rem !important;
-  border-bottom-left-radius: 50rem !important;
+.book {
+  position: absolute;
+  right: 0;
 }
 
-.right-pill {
-  border-top-right-radius: 50rem !important;
-  border-bottom-right-radius: 50rem !important;
+.book.balance {
+  left: 40%;
 }
 
-.maximize {
+.book.full {
+  left: 0;
+}
+
+.sandbox {
+  position: fixed;
+  left: 20px;
+}
+
+.sandbox.balance {
+  right: 60%;
+}
+
+.sandbox.full {
+  right: 20px;
+}
+
+.editor.maximize,
+.out.maximize {
   min-height: 80%;
   max-height: 90%;
 }
-.minimize {
+
+.editor.minimize,
+.out.minimize {
   display: none;
 }
 
-.balance {
+.editor.balance,
+.out.balance {
   min-height: 40%;
   max-height: 50%;
 }
 
-.sandbox.w-50 {
-  width: 40% !important;
+.out {
+  overflow-y: scroll;
 }
-
-.sandbox.w-50 > div {
-  right: 60%;
-}
-.sandbox.w-100 > div {
-  right: 20px;
-}
-
-.sandbox > div {
-  position: fixed;
-  left: 20px;
-  overflow: scroll;
-}
-.sandbox > div::-webkit-scrollbar {
+.out::-webkit-scrollbar {
   width: 4px;
 }
 /* Handle */
-.sandbox > div::-webkit-scrollbar-thumb {
+.out::-webkit-scrollbar-thumb {
   background: rgb(214, 168, 168);
 }
 /* Handle on hover */
-.sandbox > div::-webkit-scrollbar-thumb:hover {
+.out::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 </style>

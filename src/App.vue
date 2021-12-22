@@ -7,29 +7,27 @@
   >
     Contribute on GitHub
   </a>
-  <b-card class="fixed-top menu">
+  <b-card class="menu">
     <div class="d-flex justify-content-between align-items-center">
-      <div class="layout">
-        <b-button-group>
-          <b-button
-            variant="success"
-            class="left-pill"
-            @click="disposition = 'left'"
-          >
-            <b-icon size="lg" icon="box-arrow-left"></b-icon>
-          </b-button>
-          <b-button variant="success" @click="disposition = 'balance'">
-            <b-icon size="lg" icon="vr"></b-icon>
-          </b-button>
-          <b-button
-            variant="success"
-            class="right-pill"
-            @click="disposition = 'right'"
-          >
-            <b-icon size="lg" icon="box-arrow-right"></b-icon>
-          </b-button>
-        </b-button-group>
-      </div>
+      <b-button-group>
+        <b-button
+          variant="success"
+          class="left-pill"
+          @click="disposition = 'left'"
+        >
+          <b-icon size="lg" icon="box-arrow-left"></b-icon>
+        </b-button>
+        <b-button variant="success" @click="disposition = 'balance'">
+          <b-icon size="lg" icon="vr"></b-icon>
+        </b-button>
+        <b-button
+          variant="success"
+          class="right-pill"
+          @click="disposition = 'right'"
+        >
+          <b-icon size="lg" icon="box-arrow-right"></b-icon>
+        </b-button>
+      </b-button-group>
       <div class="toc mx-5 d-flex align-items-center">
         <b-button class="m-1 d-none d-lg-inline px-3" variant="success" to="/">
           <b-icon size="lg" icon="house"></b-icon>
@@ -87,23 +85,27 @@ export default defineComponent({
 </script>
 
 <style>
-.l {
-  left: 50%;
-}
 .left-pill {
   border-top-left-radius: 50rem !important;
   border-bottom-left-radius: 50rem !important;
+}
+
+.right-pill {
+  border-top-right-radius: 50rem !important;
+  border-bottom-right-radius: 50rem !important;
 }
 
 .main {
   position: fixed;
   top: 100px;
   bottom: 0;
-  overflow: scroll;
+  overflow-y: scroll;
   width: 100%;
 }
 
 .menu {
+  position: fixed;
+  top: 0;
   height: 80px !important;
 }
 
@@ -116,6 +118,7 @@ export default defineComponent({
   font-size: 80%;
   margin-right: 60px;
 }
+
 .license img {
   margin-right: 3px;
 }
