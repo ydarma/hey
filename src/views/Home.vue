@@ -109,7 +109,7 @@ export default defineComponent({
 }
 
 .book.balance {
-  left: 40%;
+  left: 20%;
 }
 
 .book.full {
