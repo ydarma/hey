@@ -148,6 +148,14 @@ export class HeyActions {
     );
   }
 
+  vector(ctx: IContext, x: V<number>, y: V<number>): (k: "x" | "y") => number {
+    if (!isNumber(x)) throw numberError(...ctx.get(1), x);
+    if (!isNumber(y)) throw numberError(...ctx.get(2), y);
+    const vect = (k: "x" | "y") => (k == "x" ? x : y);
+    vect.toString = () => `[${x} ${y}]`;
+    return vect;
+  }
+
   funct<T>(
     ctx: IContext,
     args: string[],

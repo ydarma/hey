@@ -382,7 +382,7 @@ def gt fun(a b)
   def f1 fun() gt(s(a 2) s(b 2))
   def f2 fun() ha
   if(and(ha hb) f1 f2)
-  
+
 gt(num(3) num(2))
 `;
 
@@ -419,5 +419,22 @@ test("Merge", async (t) => {
       props: { width: 58, height: 58, rotation: 0 },
     });
   } else t.fail();
+  t.end();
+});
+
+const vectorTestProg = `
+c(vector(3 4) v(4 3))
+`;
+
+test("Vector", async (t) => {
+  const result = (await hey(vectorTestProg)) as ((k: "x" | "y") => number)[];
+  t.equal(result[0]("x"), 3);
+  t.equal(result[0]("y"), 4);
+  t.equal(result[1]("x"), 4);
+  t.equal(result[1]("y"), 3);
+  t.deepEqual(
+    result.map((f) => f.toString()),
+    ["[3 4]", "[4 3]"]
+  );
   t.end();
 });

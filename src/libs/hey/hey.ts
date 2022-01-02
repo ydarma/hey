@@ -24,6 +24,7 @@ function getActions(
   const concatFun = sys("concat", ["values"]);
   const repeatFun = sys("repeat", ["data", "count"]);
   const sliceFun = sys("slice", ["data", "start", "end"]);
+  const vectorFun = sys("vector", ["x", "y"]);
 
   function sys<T extends keyof ExecActions>(
     name: T,
@@ -104,7 +105,7 @@ function getActions(
       f(
         (ctx, shape1, shape2, vector, rotation, ...o) =>
           mergeFun(ctx, shape1, shape2, vector, rotation, ...o),
-        squareFun.toString
+        mergeFun.toString
       ),
 
     Concat: (call): Action<"concat"> =>
@@ -121,6 +122,9 @@ function getActions(
         (ctx, data, start, end, ...o) => sliceFun(ctx, data, start, end, ...o),
         sliceFun.toString
       ),
+
+    Vector: (call): Action<"vector"> =>
+      f((ctx, x, y, ...o) => vectorFun(ctx, x, y, ...o), vectorFun.toString),
 
     Function: async (fun, lpar, args, rpar, arrow, body, dot) => {
       const argValues = [];

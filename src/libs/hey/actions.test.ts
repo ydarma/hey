@@ -174,6 +174,13 @@ test("Slice error", (t) => {
   t.end();
 });
 
+test("Vector", (t) => {
+  const vector = actions.vector(new TestContext(), 3, 4);
+  t.equal(vector("x"), 3);
+  t.equal(vector("y"), 4);
+  t.end();
+});
+
 test("Bernouilli", async (t) => {
   const result = await actions.adaLovelace(new TestContext(), 7);
   t.deepEqual(result, ["1/6", "0", "-1/30", "0", "1/42", "0", "-1/30"]);
