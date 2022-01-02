@@ -12,13 +12,13 @@ export abstract class Shape {
 
   protected abstract renderer(props: Record<string, string | number>): Cash;
 
-  protected getBox(props: ShapeProps): {
+  protected getBox(): {
     width: number;
     height: number;
   } {
-    const a = ((45 - (props.rotation % 90)) * Math.PI) / 180;
-    const width = Math.ceil(props.width * Math.sqrt(2) * Math.cos(a));
-    const height = Math.ceil(props.height * Math.sqrt(2) * Math.cos(a));
+    const a = ((45 - (this.props.rotation % 90)) * Math.PI) / 180;
+    const width = Math.ceil(this.props.width * Math.sqrt(2) * Math.cos(a));
+    const height = Math.ceil(this.props.height * Math.sqrt(2) * Math.cos(a));
     return { width, height };
   }
 
@@ -32,7 +32,7 @@ export abstract class Shape {
 
   toString(): string {
     const shape = this.renderer(this.props);
-    const { width, height } = this.getBox(this.props);
+    const { width, height } = this.getBox();
     const { dx, dy, cx, cy } = this.getTransform(width, height);
     const svg = this.getSvg(width, height, shape, dx, dy, cx, cy);
     return svg[0]?.outerHTML ?? "";
