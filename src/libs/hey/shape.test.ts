@@ -6,7 +6,7 @@ test("Square", (t) => {
   const svg = shape.toString();
   t.equal(
     svg,
-    '<svg viewbox="-8 -8 15 15" style="width: 15px; height: 15px;"><rect width="10" height="10" x="-5" y="-5" fill="blue" transform="rotate(45)"></rect></svg>'
+    '<svg style="width: 15px; height: 15px;"><rect width="10" height="10" fill="blue" transform="translate(3 3) rotate(45 5 5)"></rect></svg>'
   );
   t.end();
 });

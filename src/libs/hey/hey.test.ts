@@ -40,6 +40,8 @@ test("Square", async (t) => {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
       size: 3,
+      width: 3,
+      height: 3,
       color: "green",
       rotation: 45,
     });
@@ -57,6 +59,8 @@ test("Square", async (t) => {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
       size: 3,
+      width: 3,
+      height: 3,
       color: "green",
       rotation: 0,
     });
@@ -85,6 +89,8 @@ test("User function", async (t) => {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
       size: 3,
+      width: 3,
+      height: 3,
       color: "green",
       rotation: 0,
     });
@@ -118,6 +124,8 @@ test("Define", async (t) => {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
       size: 1,
+      width: 1,
+      height: 1,
       color: "blue",
       rotation: 0,
     });

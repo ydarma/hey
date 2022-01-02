@@ -49,7 +49,7 @@ test("Square", (t) => {
   const result = actions.square(new TestContext(), 1, "blue");
   t.deepLooseEqual(result, {
     name: "square",
-    props: { size: 1, color: "blue", rotation: 0 },
+    props: { size: 1, width: 1, height: 1, color: "blue", rotation: 0 },
   });
   t.end();
 });

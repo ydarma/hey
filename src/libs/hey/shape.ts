@@ -1,60 +1,73 @@
 import $, { Cash } from "cash-dom";
 
-export abstract class Shape {
-  constructor(
-    readonly name: "square",
-    readonly props: Record<string, number | string>
-  ) {}
+type ShapeProps = Record<string, number | string> & {
+  width: number;
+  height: number;
+  rotation: number;
+  color: string;
+};
 
-  protected abstract renderer(
-    svg: Cash,
-    props: Record<string, string | number>
-  ): string;
-  protected abstract getWH(props: Record<string, string | number>): {
-    w: number;
-    h: number;
-  };
+export abstract class Shape {
+  constructor(readonly name: "square", readonly props: ShapeProps) {}
+
+  protected abstract renderer(props: Record<string, string | number>): Cash;
+
+  protected getBox(props: ShapeProps): {
+    width: number;
+    height: number;
+  } {
+    const a = ((45 - (props.rotation % 90)) * Math.PI) / 180;
+    const width = Math.ceil(props.width * Math.sqrt(2) * Math.cos(a));
+    const height = Math.ceil(props.height * Math.sqrt(2) * Math.cos(a));
+    return { width, height };
+  }
+
+  private getTransform(width: number, height: number) {
+    const dx = Math.ceil((width - this.props.width) / 2);
+    const dy = Math.ceil((height - this.props.height) / 2);
+    const cx = Math.ceil(this.props.width / 2);
+    const cy = Math.ceil(this.props.height / 2);
+    return { dx, dy, cx, cy };
+  }
 
   toString(): string {
-    const wh = this.getWH(this.props);
-    const width = Math.ceil(wh.w / 2);
-    const height = Math.ceil(wh.h / 2);
-    const viewBox = `-${width} -${height} ${wh.w} ${wh.h}`;
-    const svg = $("<svg/>").attr("viewBox", viewBox).width(wh.w).height(wh.h);
-    return this.renderer(svg, this.props);
+    const shape = this.renderer(this.props);
+    const { width, height } = this.getBox(this.props);
+    const { dx, dy, cx, cy } = this.getTransform(width, height);
+    const svg = this.getSvg(width, height, shape, dx, dy, cx, cy);
+    return svg[0]?.outerHTML ?? "";
+  }
+
+  private getSvg(
+    width: number,
+    height: number,
+    shape: Cash,
+    dx: number,
+    dy: number,
+    cx: number,
+    cy: number
+  ) {
+    return $("<svg/>")
+      .width(width)
+      .height(height)
+      .append(
+        shape.attr(
+          "transform",
+          `translate(${dx} ${dy}) rotate(${this.props.rotation} ${cx} ${cy})`
+        )
+      );
   }
 }
 
 export class Square extends Shape {
   constructor(size: number, color: string, rotation = 0) {
-    super("square", { size, color, rotation });
+    super("square", { size, width: size, height: size, color, rotation });
   }
 
-  protected getWH(props: Record<string, number | string>): {
-    w: number;
-    h: number;
-  } {
-    const size = props.size as number;
-    const angle = props.rotation as number;
-    const a = ((45 - (angle % 90)) * Math.PI) / 180;
-    const d = Math.ceil(size * Math.sqrt(2) * Math.cos(a));
-    return { w: d, h: d };
-  }
-
-  protected renderer(
-    svg: Cash,
-    props: Record<string, number | string>
-  ): string {
-    return (
-      svg.append(
-        $("<rect/>")
-          .attr("width", String(props.size))
-          .attr("height", String(props.size))
-          .attr("x", String(-Math.ceil((props.size as number) / 2)))
-          .attr("y", String(-Math.ceil((props.size as number) / 2)))
-          .attr("fill", String(props.color))
-          .attr("transform", `rotate(${props.rotation})`)
-      )[0]?.outerHTML ?? ""
-    );
+  protected renderer(props: Record<string, number | string>): Cash {
+    return $("<rect/>")
+      .attr("width", String(props.size))
+      .attr("height", String(props.size))
+      .attr("fill", String(props.color));
   }
 }
