@@ -10,7 +10,7 @@ import {
   alreadyDefError,
   interruptionError,
 } from "./error";
-import { Shape } from "./shape";
+import { Shape, Square } from "./shape";
 
 export interface IContext {
   get(index: number): [string, number];
@@ -82,10 +82,16 @@ export class HeyActions {
     return result;
   }
 
-  square(ctx: IContext, size: V<number>, color: V<string>): Shape {
+  square(
+    ctx: IContext,
+    size: V<number>,
+    color: V<string>,
+    rotation: V<number> = 0
+  ): Shape {
     if (!isNumber(size)) throw numberError(...ctx.get(0), size);
     if (!isColor(color)) throw colorError(...ctx.get(1), color);
-    return new Shape("square", { size, color });
+    if (!isNumber(rotation)) throw colorError(...ctx.get(1), rotation);
+    return new Square(size, color, rotation);
   }
 
   async concat(ctx: IContext, values: unknown[]): Promise<unknown[]> {

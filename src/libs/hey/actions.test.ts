@@ -1,6 +1,5 @@
 import test from "tape";
 import { HeyActions, IContext } from "./actions";
-import { Shape } from "./shape";
 import { Env } from "./env";
 import { HeyError } from "./error";
 
@@ -48,7 +47,10 @@ test("Range error", async (t) => {
 
 test("Square", (t) => {
   const result = actions.square(new TestContext(), 1, "blue");
-  t.deepEqual(result, new Shape("square", { size: 1, color: "blue" }));
+  t.deepLooseEqual(result, {
+    name: "square",
+    props: { size: 1, color: "blue", rotation: 0 },
+  });
   t.end();
 });
 

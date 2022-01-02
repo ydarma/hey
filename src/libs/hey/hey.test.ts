@@ -30,6 +30,23 @@ test("Range", async (t) => {
   t.end();
 });
 
+const rotateProg = `
+square(3 green 45)
+`;
+
+test("Square", async (t) => {
+  const result = await hey(rotateProg);
+  if (result instanceof Shape) {
+    t.equal(result.name, "square");
+    t.deepEqual(result.props, {
+      size: 3,
+      color: "green",
+      rotation: 45,
+    });
+  } else t.fail();
+  t.end();
+});
+
 const squareProg = `
 square(3 green)
 `;
@@ -41,6 +58,7 @@ test("Square", async (t) => {
     t.deepEqual(result.props, {
       size: 3,
       color: "green",
+      rotation: 0,
     });
   } else t.fail();
   t.end();
@@ -49,7 +67,10 @@ test("Square", async (t) => {
 test("Square as value", async (t) => {
   const result = await hey("square");
   t.equal(typeof result, "function");
-  t.equal(String(result), "(size color) -> square(size color)");
+  t.equal(
+    String(result),
+    "(size color rotation?) -> square(size color rotation?)"
+  );
   t.end();
 });
 
@@ -65,6 +86,7 @@ test("User function", async (t) => {
     t.deepEqual(result.props, {
       size: 3,
       color: "green",
+      rotation: 0,
     });
     t.equal(fun.toString(), "(size) -> square(size green)");
   } else t.fail();
@@ -97,6 +119,7 @@ test("Define", async (t) => {
     t.deepEqual(result.props, {
       size: 1,
       color: "blue",
+      rotation: 0,
     });
   } else t.fail();
   t.end();
@@ -104,8 +127,8 @@ test("Define", async (t) => {
 
 test("Error", async (t) => {
   t.plan(3);
-  await hey("def Az 40\n\nsquare(1 black Az)").catch((e: HeyError) =>
-    t.ok(isError("expected 2 argument(s), got 3", 3, 1)(e))
+  await hey("def Az 40\n\nsquare(1 black Az 0)").catch((e: HeyError) =>
+    t.ok(isError("expected 3 argument(s), got 4", 3, 1)(e))
   );
   await hey("square(\n1\ntransparent\n)").catch((e: HeyError) =>
     t.ok(isError("expected identifier, got transparent", 3, 1)(e))

@@ -17,7 +17,7 @@ function getActions(
 ): ohm.ActionDict<
   Promise<unknown> | Action<keyof ExecActions> | number | string
 > {
-  const squareFun = sys("square", ["size", "color"]);
+  const squareFun = sys("square", ["size", "color", "rotation?"]);
   const rangeFun = sys("range", ["start", "end", "step"]);
   const adaLovelaceFun = sys("adaLovelace", ["n"]);
   const concatFun = sys("concat", ["values"]);
@@ -94,7 +94,8 @@ function getActions(
 
     Square: (call): Action<"square"> =>
       f(
-        (ctx, size, color, ...o) => squareFun(ctx, size, color, ...o),
+        (ctx, size, color, rotation, ...o) =>
+          squareFun(ctx, size, color, rotation, ...o),
         squareFun.toString
       ),
 

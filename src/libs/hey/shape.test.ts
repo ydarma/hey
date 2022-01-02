@@ -1,9 +1,12 @@
 import test from "tape";
-import { Shape } from "./shape";
+import { Square } from "./shape";
 
 test("Square", (t) => {
-  const shape = new Shape("square", { size: 1, color: "blue" });
+  const shape = new Square(10, "blue", 45);
   const svg = shape.toString();
-  t.true(svg.includes('<rect width="1" height="1" fill="blue"></rect>'));
+  t.equal(
+    svg,
+    '<svg viewbox="-8 -8 15 15" style="width: 15px; height: 15px;"><rect width="10" height="10" x="-5" y="-5" fill="blue" transform="rotate(45)"></rect></svg>'
+  );
   t.end();
 });
