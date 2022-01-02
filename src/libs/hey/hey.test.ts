@@ -1,5 +1,5 @@
 import test from "tape";
-import { Shape } from "./shape";
+import { Merge, Square } from "./shape";
 import fs from "fs";
 import path from "path";
 import { heyLoader } from "./hey";
@@ -36,13 +36,11 @@ square(3 green 45)
 
 test("Square", async (t) => {
   const result = await hey(rotateProg);
-  if (result instanceof Shape) {
+  if (result instanceof Square) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
-      size: 3,
       width: 3,
       height: 3,
-      color: "green",
       rotation: 45,
     });
   } else t.fail();
@@ -55,13 +53,11 @@ square(3 green)
 
 test("Square", async (t) => {
   const result = await hey(squareProg);
-  if (result instanceof Shape) {
+  if (result instanceof Square) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
-      size: 3,
       width: 3,
       height: 3,
-      color: "green",
       rotation: 0,
     });
   } else t.fail();
@@ -88,10 +84,8 @@ test("User function", async (t) => {
     const result = await fun(["fake context"], 3);
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
-      size: 3,
       width: 3,
       height: 3,
-      color: "green",
       rotation: 0,
     });
     t.equal(fun.toString(), "(size) -> square(size green)");
@@ -120,13 +114,11 @@ a(1)
 
 test("Define", async (t) => {
   const result = await hey(defTestProg);
-  if (result instanceof Shape) {
+  if (result instanceof Square) {
     t.equal(result.name, "square");
     t.deepEqual(result.props, {
-      size: 1,
       width: 1,
       height: 1,
-      color: "blue",
       rotation: 0,
     });
   } else t.fail();
@@ -397,5 +389,35 @@ gt(num(3) num(2))
 test("Recursion", async (t) => {
   const result = await hey(recursionTestProg);
   t.equal(result, 1);
+  t.end();
+});
+
+const mergeTestProg = `
+def sq1 square(58 "red")
+def sq2 square(40 "green" 45)
+merge(sq1 sq2)
+`;
+
+test("Merge", async (t) => {
+  const result = await hey(mergeTestProg);
+  if (result instanceof Merge) {
+    t.deepLooseEqual(result, {
+      name: "merge",
+      shape1: {
+        name: "square",
+        props: { width: 58, height: 58, rotation: 0 },
+        size: 58,
+        color: "red",
+      },
+      shape2: {
+        name: "square",
+        props: { width: 40, height: 40, rotation: 45 },
+        size: 40,
+        color: "green",
+      },
+      vector: "center",
+      props: { width: 58, height: 58, rotation: 0 },
+    });
+  } else t.fail();
   t.end();
 });

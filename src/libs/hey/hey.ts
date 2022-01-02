@@ -18,6 +18,7 @@ function getActions(
   Promise<unknown> | Action<keyof ExecActions> | number | string
 > {
   const squareFun = sys("square", ["size", "color", "rotation?"]);
+  const mergeFun = sys("merge", ["shape1", "shape2", "vector?", "rotation?"]);
   const rangeFun = sys("range", ["start", "end", "step"]);
   const adaLovelaceFun = sys("adaLovelace", ["n"]);
   const concatFun = sys("concat", ["values"]);
@@ -96,6 +97,13 @@ function getActions(
       f(
         (ctx, size, color, rotation, ...o) =>
           squareFun(ctx, size, color, rotation, ...o),
+        squareFun.toString
+      ),
+
+    Merge: (call): Action<"merge"> =>
+      f(
+        (ctx, shape1, shape2, vector, rotation, ...o) =>
+          mergeFun(ctx, shape1, shape2, vector, rotation, ...o),
         squareFun.toString
       ),
 

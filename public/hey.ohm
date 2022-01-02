@@ -5,10 +5,11 @@ HeyGrammar {
 
   Result = Call (lpar Val* rpar)*
     
-  Call = Range | AdaLovelace | Square | Concat | Repeat | Slice | Function | Known
+  Call = Range | AdaLovelace | Square | Merge | Concat | Repeat | Slice | Function | Known
   Range = #("range" ~nameEnd)
   AdaLovelace = #("ada-lovelace" ~nameEnd)
   Square = #("square" ~nameEnd)
+  Merge = #("merge" ~nameEnd)
   Concat = #(("concat" | "c") ~nameEnd)
   Repeat = #(("repeat" | "r") ~nameEnd)
   Slice = #(("slice" | "s") ~nameEnd)
@@ -28,7 +29,7 @@ HeyGrammar {
   colon = ":"
   arrow = "->" | ":"
   reserved = ("def" | "fun" | builtin | color) ~nameEnd
-  builtin = ("range" | "ada-lovelace" | "square" | "concat" | "c" | "repeat" | "r" | "slice" | "s" ) ~nameEnd
+  builtin = ("range" | "ada-lovelace" | "square" | "merge" | "concat" | "c" | "repeat" | "r" | "slice" | "s" ) ~nameEnd
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"

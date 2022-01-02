@@ -49,7 +49,33 @@ test("Square", (t) => {
   const result = actions.square(new TestContext(), 1, "blue");
   t.deepLooseEqual(result, {
     name: "square",
-    props: { size: 1, width: 1, height: 1, color: "blue", rotation: 0 },
+    props: { width: 1, height: 1, rotation: 0 },
+    size: 1,
+    color: "blue",
+  });
+  t.end();
+});
+
+test("Merge", (t) => {
+  const sq1 = actions.square(new TestContext(), 58, "red");
+  const sq2 = actions.square(new TestContext(), 40, "green", 45);
+  const result = actions.merge(new TestContext(), sq1, sq2);
+  t.deepLooseEqual(result, {
+    name: "merge",
+    shape1: {
+      name: "square",
+      props: { width: 58, height: 58, rotation: 0 },
+      size: 58,
+      color: "red",
+    },
+    shape2: {
+      name: "square",
+      props: { width: 40, height: 40, rotation: 45 },
+      size: 40,
+      color: "green",
+    },
+    vector: "center",
+    props: { width: 58, height: 58, rotation: 0 },
   });
   t.end();
 });

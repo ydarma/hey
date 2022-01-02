@@ -10,7 +10,7 @@ import {
   alreadyDefError,
   interruptionError,
 } from "./error";
-import { Shape, Square } from "./shape";
+import { Merge, Shape, Square } from "./shape";
 
 export interface IContext {
   get(index: number): [string, number];
@@ -92,6 +92,19 @@ export class HeyActions {
     if (!isColor(color)) throw colorError(...ctx.get(1), color);
     if (!isNumber(rotation)) throw colorError(...ctx.get(1), rotation);
     return new Square(size, color, rotation);
+  }
+
+  merge(
+    ctx: IContext,
+    shape1: V<Shape>,
+    shape2: V<Shape>,
+    vector: V<string> = "center",
+    rotation: V<number> = 0
+  ): Shape {
+    if (!isShape(shape1)) throw numberError(...ctx.get(0), shape1);
+    if (!isShape(shape2)) throw numberError(...ctx.get(1), shape2);
+    if (!isNumber(rotation)) throw numberError(...ctx.get(2), rotation);
+    return new Merge(shape1, shape2, vector, rotation);
   }
 
   async concat(ctx: IContext, values: unknown[]): Promise<unknown[]> {
@@ -200,4 +213,8 @@ function isFunction(
 
 function isData(callable: unknown): callable is unknown[] {
   return Array.isArray(callable);
+}
+
+function isShape(shape: V<Shape>): shape is Shape {
+  return shape instanceof Shape;
 }
