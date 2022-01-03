@@ -11,6 +11,7 @@ import {
   interruptionError,
 } from "./error";
 import { Composite, Shape, Square } from "./shape";
+import { vector, Vector } from "./vector";
 
 export interface IContext {
   get(index: number): [string, number];
@@ -148,12 +149,10 @@ export class HeyActions {
     );
   }
 
-  vector(ctx: IContext, x: V<number>, y: V<number>): (k: "x" | "y") => number {
+  vector(ctx: IContext, x: V<number>, y: V<number>): Vector {
     if (!isNumber(x)) throw numberError(...ctx.get(1), x);
     if (!isNumber(y)) throw numberError(...ctx.get(2), y);
-    const vect = (k: "x" | "y") => (k == "x" ? x : y);
-    vect.toString = () => `(x:${x} y:${y})`;
-    return vect;
+    return vector(x, y);
   }
 
   funct<T>(
