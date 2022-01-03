@@ -101,8 +101,14 @@ export class Composite extends Shape {
       .append(super.r(this.shape1, v1))
       .append(super.r(this.shape2, v2));
   }
-  protected transform(shape: Cash): Cash {
-    return shape.attr("transform", `rotate(${this.props.rotation})`);
+  protected transform(
+    shape: Cash,
+    dx: number,
+    dy: number,
+    tx: number,
+    ty: number
+  ): Cash {
+    return super.transform(shape, 0, 0, tx, ty);
   }
 }
 
