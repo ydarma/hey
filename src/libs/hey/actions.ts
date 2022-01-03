@@ -10,7 +10,7 @@ import {
   alreadyDefError,
   interruptionError,
 } from "./error";
-import { Merge, Shape, Square } from "./shape";
+import { Composite, Shape, Square } from "./shape";
 
 export interface IContext {
   get(index: number): [string, number];
@@ -104,7 +104,7 @@ export class HeyActions {
     if (!isShape(shape1)) throw numberError(...ctx.get(0), shape1);
     if (!isShape(shape2)) throw numberError(...ctx.get(1), shape2);
     if (!isNumber(rotation)) throw numberError(...ctx.get(2), rotation);
-    return new Merge(shape1, shape2, vector, rotation);
+    return new Composite(shape1, shape2, vector, rotation);
   }
 
   async concat(ctx: IContext, values: unknown[]): Promise<unknown[]> {
@@ -152,7 +152,7 @@ export class HeyActions {
     if (!isNumber(x)) throw numberError(...ctx.get(1), x);
     if (!isNumber(y)) throw numberError(...ctx.get(2), y);
     const vect = (k: "x" | "y") => (k == "x" ? x : y);
-    vect.toString = () => `[${x} ${y}]`;
+    vect.toString = () => `(x:${x} y:${y})`;
     return vect;
   }
 

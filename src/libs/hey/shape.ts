@@ -6,8 +6,10 @@ type ShapeProps = {
   rotation: number;
 };
 
+type ShapeName = "square" | "composite";
+
 export abstract class Shape {
-  constructor(readonly name: "square" | "merge", readonly props: ShapeProps) {}
+  constructor(readonly name: ShapeName, readonly props: ShapeProps) {}
 
   protected abstract render(): Cash;
 
@@ -75,14 +77,14 @@ export class Square extends Shape {
   }
 }
 
-export class Merge extends Shape {
+export class Composite extends Shape {
   constructor(
     private shape1: Shape,
     private shape2: Shape,
     private vector = "center",
     rotation = 0
   ) {
-    super("merge", {
+    super("composite", {
       width: Math.max(shape1.props.width, shape2.props.width),
       height: Math.max(shape1.props.height, shape2.props.height),
       rotation,

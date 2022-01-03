@@ -1,5 +1,5 @@
 import test from "tape";
-import { Merge, Square } from "./shape";
+import { Composite, Square } from "./shape";
 
 test("Square", (t) => {
   const shape = new Square(10, "blue", 45);
@@ -11,10 +11,10 @@ test("Square", (t) => {
   t.end();
 });
 
-test("Merge", (t) => {
+test("Composite", (t) => {
   const shape1 = new Square(58, "green");
   const shape2 = new Square(40, "blue", 45);
-  const shape = new Merge(shape1, shape2);
+  const shape = new Composite(shape1, shape2);
   const svg = shape.toString();
   t.equal(
     svg,

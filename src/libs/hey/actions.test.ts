@@ -61,7 +61,7 @@ test("Merge", (t) => {
   const sq2 = actions.square(new TestContext(), 40, "green", 45);
   const result = actions.merge(new TestContext(), sq1, sq2);
   t.deepLooseEqual(result, {
-    name: "merge",
+    name: "composite",
     shape1: {
       name: "square",
       props: { width: 58, height: 58, rotation: 0 },

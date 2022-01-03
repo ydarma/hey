@@ -1,5 +1,5 @@
 import test from "tape";
-import { Merge, Square } from "./shape";
+import { Composite, Square } from "./shape";
 import fs from "fs";
 import path from "path";
 import { heyLoader } from "./hey";
@@ -400,9 +400,9 @@ merge(sq1 sq2)
 
 test("Merge", async (t) => {
   const result = await hey(mergeTestProg);
-  if (result instanceof Merge) {
+  if (result instanceof Composite) {
     t.deepLooseEqual(result, {
-      name: "merge",
+      name: "composite",
       shape1: {
         name: "square",
         props: { width: 58, height: 58, rotation: 0 },
@@ -434,7 +434,7 @@ test("Vector", async (t) => {
   t.equal(result[1]("y"), 3);
   t.deepEqual(
     result.map((f) => f.toString()),
-    ["[3 4]", "[4 3]"]
+    ["(x:3 y:4)", "(x:4 y:3)"]
   );
   t.end();
 });
