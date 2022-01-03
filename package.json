@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "VUE_APP_TOC=`ls -1 ./public/book` vue-cli-service serve",
+    "serve": "PORT=8090 VUE_APP_TOC=`ls -1 ./public/book` vue-cli-service serve",
     "build": "VUE_APP_TOC=`ls -1 ./public/book` vue-cli-service build",
     "deploy": "npm run build ; rm -rf ./ydarma.github.io/*.js ./ydarma.github.io/js/* ./ydarma.github.io/book/* ./ydarma.github.io/css/*; cp -r ./dist/* ./ydarma.github.io/ ; cd ./ydarma.github.io/ ; git add . ; git commit -m release; git push",
     "lint": "vue-cli-service lint",

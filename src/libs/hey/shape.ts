@@ -1,24 +1,24 @@
 import $, { Cash } from "cash-dom";
-import { isVector, mul, vector, Vector } from "./vector";
-
-type ShapeProps = {
-  width: number;
-  height: number;
-  rotation: number;
-};
-
-type ShapeName = "square" | "composite";
+import { add, isVector, mul, rot, vector, Vector } from "./vector";
 
 export abstract class Shape {
-  constructor(readonly name: ShapeName, readonly props: ShapeProps) {}
+  constructor(readonly name: string) {}
 
   protected abstract render(): Cash;
+  abstract getBox(t: number): { width: number; height: number };
+  abstract getTransform(): {
+    dx: number;
+    dy: number;
+    cx: number;
+    cy: number;
+    rotation: number;
+  };
 
   toString(): string {
     const { width, height, transformed } = this.t();
-    const viewBox = `-${Math.round(width / 2)} -${Math.round(
-      height / 2
-    )} ${width} ${height}`;
+    const w = Math.ceil(width / 2);
+    const h = Math.ceil(height / 2);
+    const viewBox = `-${w} -${h} ${w * 2} ${h * 2}`;
     const svg = $("<svg>")
       .attr("viewBox", viewBox)
       .width(width)
@@ -29,24 +29,32 @@ export abstract class Shape {
 
   private t(tx = 0, ty = 0) {
     const shape = this.render();
-    const { width, height } = getBox(this.props);
-    const { dx, dy } = getTransform(this.props);
-    const transformed = this.transform(shape, dx, dy, tx, ty);
+    const { width, height } = this.getBox(0);
+    const { dx, dy, cx, cy, rotation } = this.getTransform();
+    const transformed = this.transform(
+      shape,
+      rotation,
+      dx - tx,
+      dy - ty,
+      cx,
+      cy
+    );
     return { width, height, transformed };
   }
 
   protected transform(
     shape: Cash,
+    rotation: number,
     dx: number,
     dy: number,
-    tx: number,
-    ty: number
+    cx: number,
+    cy: number
   ): Cash {
     return shape.attr(
       "transform",
-      `translate(${-dx + tx} ${-dy + ty}) rotate(${
-        this.props.rotation
-      } ${dx} ${dy})`
+      `translate(${-Math.round(dx)} ${-Math.round(
+        dy
+      )}) rotate(${rotation} ${Math.round(cx)} ${Math.round(cy)})`
     );
   }
 
@@ -57,8 +65,37 @@ export abstract class Shape {
 }
 
 export class Square extends Shape {
-  constructor(private size: number, private color: string, rotation = 0) {
-    super("square", { width: size, height: size, rotation });
+  constructor(
+    private size: number,
+    private color: string,
+    private rotation = 0
+  ) {
+    super("square");
+  }
+
+  getBox(t: number): {
+    width: number;
+    height: number;
+    a: number;
+  } {
+    const o = Math.atan(this.size / this.size);
+    const a = ((this.rotation + t) * Math.PI) / 180;
+    const r = Math.sqrt(2 * this.size * this.size);
+    const width = Math.abs(r * Math.cos(a - o));
+    const height = Math.abs(r * Math.sin(a + o));
+    return { width, height, a };
+  }
+
+  getTransform(): {
+    dx: number;
+    dy: number;
+    cx: number;
+    cy: number;
+    rotation: number;
+  } {
+    const dx = this.size / 2;
+    const dy = this.size / 2;
+    return { dx, dy, cx: dx, cy: dy, rotation: this.rotation };
   }
 
   protected render(): Cash {
@@ -76,75 +113,75 @@ export class Composite extends Shape {
     private shape1: Shape,
     private shape2: Shape,
     vect: Vector | "center" = "center",
-    rotation = 0
+    private rotation = 0
   ) {
-    super("composite", {
-      width: computeWidth(
-        getBox(shape1.props).width,
-        getBox(shape2.props).width,
-        vect
-      ),
-      height: computeHeight(
-        getBox(shape1.props).height,
-        getBox(shape2.props).height,
-        vect
-      ),
-      rotation,
-    });
-    this.vector = isVector(vect) ? vect : vector(0, 0);
+    super("composite");
+    this.vector = toVector(vect);
   }
 
   protected render(): Cash {
-    const v1 = mul(-0.5, this.vector);
-    const v2 = mul(0.5, this.vector);
+    const { width: w1, height: h1 } = this.shape1.getBox(0);
+    const { width: w2, height: h2 } = this.shape2.getBox(0);
+    const { width, height } = this.getBox(0);
+    const dw1 = (w1 - width) / 2;
+    const dh1 = (h1 - height) / 2;
+    const dw2 = (width - w2) / 2;
+    const dh2 = (height - h2) / 2;
+    const t1 = vector(
+      w1 > w2 ? dw1 : dw2 - this.vector("x"),
+      h1 > h2 ? dh1 : dh2 - this.vector("y")
+    );
+    const t2 = vector(
+      w1 > w2 ? dw1 + this.vector("x") : dw2,
+      h1 > h2 ? dh1 + this.vector("y") : dh2
+    );
     return $("<g>")
-      .append(super.r(this.shape1, v1))
-      .append(super.r(this.shape2, v2));
+      .append(super.r(this.shape1, t1))
+      .append(super.r(this.shape2, t2));
   }
-  protected transform(
-    shape: Cash,
-    dx: number,
-    dy: number,
-    tx: number,
-    ty: number
-  ): Cash {
-    return super.transform(shape, 0, 0, tx, ty);
+
+  getTransform(): {
+    dx: number;
+    dy: number;
+    cx: number;
+    cy: number;
+    rotation: number;
+  } {
+    return {
+      dx: 0,
+      dy: 0,
+      cx: 0,
+      cy: 0,
+      rotation: this.rotation,
+    };
+  }
+
+  getBox(t: number): { width: number; height: number } {
+    return {
+      width: computeWidth(
+        this.shape1.getBox(this.rotation + t).width,
+        this.shape2.getBox(this.rotation + t).width,
+        rot(this.rotation + t, this.vector)("x")
+      ),
+      height: computeHeight(
+        this.shape1.getBox(this.rotation + t).height,
+        this.shape2.getBox(this.rotation + t).height,
+        rot(this.rotation + t, this.vector)("y")
+      ),
+    };
   }
 }
 
-function getTransform(props: ShapeProps) {
-  const dx = Math.round(props.width / 2);
-  const dy = Math.round(props.height / 2);
-  return { dx, dy };
-}
-
-function getBox(props: ShapeProps): {
-  width: number;
-  height: number;
-  a: number;
-} {
-  const o = Math.atan(props.height / props.width);
-  const a = (props.rotation * Math.PI) / 180;
-  const r = Math.sqrt(props.height * props.height + props.width * props.width);
-  const width = Math.abs(Math.round(r * Math.cos(a - o)));
-  const height = Math.abs(Math.round(r * Math.sin(a + o)));
-  return { width, height, a };
-}
-
-function computeWidth(width1: number, width2: number, vect: Vector | "center") {
-  return Math.max(
-    width1,
-    width2,
-    Math.round((width1 + width2) / 2) + (isVector(vect) ? vect("x") : 0)
-  );
+function computeWidth(width1: number, width2: number, d: number) {
+  return Math.max(width1, width2, (width1 + width2) / 2 + Math.abs(d));
 }
 
 type VectorPos = Vector | "center";
 
-function computeHeight(height1: number, height2: number, vect: VectorPos) {
-  return Math.max(
-    height1,
-    height2,
-    Math.round((height1 + height2) / 2) + (isVector(vect) ? vect("y") : 0)
-  );
+function computeHeight(height1: number, height2: number, d: number) {
+  return Math.max(height1, height2, (height1 + height2) / 2 + Math.abs(d));
+}
+
+function toVector(v: VectorPos): Vector {
+  return isVector(v) ? v : vector(0, 0);
 }
