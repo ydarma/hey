@@ -9,6 +9,8 @@ import {
   dataError,
   alreadyDefError,
   interruptionError,
+  shapeError,
+  vectorError,
 } from "./error";
 import { Composite, Shape, Square } from "./shape";
 import { vector, Vector } from "./vector";
@@ -99,12 +101,13 @@ export class HeyActions {
     ctx: IContext,
     shape1: V<Shape>,
     shape2: V<Shape>,
-    vector: V<string> = "center",
+    vector: V<Vector | "center"> = "center",
     rotation: V<number> = 0
   ): Shape {
-    if (!isShape(shape1)) throw numberError(...ctx.get(0), shape1);
-    if (!isShape(shape2)) throw numberError(...ctx.get(1), shape2);
-    if (!isNumber(rotation)) throw numberError(...ctx.get(2), rotation);
+    if (!isShape(shape1)) throw shapeError(...ctx.get(0), shape1);
+    if (!isShape(shape2)) throw shapeError(...ctx.get(1), shape2);
+    if (!isVector(vector)) throw vectorError(...ctx.get(2), vector);
+    if (!isNumber(rotation)) throw numberError(...ctx.get(3), rotation);
     return new Composite(shape1, shape2, vector, rotation);
   }
 
@@ -224,4 +227,8 @@ function isData(callable: unknown): callable is unknown[] {
 
 function isShape(shape: V<Shape>): shape is Shape {
   return shape instanceof Shape;
+}
+
+function isVector(vector: V<Vector | "center">): vector is Vector | "center" {
+  return typeof vector == "function" || vector === "center";
 }

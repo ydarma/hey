@@ -37,6 +37,22 @@ export function colorError(
   return error(source, pos, "color", symbol);
 }
 
+export function shapeError(
+  source: string,
+  pos: number,
+  symbol: string
+): HeyError {
+  return error(source, pos, "shape", symbol);
+}
+
+export function vectorError(
+  source: string,
+  pos: number,
+  symbol: string
+): HeyError {
+  return error(source, pos, "vector", symbol);
+}
+
 export function numberError(
   source: string,
   pos: number,
