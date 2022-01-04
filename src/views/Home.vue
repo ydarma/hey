@@ -141,7 +141,8 @@ export default defineComponent({
 }
 
 .out::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
+  height: 8px;
 }
 /* Handle */
 .out::-webkit-scrollbar-thumb {

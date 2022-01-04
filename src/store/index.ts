@@ -31,7 +31,6 @@ export default createStore({
       }
     },
     async clear({ commit }) {
-      console.log("cancel");
       cancel();
       commit("setOutput", undefined);
       commit("setError", undefined);

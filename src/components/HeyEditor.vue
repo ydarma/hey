@@ -30,7 +30,6 @@ export default defineComponent({
   },
   updated() {
     this.height = (this.$refs.editor as HTMLElement).clientHeight;
-    console.log(this.height);
   },
   mounted() {
     this.fit(this.$refs.container as HTMLElement);

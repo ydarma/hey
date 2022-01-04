@@ -16,13 +16,13 @@ export abstract class Shape {
 
   toString(): string {
     const { width, height, transformed } = this.t();
-    const w = Math.ceil(width / 2);
-    const h = Math.ceil(height / 2);
+    const w = Math.ceil((width / 2) * 1.1);
+    const h = Math.ceil((height / 2) * 1.1);
     const viewBox = `-${w} -${h} ${w * 2} ${h * 2}`;
     const svg = $("<svg>")
       .attr("viewBox", viewBox)
-      .width(width)
-      .height(height)
+      .width(w * 2)
+      .height(h * 2)
       .append(transformed);
     return svg[0]?.outerHTML ?? "";
   }
@@ -79,7 +79,7 @@ export class Square extends Shape {
     a: number;
   } {
     const o = Math.atan(this.size / this.size);
-    const a = ((this.rotation + t) * Math.PI) / 180;
+    const a = (((180 + this.rotation + t) % 90) * Math.PI) / 180;
     const r = Math.sqrt(2 * this.size * this.size);
     const width = Math.abs(r * Math.cos(a - o));
     const height = Math.abs(r * Math.sin(a + o));
@@ -120,9 +120,16 @@ export class Composite extends Shape {
   }
 
   protected render(): Cash {
+    const { t1, t2 } = this.getTranslations();
+    return $("<g>")
+      .append(super.r(this.shape1, t1))
+      .append(super.r(this.shape2, t2));
+  }
+
+  private getTranslations() {
     const { width: w1, height: h1 } = this.shape1.getBox(0);
     const { width: w2, height: h2 } = this.shape2.getBox(0);
-    const { width, height } = this.getBox(0);
+    const { width, height } = this.getBox(-this.rotation);
     const dw1 = (w1 - width) / 2;
     const dh1 = (h1 - height) / 2;
     const dw2 = (width - w2) / 2;
@@ -135,9 +142,7 @@ export class Composite extends Shape {
       w1 > w2 ? dw1 + this.vector("x") : dw2,
       h1 > h2 ? dh1 + this.vector("y") : dh2
     );
-    return $("<g>")
-      .append(super.r(this.shape1, t1))
-      .append(super.r(this.shape2, t2));
+    return { t1, t2 };
   }
 
   getTransform(): {
