@@ -23,13 +23,17 @@ export abstract class Shape {
 
   toString(): string {
     const { x, y, width, height, transformed } = this.t();
-    const viewBox = `${x} ${y} ${width} ${height}`;
+    const viewBox = this.getViewBox(x ?? 0, y ?? 0, width, height);
     const svg = $("<svg>")
       .attr("viewBox", viewBox)
       .width(width)
       .height(height)
       .append(transformed);
     return svg[0]?.outerHTML ?? "";
+  }
+
+  private getViewBox(x: number, y: number, width: number, height: number) {
+    return `${x} ${y} ${width} ${height}`;
   }
 
   private t(v = vector(0, 0)) {
