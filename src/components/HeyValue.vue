@@ -3,7 +3,7 @@
     <div v-if="isValue" :class="{ fun: isFunction }">
       {{ output }}
     </div>
-    <div v-if="isShape" v-html="output"></div>
+    <div v-if="isShape" v-html="output" class="shape"></div>
   </div>
 </template>
 
