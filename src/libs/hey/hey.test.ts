@@ -38,10 +38,11 @@ test("Square", async (t) => {
   const result = await hey(rotateProg);
   if (result instanceof Square) {
     t.equal(result.name, "square");
-    t.deepEqual(result.props, {
-      width: 3,
-      height: 3,
+    t.deepLooseEqual(result, {
+      name: "square",
+      size: 3,
       rotation: 45,
+      color: "green",
     });
   } else t.fail();
   t.end();
@@ -55,10 +56,11 @@ test("Square", async (t) => {
   const result = await hey(squareProg);
   if (result instanceof Square) {
     t.equal(result.name, "square");
-    t.deepEqual(result.props, {
-      width: 3,
-      height: 3,
+    t.deepLooseEqual(result, {
+      name: "square",
+      size: 3,
       rotation: 0,
+      color: "green",
     });
   } else t.fail();
   t.end();
@@ -83,10 +85,11 @@ test("User function", async (t) => {
   if (typeof fun == "function") {
     const result = await fun(["fake context"], 3);
     t.equal(result.name, "square");
-    t.deepEqual(result.props, {
-      width: 3,
-      height: 3,
+    t.deepLooseEqual(result, {
+      name: "square",
+      size: 3,
       rotation: 0,
+      color: "green",
     });
     t.equal(fun.toString(), "(size) -> square(size green)");
   } else t.fail();
@@ -116,10 +119,11 @@ test("Define", async (t) => {
   const result = await hey(defTestProg);
   if (result instanceof Square) {
     t.equal(result.name, "square");
-    t.deepEqual(result.props, {
-      width: 1,
-      height: 1,
+    t.deepLooseEqual(result, {
+      name: "square",
+      size: 1,
       rotation: 0,
+      color: "blue",
     });
   } else t.fail();
   t.end();
@@ -401,23 +405,11 @@ merge(sq1 sq2)
 test("Merge", async (t) => {
   const result = await hey(mergeTestProg);
   if (result instanceof Composite) {
-    t.deepLooseEqual(result, {
-      name: "composite",
-      shape1: {
-        name: "square",
-        props: { width: 58, height: 58, rotation: 0 },
-        size: 58,
-        color: "red",
-      },
-      shape2: {
-        name: "square",
-        props: { width: 40, height: 40, rotation: 45 },
-        size: 40,
-        color: "green",
-      },
-      vector: "center",
-      props: { width: 58, height: 58, rotation: 0 },
-    });
+    t.equal(result.name, "composite");
+    t.equal(Reflect.get(result, "shape1").name, "square");
+    t.equal(Reflect.get(result, "shape1").size, 58);
+    t.equal(Reflect.get(result, "shape2").name, "square");
+    t.equal(Reflect.get(result, "shape2").rotation, 45);
   } else t.fail();
   t.end();
 });

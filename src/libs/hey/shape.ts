@@ -41,8 +41,8 @@ export abstract class Shape {
   ) {
     return $("<svg>")
       .attr("viewBox", viewBox)
-      .width(width)
-      .height(height)
+      .width(width + 6)
+      .height(height + 6)
       .append(transformed);
   }
 
