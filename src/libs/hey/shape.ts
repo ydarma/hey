@@ -33,7 +33,7 @@ export abstract class Shape {
   }
 
   private getViewBox(x: number, y: number, width: number, height: number) {
-    return `${x} ${y} ${width} ${height}`;
+    return `${x - 3} ${y - 3} ${width + 6} ${height + 6}`;
   }
 
   private t(v = vector(0, 0)) {
@@ -118,8 +118,7 @@ export class Composite extends Shape {
   }
 
   protected render(): Cash {
-    const wh = this.getWH(-this.rotation);
-    const { t1, t2 } = this.getTranslations(wh, -this.rotation);
+    const { t1, t2 } = this.getTranslations(-this.rotation);
     return $("<g>")
       .append(super.r(this.shape1, t1))
       .append(super.r(this.shape2, t2));
@@ -127,7 +126,7 @@ export class Composite extends Shape {
 
   getBox(t: number): Box {
     const { width, height } = this.getWH(t);
-    const { tb1, tb2 } = this.getTranslations({ width, height }, t);
+    const { tb1, tb2 } = this.getTranslations(t);
     return {
       x: Math.min(tb1("x"), tb2("x")),
       y: Math.min(tb1("y"), tb2("y")),
@@ -150,23 +149,13 @@ export class Composite extends Shape {
     return { width, height };
   }
 
-  private getTranslations({ width, height }: Box, angle: number) {
+  private getTranslations(angle: number) {
     const t = this.rotation + angle;
     const { x: x1, y: y1, width: w1, height: h1 } = this.shape1.getBox(t);
-    const dw1 = (w1 - width) / 2;
-    const dh1 = (h1 - height) / 2;
     const { x: x2, y: y2, width: w2, height: h2 } = this.shape2.getBox(t);
-    const dw2 = (width - w2) / 2;
-    const dh2 = (height - h2) / 2;
     const r = rot(t, this.vector);
-    const t1 = vector(
-      w1 > w2 ? dw1 : dw2 - r("x"),
-      h1 > h2 ? dh1 : dh2 - r("y")
-    );
-    const t2 = vector(
-      w1 > w2 ? dw1 + r("x") : dw2,
-      h1 > h2 ? dh1 + r("y") : dh2
-    );
+    const t1 = vector((-r("x") * w2) / (w1 + w2), -(r("y") * h2) / (h1 + h2));
+    const t2 = vector((r("x") * w1) / (w1 + w2), (r("y") * h1) / (h1 + h2));
     const tb1 = add(vector(x1 ?? 0, y1 ?? 0), t1);
     const tb2 = add(vector(x2 ?? 0, y2 ?? 0), t2);
     return { t1, t2, tb1, tb2 };
