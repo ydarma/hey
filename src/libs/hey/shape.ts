@@ -18,17 +18,14 @@ export abstract class Shape {
   constructor(readonly name: string) {}
 
   protected abstract render(): Cash;
-  abstract getBox(t: number): Box;
+  abstract getBox(rotation: number): Box;
   abstract getTransform(): Transform;
 
   toString(): string {
-    const { x, y, width, height, transformed } = this.t();
+    const { x, y, width, height } = this.getBox(0);
     const viewBox = this.getViewBox(x ?? 0, y ?? 0, width, height);
-    const svg = $("<svg>")
-      .attr("viewBox", viewBox)
-      .width(width)
-      .height(height)
-      .append(transformed);
+    const transformed = this.transform();
+    const svg = this.svg(viewBox, width, height, transformed);
     return svg[0]?.outerHTML ?? "";
   }
 
@@ -36,20 +33,32 @@ export abstract class Shape {
     return `${x - 3} ${y - 3} ${width + 6} ${height + 6}`;
   }
 
-  private t(v = vector(0, 0)) {
+  private svg(
+    viewBox: string,
+    width: number,
+    height: number,
+    transformed: Cash
+  ) {
+    return $("<svg>")
+      .attr("viewBox", viewBox)
+      .width(width)
+      .height(height)
+      .append(transformed);
+  }
+
+  private transform(v = vector(0, 0)) {
     const shape = this.render();
-    const { x, y, width, height } = this.getBox(0);
     const { dx, dy, rotation } = this.getTransform();
-    const transformed = this.transform(
+    const transformed = this.transformSvg(
       shape,
       rotation,
       dx ?? 0 + v("x"),
       dy ?? 0 + v("y")
     );
-    return { x, y, width, height, transformed };
+    return transformed;
   }
 
-  protected transform(
+  protected transformSvg(
     shape: Cash,
     rotation: number,
     dx: number,
@@ -61,9 +70,8 @@ export abstract class Shape {
     );
   }
 
-  protected r(other: Shape, vector?: Vector): Cash {
-    const { transformed } = other.t(vector);
-    return transformed;
+  protected t(other: Shape, vector?: Vector): Cash {
+    return other.transform(vector);
   }
 }
 
@@ -76,12 +84,11 @@ export class Square extends Shape {
     super("square");
   }
 
-  getBox(t: number): Box {
-    const o = Math.atan(this.size / this.size);
-    const a = (((180 + this.rotation + t) % 90) * Math.PI) / 180;
+  getBox(rotation: number): Box {
+    const a = (((180 + this.rotation + rotation) % 90) * Math.PI) / 180;
     const r = Math.sqrt(2 * this.size * this.size);
-    const width = Math.abs(r * Math.cos(a - o));
-    const height = Math.abs(r * Math.sin(a + o));
+    const width = Math.abs(r * Math.cos(a - Math.PI / 4));
+    const height = Math.abs(r * Math.sin(a + Math.PI / 4));
     return {
       x: -width / 2,
       y: -height / 2,
@@ -118,18 +125,18 @@ export class Composite extends Shape {
   }
 
   protected render(): Cash {
-    const { t1, t2 } = this.getTranslations(-this.rotation);
+    const { trCenter1, trCenter2 } = this.getTranslations(-this.rotation);
     return $("<g>")
-      .append(super.r(this.shape1, t1))
-      .append(super.r(this.shape2, t2));
+      .append(super.t(this.shape1, trCenter1))
+      .append(super.t(this.shape2, trCenter2));
   }
 
-  getBox(t: number): Box {
-    const { width, height } = this.getWH(t);
-    const { tb1, tb2 } = this.getTranslations(t);
+  getBox(rotation: number): Box {
+    const { width, height } = this.getWH(rotation);
+    const { trOrigin1, trOrigin2 } = this.getTranslations(rotation);
     return {
-      x: Math.min(tb1("x"), tb2("x")),
-      y: Math.min(tb1("y"), tb2("y")),
+      x: Math.min(trOrigin1("x"), trOrigin2("x")),
+      y: Math.min(trOrigin1("y"), trOrigin2("y")),
       width,
       height,
     };
@@ -153,12 +160,14 @@ export class Composite extends Shape {
     const t = this.rotation + angle;
     const { x: x1, y: y1, width: w1, height: h1 } = this.shape1.getBox(t);
     const { x: x2, y: y2, width: w2, height: h2 } = this.shape2.getBox(t);
+    const a = w1 / (w1 + w2);
+    const b = h1 / (h1 + h2);
     const r = rot(t, this.vector);
-    const t1 = vector((-r("x") * w2) / (w1 + w2), -(r("y") * h2) / (h1 + h2));
-    const t2 = vector((r("x") * w1) / (w1 + w2), (r("y") * h1) / (h1 + h2));
-    const tb1 = add(vector(x1 ?? 0, y1 ?? 0), t1);
-    const tb2 = add(vector(x2 ?? 0, y2 ?? 0), t2);
-    return { t1, t2, tb1, tb2 };
+    const trCenter1 = vector(r("x") * (a - 1), r("y") * (b - 1));
+    const trCenter2 = vector(r("x") * a, r("y") * b);
+    const trOrigin1 = add(vector(x1 ?? 0, y1 ?? 0), trCenter1);
+    const trOrigin2 = add(vector(x2 ?? 0, y2 ?? 0), trCenter2);
+    return { trCenter1, trCenter2, trOrigin1, trOrigin2 };
   }
 
   private computeWidth(width1: number, width2: number, d: number) {
