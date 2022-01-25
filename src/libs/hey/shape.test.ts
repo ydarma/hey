@@ -1,5 +1,5 @@
 import test from "tape";
-import { Composite, Square } from "./shape";
+import { Composite, Parallelogram, Square } from "./shape";
 import { vector } from "./vector";
 
 test("Square", (t) => {
@@ -33,12 +33,12 @@ test("Composite with translation", (t) => {
   const svg = shape.toString();
   t.ok(
     svg.includes(
-      '<rect x="-29" y="-29" width="58" height="58" fill="green" transform="translate(-28'
+      '<rect x="-29" y="-29" width="58" height="58" fill="green" transform="tr'
     )
   );
   t.ok(
     svg.includes(
-      '<rect x="-20" y="-20" width="40" height="40" fill="blue" transform="translate(29'
+      '<rect x="-20" y="-20" width="40" height="40" fill="blue" transform="tr'
     )
   );
   t.end();
@@ -50,5 +50,16 @@ test("Composite with rotation", (t) => {
   const shape = new Composite(shape1, shape2, vector(58, 0), 45);
   const svg = shape.toString();
   t.ok(svg.includes('<g transform="translate(0 0) rotate(45)">'));
+  t.end();
+});
+
+test("Parallelogram", (t) => {
+  const parallelogram = new Parallelogram(50, 60, 70, "green");
+  const svg = parallelogram.toString();
+  t.ok(
+    svg.includes(
+      '<rect x="-35" y="-30" width="50" height="60" fill="green" transform="skewX(18.4349) tr'
+    )
+  );
   t.end();
 });

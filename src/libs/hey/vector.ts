@@ -25,3 +25,9 @@ export function rot(alpha: number, v: Vector): Vector {
 export function isVector(o: unknown): o is Vector {
   return typeof o == "function";
 }
+
+type VectorPos = Vector | "center";
+
+export function toVector(v: VectorPos): Vector {
+  return isVector(v) ? v : vector(0, 0);
+}

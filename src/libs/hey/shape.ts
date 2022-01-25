@@ -1,5 +1,5 @@
 import $, { Cash } from "cash-dom";
-import { add, isVector, rot, vector, Vector } from "./vector";
+import { add, isVector, rot, toVector, vector, Vector } from "./vector";
 
 type Transform = {
   dx?: number;
@@ -22,7 +22,7 @@ export abstract class Shape {
   abstract getTransform(): Transform;
 
   toString(): string {
-    const { x, y, width, height } = this.getBox(0);
+    const { x, y, width, height } = round4(this.getBox(0));
     const viewBox = this.getViewBox(x ?? 0, y ?? 0, width, height);
     const transformed = this.transform();
     const svg = this.svg(viewBox, width, height, transformed);
@@ -48,7 +48,7 @@ export abstract class Shape {
 
   private transform(v = vector(0, 0)) {
     const shape = this.render();
-    const { dx, dy, rotation } = this.getTransform();
+    const { dx, dy, rotation } = round4(this.getTransform());
     const transformed = this.transformSvg(
       shape,
       rotation,
@@ -64,14 +64,15 @@ export abstract class Shape {
     dx: number,
     dy: number
   ): Cash {
+    const tr = shape.attr("transform") ?? "";
     return shape.attr(
       "transform",
-      `translate(${dx} ${dy}) rotate(${rotation})`
+      `${tr} translate(${dx} ${dy}) rotate(${rotation})`.trim()
     );
   }
 
   protected t(other: Shape, vector?: Vector): Cash {
-    return other.transform(vector);
+    return other.transform(round4(vector));
   }
 }
 
@@ -84,11 +85,21 @@ export class Square extends Shape {
     super("square");
   }
 
+  protected render(): Cash {
+    return $("<rect/>")
+      .attr("x", String(-this.size / 2))
+      .attr("y", String(-this.size / 2))
+      .attr("width", String(this.size))
+      .attr("height", String(this.size))
+      .attr("fill", String(this.color));
+  }
+
   getBox(rotation: number): Box {
-    const a = (((180 + this.rotation + rotation) % 90) * Math.PI) / 180;
-    const r = Math.sqrt(2 * this.size * this.size);
-    const width = Math.abs(r * Math.cos(a - Math.PI / 4));
-    const height = Math.abs(r * Math.sin(a + Math.PI / 4));
+    const alpha = rad((180 + this.rotation + rotation) % 90);
+    const rho = Math.sqrt(2 * this.size * this.size);
+    const theta = Math.PI / 4;
+    const width = Math.abs(rho * Math.cos(theta - alpha));
+    const height = Math.abs(rho * Math.sin(theta + alpha));
     return {
       x: -width / 2,
       y: -height / 2,
@@ -99,15 +110,6 @@ export class Square extends Shape {
 
   getTransform(): Transform {
     return { rotation: this.rotation };
-  }
-
-  protected render(): Cash {
-    return $("<rect/>")
-      .attr("x", String(-this.size / 2))
-      .attr("y", String(-this.size / 2))
-      .attr("width", String(this.size))
-      .attr("height", String(this.size))
-      .attr("fill", String(this.color));
   }
 }
 
@@ -179,8 +181,64 @@ export class Composite extends Shape {
   }
 }
 
-type VectorPos = Vector | "center";
+export class Parallelogram extends Shape {
+  constructor(
+    private base: number,
+    private height: number,
+    private width: number,
+    private color: string,
+    private rotation = 0
+  ) {
+    super("parallelogram");
+  }
 
-function toVector(v: VectorPos): Vector {
-  return isVector(v) ? v : vector(0, 0);
+  protected render(): Cash {
+    const box = round4(this.getBox(0));
+    const angle =
+      (Math.atan((this.width - this.base) / this.height) / Math.PI) * 180;
+    return $("<rect/>")
+      .attr("x", String(box.x))
+      .attr("y", String(box.y))
+      .attr("width", String(this.base))
+      .attr("height", String(this.height))
+      .attr("fill", this.color)
+      .attr("transform", `skewX(${round4(angle)})`);
+  }
+
+  getBox(rotation: number): Box {
+    const alpha = rad((180 + this.rotation + rotation) % 90);
+    const rho = Math.sqrt(this.width * this.width + this.height * this.height);
+    const theta = Math.atan(this.height / this.width);
+    const width = Math.abs(rho * Math.cos(theta - alpha));
+    const height = Math.abs(rho * Math.sin(theta + alpha));
+    return {
+      x: -width / 2,
+      y: -height / 2,
+      width,
+      height,
+    };
+  }
+
+  getTransform(): Transform {
+    return { rotation: this.rotation };
+  }
+}
+function rad(a: number) {
+  return (a * Math.PI) / 180;
+}
+
+function round4<
+  T extends Record<string, number> | number[] | number | Vector | undefined
+>(x: T): T {
+  if (typeof x == "undefined") return x;
+  if (typeof x == "number") return (Math.round(x * 10000) / 10000) as T;
+  if (isVector(x)) return ((c: "x" | "y") => round4(x(c))) as T;
+  if (Array.isArray(x)) return x.map((y) => round4(y)) as T;
+  return Object.entries(x).reduce(
+    (result, [k, y]) => ({
+      ...result,
+      [k]: round4(y),
+    }),
+    {} as Record<string, number>
+  ) as T;
 }
