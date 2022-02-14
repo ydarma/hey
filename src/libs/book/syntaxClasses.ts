@@ -26,6 +26,6 @@ export const syntaxClasses = [
   },
   {
     className: "keyword",
-    regex: /\b(range|square|concat|c|repeat|r|slice|s)\b(?![-0-9])/,
+    regex: /\b(range|square|parall|concat|c|repeat|r|slice|s)\b(?![-0-9])/,
   },
 ];

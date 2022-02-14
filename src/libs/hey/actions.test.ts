@@ -174,3 +174,23 @@ test("Bernouilli", async (t) => {
   t.deepEqual(result, ["1/6", "0", "-1/30", "0", "1/42", "0", "-1/30"]);
   t.end();
 });
+
+test("Parallelogram", (t) => {
+  const parallelogram = actions.parall(
+    new TestContext(),
+    50,
+    30,
+    -20,
+    "grey",
+    30
+  );
+  t.deepLooseEqual(parallelogram, {
+    name: "parallelogram",
+    base: 50,
+    height: 30,
+    offset: -20,
+    color: "grey",
+    rotation: 30,
+  });
+  t.end();
+});

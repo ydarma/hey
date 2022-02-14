@@ -18,6 +18,13 @@ function getActions(
   Promise<unknown> | Action<keyof ExecActions> | number | string
 > {
   const squareFun = sys("square", ["size", "color", "rotation?"]);
+  const parallFun = sys("parall", [
+    "base",
+    "height",
+    "width",
+    "color",
+    "rotation?",
+  ]);
   const mergeFun = sys("merge", ["shape1", "shape2", "vector?", "rotation?"]);
   const rangeFun = sys("range", ["start", "end", "step"]);
   const adaLovelaceFun = sys("adaLovelace", ["n"]);
@@ -98,6 +105,13 @@ function getActions(
       f(
         (ctx, size, color, rotation, ...o) =>
           squareFun(ctx, size, color, rotation, ...o),
+        squareFun.toString
+      ),
+
+    Parallelogram: (call): Action<"parall"> =>
+      f(
+        (ctx, base, height, offset, color, rotation, ...o) =>
+          parallFun(ctx, base, height, offset, color, rotation, ...o),
         squareFun.toString
       ),
 

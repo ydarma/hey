@@ -1,5 +1,5 @@
 import test from "tape";
-import { Composite, Square } from "./shape";
+import { Composite, Parallelogram, Square } from "./shape";
 import fs from "fs";
 import path from "path";
 import { heyLoader } from "./hey";
@@ -428,5 +428,17 @@ test("Vector", async (t) => {
     result.map((f) => f.toString()),
     ["(x:3 y:4)", "(x:4 y:3)"]
   );
+  t.end();
+});
+
+const parallParTest = `
+parall(50 30 -20 green)
+`;
+
+test("Parall", async (t) => {
+  const result = await hey(parallParTest);
+  if (result instanceof Parallelogram) {
+    t.equal(result.name, "parallelogram");
+  } else t.fail();
   t.end();
 });

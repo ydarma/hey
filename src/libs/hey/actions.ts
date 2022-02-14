@@ -12,7 +12,7 @@ import {
   shapeError,
   vectorError,
 } from "./error";
-import { Composite, Shape, Square } from "./shape";
+import { Composite, Parallelogram, Shape, Square } from "./shape";
 import { vector, Vector } from "./vector";
 
 export interface IContext {
@@ -93,8 +93,24 @@ export class HeyActions {
   ): Shape {
     if (!isNumber(size)) throw numberError(...ctx.get(0), size);
     if (!isColor(color)) throw colorError(...ctx.get(1), color);
-    if (!isNumber(rotation)) throw colorError(...ctx.get(1), rotation);
+    if (!isNumber(rotation)) throw colorError(...ctx.get(2), rotation);
     return new Square(size, color, rotation);
+  }
+
+  parall(
+    ctx: IContext,
+    base: V<number>,
+    height: V<number>,
+    offset: V<number>,
+    color: V<string>,
+    rotation: V<number> = 0
+  ): Shape {
+    if (!isNumber(base)) throw numberError(...ctx.get(0), base);
+    if (!isNumber(height)) throw numberError(...ctx.get(1), height);
+    if (!isNumber(offset)) throw numberError(...ctx.get(2), offset);
+    if (!isColor(color)) throw colorError(...ctx.get(3), color);
+    if (!isNumber(rotation)) throw colorError(...ctx.get(4), rotation);
+    return new Parallelogram(base, height, offset, color, rotation);
   }
 
   merge(

@@ -17,7 +17,7 @@ type Box = {
 export abstract class Shape {
   constructor(readonly name: string) {}
 
-  protected abstract render(): Cash;
+  abstract render(): Cash;
   abstract getBox(rotation: number): Box;
   abstract getTransform(): Transform;
 
@@ -76,43 +76,6 @@ export abstract class Shape {
   }
 }
 
-export class Square extends Shape {
-  constructor(
-    private size: number,
-    private color: string,
-    private rotation = 0
-  ) {
-    super("square");
-  }
-
-  protected render(): Cash {
-    return $("<rect/>")
-      .attr("x", String(-this.size / 2))
-      .attr("y", String(-this.size / 2))
-      .attr("width", String(this.size))
-      .attr("height", String(this.size))
-      .attr("fill", String(this.color));
-  }
-
-  getBox(rotation: number): Box {
-    const alpha = rad((180 + this.rotation + rotation) % 90);
-    const rho = Math.sqrt(2 * this.size * this.size);
-    const theta = Math.PI / 4;
-    const width = Math.abs(rho * Math.cos(theta - alpha));
-    const height = Math.abs(rho * Math.sin(theta + alpha));
-    return {
-      x: -width / 2,
-      y: -height / 2,
-      width,
-      height,
-    };
-  }
-
-  getTransform(): Transform {
-    return { rotation: this.rotation };
-  }
-}
-
 export class Composite extends Shape {
   private readonly vector: Vector;
 
@@ -126,7 +89,7 @@ export class Composite extends Shape {
     this.vector = toVector(vect);
   }
 
-  protected render(): Cash {
+  render(): Cash {
     const { trCenter1, trCenter2 } = this.getTranslations(-this.rotation);
     return $("<g>")
       .append(super.t(this.shape1, trCenter1))
@@ -185,32 +148,32 @@ export class Parallelogram extends Shape {
   constructor(
     private base: number,
     private height: number,
-    private width: number,
+    private offset: number,
     private color: string,
     private rotation = 0
   ) {
     super("parallelogram");
   }
 
-  protected render(): Cash {
-    const box = round4(this.getBox(0));
-    const angle =
-      (Math.atan((this.width - this.base) / this.height) / Math.PI) * 180;
-    return $("<rect/>")
-      .attr("x", String(box.x))
-      .attr("y", String(box.y))
-      .attr("width", String(this.base))
-      .attr("height", String(this.height))
-      .attr("fill", this.color)
-      .attr("transform", `skewX(${round4(angle)})`);
+  render(): Cash {
+    const box = round4(this.getBox(-this.rotation));
+    if (this.offset > 0) box.x = (box.x ?? 0) + this.offset;
+    return $("<path/>")
+      .attr(
+        "d",
+        `m ${box.x} ${box.y} h ${this.base} ` +
+          `l ${-this.offset} ${this.height} h ${-this.base} z`
+      )
+      .attr("fill", this.color);
   }
 
   getBox(rotation: number): Box {
-    const alpha = rad((180 + this.rotation + rotation) % 90);
-    const rho = Math.sqrt(this.width * this.width + this.height * this.height);
-    const theta = Math.atan(this.height / this.width);
-    const width = Math.abs(rho * Math.cos(theta - alpha));
-    const height = Math.abs(rho * Math.sin(theta + alpha));
+    const { width, height } = getWH(
+      this.base,
+      this.height,
+      this.offset,
+      this.rotation + rotation
+    );
     return {
       x: -width / 2,
       y: -height / 2,
@@ -220,25 +183,74 @@ export class Parallelogram extends Shape {
   }
 
   getTransform(): Transform {
-    return { rotation: this.rotation };
+    return { rotation: -this.rotation };
   }
 }
-function rad(a: number) {
+
+export class Square extends Shape {
+  private readonly parallelogram;
+  constructor(
+    private size: number,
+    private color: string,
+    private rotation = 0
+  ) {
+    super("square");
+    this.parallelogram = new Parallelogram(size, size, 0, color, rotation);
+  }
+
+  render(): Cash {
+    return this.parallelogram.render();
+  }
+
+  getBox(rotation: number): Box {
+    return this.parallelogram.getBox(rotation);
+  }
+
+  getTransform(): Transform {
+    return this.parallelogram.getTransform();
+  }
+}
+
+function getWH(base: number, height: number, offset: number, theta: number) {
+  const { width: w1, height: h1 } = diag(
+    base + Math.abs(offset),
+    height,
+    theta
+  );
+  const { width: w2, height: h2 } = diag(
+    -Math.abs(base - offset),
+    height,
+    theta
+  );
+  return { width: Math.max(w1, w2), height: Math.max(h1, h2) };
+}
+function diag(width: number, height: number, theta: number) {
+  const alpha = Math.atan(height / width) + rad(theta);
+  const rho1 = Math.sqrt(width * width + height * height);
+  const w = Math.abs(rho1 * Math.cos(alpha));
+  const h = Math.abs(rho1 * Math.sin(alpha));
+  return { width: w, height: h };
+}
+
+export function rad(a: number): number {
   return (a * Math.PI) / 180;
 }
 
-function round4<
-  T extends Record<string, number> | number[] | number | Vector | undefined
+export function round4<
+  T extends
+    | Record<string, number | undefined>
+    | number[]
+    | number
+    | Vector
+    | undefined
 >(x: T): T {
   if (typeof x == "undefined") return x;
   if (typeof x == "number") return (Math.round(x * 10000) / 10000) as T;
   if (isVector(x)) return ((c: "x" | "y") => round4(x(c))) as T;
   if (Array.isArray(x)) return x.map((y) => round4(y)) as T;
-  return Object.entries(x).reduce(
-    (result, [k, y]) => ({
-      ...result,
-      [k]: round4(y),
-    }),
-    {} as Record<string, number>
-  ) as T;
+  const result: Record<string, number | undefined> = {};
+  for (const k in x) {
+    result[k] = round4(x[k]);
+  }
+  return result as T;
 }
