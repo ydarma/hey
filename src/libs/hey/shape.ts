@@ -168,12 +168,18 @@ export class Parallelogram extends Shape {
   }
 
   getBox(rotation: number): Box {
-    const { width, height } = getWH(
-      this.base,
+    const { width: w1, height: h1 } = diag(
+      this.base + Math.abs(this.offset),
       this.height,
-      this.offset,
       this.rotation + rotation
     );
+    const { width: w2, height: h2 } = diag(
+      -Math.abs(this.base - this.offset),
+      this.height,
+      this.rotation + rotation
+    );
+    const width = Math.max(w1, w2);
+    const height = Math.max(h1, h2);
     return {
       x: -width / 2,
       y: -height / 2,
@@ -196,6 +202,7 @@ export class Square extends Shape {
   ) {
     super("square");
     this.parallelogram = new Parallelogram(size, size, 0, color, rotation);
+    Object.defineProperty(this, "parallelogram", { enumerable: false });
   }
 
   render(): Cash {
@@ -211,22 +218,9 @@ export class Square extends Shape {
   }
 }
 
-function getWH(base: number, height: number, offset: number, theta: number) {
-  const { width: w1, height: h1 } = diag(
-    base + Math.abs(offset),
-    height,
-    theta
-  );
-  const { width: w2, height: h2 } = diag(
-    -Math.abs(base - offset),
-    height,
-    theta
-  );
-  return { width: Math.max(w1, w2), height: Math.max(h1, h2) };
-}
-function diag(width: number, height: number, theta: number) {
-  const alpha = Math.atan(height / width) + rad(theta);
-  const rho1 = Math.sqrt(width * width + height * height);
+function diag(x: number, y: number, theta: number) {
+  const alpha = Math.atan(y / x) + rad(theta);
+  const rho1 = Math.sqrt(x * x + y * y);
   const w = Math.abs(rho1 * Math.cos(alpha));
   const h = Math.abs(rho1 * Math.sin(alpha));
   return { width: w, height: h };
