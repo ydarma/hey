@@ -164,8 +164,8 @@ test("Slice error", (t) => {
 
 test("Vector", (t) => {
   const vector = actions.vector(new TestContext(), 3, 4);
-  t.equal(vector("x"), 3);
-  t.equal(vector("y"), 4);
+  t.equal(vector.x, 3);
+  t.equal(vector.y, 4);
   t.end();
 });
 

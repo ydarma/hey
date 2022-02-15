@@ -52,8 +52,8 @@ export abstract class Shape {
     const transformed = this.transformSvg(
       shape,
       rotation,
-      dx ?? 0 + v("x"),
-      dy ?? 0 + v("y")
+      dx ?? 0 + v.x,
+      dy ?? 0 + v.y
     );
     return transformed;
   }
@@ -100,8 +100,8 @@ export class Composite extends Shape {
     const { width, height } = this.getWH(rotation);
     const { trOrigin1, trOrigin2 } = this.getTranslations(rotation);
     return {
-      x: Math.min(trOrigin1("x"), trOrigin2("x")),
-      y: Math.min(trOrigin1("y"), trOrigin2("y")),
+      x: Math.min(trOrigin1.x, trOrigin2.x),
+      y: Math.min(trOrigin1.y, trOrigin2.y),
       width,
       height,
     };
@@ -116,8 +116,8 @@ export class Composite extends Shape {
     const v = rot(t, this.vector);
     const box1 = this.shape1.getBox(t);
     const box2 = this.shape2.getBox(t);
-    const width = this.computeWidth(box1.width, box2.width, v("x"));
-    const height = this.computeHeight(box1.height, box2.height, v("y"));
+    const width = this.computeWidth(box1.width, box2.width, v.x);
+    const height = this.computeHeight(box1.height, box2.height, v.y);
     return { width, height };
   }
 
@@ -128,8 +128,8 @@ export class Composite extends Shape {
     const a = w1 / (w1 + w2);
     const b = h1 / (h1 + h2);
     const r = rot(t, this.vector);
-    const trCenter1 = vector(r("x") * (a - 1), r("y") * (b - 1));
-    const trCenter2 = vector(r("x") * a, r("y") * b);
+    const trCenter1 = vector(r.x * (a - 1), r.y * (b - 1));
+    const trCenter2 = vector(r.x * a, r.y * b);
     const trOrigin1 = add(vector(x1 ?? 0, y1 ?? 0), trCenter1);
     const trOrigin2 = add(vector(x2 ?? 0, y2 ?? 0), trCenter2);
     return { trCenter1, trCenter2, trOrigin1, trOrigin2 };
@@ -237,14 +237,14 @@ export function round4<
     | number
     | Vector
     | undefined
->(x: T): T {
-  if (typeof x == "undefined") return x;
-  if (typeof x == "number") return (Math.round(x * 10000) / 10000) as T;
-  if (isVector(x)) return ((c: "x" | "y") => round4(x(c))) as T;
-  if (Array.isArray(x)) return x.map((y) => round4(y)) as T;
+>(v: T): T {
+  if (typeof v == "undefined") return v;
+  if (typeof v == "number") return (Math.round(v * 10000) / 10000) as T;
+  if (isVector(v)) return vector(round4(v.x), round4(v.y)) as T;
+  if (Array.isArray(v)) return v.map((y) => round4(y)) as T;
   const result: Record<string, number | undefined> = {};
-  for (const k in x) {
-    result[k] = round4(x[k]);
+  for (const k in v) {
+    result[k] = round4(v[k]);
   }
   return result as T;
 }

@@ -420,10 +420,10 @@ c(vector(3 4) v(4 3))
 
 test("Vector", async (t) => {
   const result = (await hey(vectorTestProg)) as ((k: "x" | "y") => number)[];
-  t.equal(result[0]("x"), 3);
-  t.equal(result[0]("y"), 4);
-  t.equal(result[1]("x"), 4);
-  t.equal(result[1]("y"), 3);
+  t.equal(result[0].x, 3);
+  t.equal(result[0].y, 4);
+  t.equal(result[1].x, 4);
+  t.equal(result[1].y, 3);
   t.deepEqual(
     result.map((f) => f.toString()),
     ["(x:3 y:4)", "(x:4 y:3)"]
