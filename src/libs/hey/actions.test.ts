@@ -59,7 +59,7 @@ test("Square", (t) => {
 test("Merge", (t) => {
   const sq1 = actions.square(new TestContext(), 58, "red");
   const sq2 = actions.square(new TestContext(), 40, "green", 45);
-  const result = actions.merge(new TestContext(), sq1, sq2);
+  const result = actions.assemble(new TestContext(), sq1, sq2);
   t.equal(result.name, "composite");
   t.equal(Reflect.get(result, "shape1").name, "square");
   t.equal(Reflect.get(result, "shape1").size, 58);

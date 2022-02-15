@@ -113,7 +113,7 @@ export class HeyActions {
     return new Parallelogram(base, height, offset, color, rotation);
   }
 
-  merge(
+  assemble(
     ctx: IContext,
     shape1: V<Shape>,
     shape2: V<Shape>,

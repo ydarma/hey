@@ -25,7 +25,7 @@ function getActions(
     "color",
     "rotation?",
   ]);
-  const mergeFun = sys("merge", ["shape1", "shape2", "vector?", "rotation?"]);
+  const assembleFun = sys("assemble", ["shape1", "shape2", "vector?", "rotation?"]);
   const rangeFun = sys("range", ["start", "end", "step"]);
   const adaLovelaceFun = sys("adaLovelace", ["n"]);
   const concatFun = sys("concat", ["values"]);
@@ -115,11 +115,11 @@ function getActions(
         squareFun.toString
       ),
 
-    Merge: (call): Action<"merge"> =>
+    Merge: (call): Action<"assemble"> =>
       f(
         (ctx, shape1, shape2, vector, rotation, ...o) =>
-          mergeFun(ctx, shape1, shape2, vector, rotation, ...o),
-        mergeFun.toString
+          assembleFun(ctx, shape1, shape2, vector, rotation, ...o),
+        assembleFun.toString
       ),
 
     Concat: (call): Action<"concat"> =>

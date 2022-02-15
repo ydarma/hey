@@ -10,7 +10,7 @@ HeyGrammar {
   AdaLovelace = #("ada-lovelace" ~nameEnd)
   Square = #("square" ~nameEnd)
   Parallelogram = #("parall" ~nameEnd)
-  Merge = #("merge" ~nameEnd)
+  Merge = #("assemble" ~nameEnd)
   Concat = #(("concat" | "c") ~nameEnd)
   Repeat = #(("repeat" | "r") ~nameEnd)
   Slice = #(("slice" | "s") ~nameEnd)
@@ -31,7 +31,7 @@ HeyGrammar {
   colon = ":"
   arrow = "->" | ":"
   reserved = ("def" | "fun" | builtin | color) ~nameEnd
-  builtin = ("range" | "ada-lovelace" | "square" | "parall" | "merge" | "concat" | "c" | "repeat" | "r" | "slice" | "s" | "vector" | "v" ) ~nameEnd
+  builtin = ("range" | "ada-lovelace" | "square" | "parall" | "assemble" | "concat" | "c" | "repeat" | "r" | "slice" | "s" | "vector" | "v" ) ~nameEnd
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"

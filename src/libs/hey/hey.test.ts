@@ -396,14 +396,14 @@ test("Recursion", async (t) => {
   t.end();
 });
 
-const mergeTestProg = `
+const assembleTestProg = `
 def sq1 square(58 "red")
 def sq2 square(40 "green" 45)
-merge(sq1 sq2)
+assemble(sq1 sq2)
 `;
 
 test("Merge", async (t) => {
-  const result = await hey(mergeTestProg);
+  const result = await hey(assembleTestProg);
   if (result instanceof Composite) {
     t.equal(result.name, "composite");
     t.equal(Reflect.get(result, "shape1").name, "square");
