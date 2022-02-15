@@ -14,6 +14,12 @@ type Box = {
   height: number;
 };
 
+function isBox(o: unknown): o is Box {
+  if (typeof o != "object") return false;
+  const b = o as Box;
+  return typeof b.width == "number" && typeof b.height == "number";
+}
+
 export abstract class Shape {
   constructor(readonly name: string) {}
 
@@ -24,7 +30,7 @@ export abstract class Shape {
   toString(): string {
     const { x, y, width, height } = round4(this.getBox(0));
     const viewBox = this.getViewBox(x ?? 0, y ?? 0, width, height);
-    const transformed = this.transform();
+    const transformed = this.transform(vector(0, 0));
     const svg = this.svg(viewBox, width, height, transformed);
     return svg[0]?.outerHTML ?? "";
   }
@@ -46,7 +52,7 @@ export abstract class Shape {
       .append(transformed);
   }
 
-  private transform(v = vector(0, 0)) {
+  private transform(v: Vector) {
     const shape = this.render();
     const { dx, dy, rotation } = round4(this.getTransform());
     const transformed = this.transformSvg(
@@ -71,8 +77,8 @@ export abstract class Shape {
     );
   }
 
-  protected t(other: Shape, vector?: Vector): Cash {
-    return other.transform(round4(vector));
+  protected t(other: Shape, vect?: Vector): Cash {
+    return other.transform(vect ? round4(vect) : vector(0, 0));
   }
 }
 
@@ -226,21 +232,19 @@ function maxAbs<T extends number | Vector>(value: T, ...others: T[]): T {
   return Math.max(Math.abs(value), ...v.map(Math.abs)) as T;
 }
 
-export function round4<
-  T extends
-    | Record<string, number | undefined>
-    | number[]
-    | number
-    | Vector
-    | undefined
->(v: T): T {
-  if (typeof v == "undefined") return v;
+export function round4<T extends Box | Transform | Vector | number>(v: T): T {
   if (typeof v == "number") return (Math.round(v * 10000) / 10000) as T;
   if (isVector(v)) return vector(round4(v.x), round4(v.y)) as T;
-  if (Array.isArray(v)) return v.map((y) => round4(y)) as T;
-  const result: Record<string, number | undefined> = {};
-  for (const k in v) {
-    result[k] = round4(v[k]);
-  }
-  return result as T;
+  if (isBox(v))
+    return {
+      ...(v.x ? { x: round4(v.x) } : {}),
+      ...(v.y ? { y: round4(v.y) } : {}),
+      width: round4(v.width),
+      height: round4(v.height),
+    } as T;
+  return {
+    ...(v.dx ? { dx: round4(v.dx) } : {}),
+    ...(v.dy ? { dy: round4(v.dy) } : {}),
+    rotation: round4(v.rotation),
+  } as T;
 }
