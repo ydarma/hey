@@ -112,22 +112,22 @@ export class Composite extends Shape {
   }
 
   private getWH(angle: number) {
-    const t = this.rotation + angle;
-    const v = rot(t, this.vector);
-    const box1 = this.shape1.getBox(t);
-    const box2 = this.shape2.getBox(t);
+    const theta = this.rotation + angle;
+    const v = rot(this.vector, theta);
+    const box1 = this.shape1.getBox(theta);
+    const box2 = this.shape2.getBox(theta);
     const width = this.computeWidth(box1.width, box2.width, v.x);
     const height = this.computeHeight(box1.height, box2.height, v.y);
     return { width, height };
   }
 
   private getTranslations(angle: number) {
-    const t = this.rotation + angle;
-    const { x: x1, y: y1, width: w1, height: h1 } = this.shape1.getBox(t);
-    const { x: x2, y: y2, width: w2, height: h2 } = this.shape2.getBox(t);
+    const theta = this.rotation + angle;
+    const { x: x1, y: y1, width: w1, height: h1 } = this.shape1.getBox(theta);
+    const { x: x2, y: y2, width: w2, height: h2 } = this.shape2.getBox(theta);
     const a = w1 / (w1 + w2);
     const b = h1 / (h1 + h2);
-    const r = rot(t, this.vector);
+    const r = rot(this.vector, theta);
     const trCenter1 = vector(r.x * (a - 1), r.y * (b - 1));
     const trCenter2 = vector(r.x * a, r.y * b);
     const trOrigin1 = add(vector(x1 ?? 0, y1 ?? 0), trCenter1);
@@ -168,18 +168,17 @@ export class Parallelogram extends Shape {
   }
 
   getBox(rotation: number): Box {
-    const { width: w1, height: h1 } = diag(
-      this.base + Math.abs(this.offset),
-      this.height,
+    const { x: w1, y: h1 } = rot(
+      vector(this.base + Math.abs(this.offset), this.height),
       this.rotation + rotation
     );
-    const { width: w2, height: h2 } = diag(
-      -Math.abs(this.base - this.offset),
-      this.height,
+    const { x: w2, y: h2 } = rot(
+      vector(-Math.abs(this.base - this.offset),
+      this.height),
       this.rotation + rotation
     );
-    const width = Math.max(w1, w2);
-    const height = Math.max(h1, h2);
+    const width = maxAbs(w1, w2);
+    const height = maxAbs(h1, h2);
     return {
       x: -width / 2,
       y: -height / 2,
@@ -218,16 +217,8 @@ export class Square extends Shape {
   }
 }
 
-function diag(x: number, y: number, theta: number) {
-  const alpha = Math.atan(y / x) + rad(theta);
-  const rho1 = Math.sqrt(x * x + y * y);
-  const w = Math.abs(rho1 * Math.cos(alpha));
-  const h = Math.abs(rho1 * Math.sin(alpha));
-  return { width: w, height: h };
-}
-
-export function rad(a: number): number {
-  return (a * Math.PI) / 180;
+function maxAbs(...values: number[]) {
+  return Math.max(...values.map(Math.abs))
 }
 
 export function round4<

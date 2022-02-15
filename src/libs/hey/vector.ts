@@ -12,8 +12,8 @@ export function mul(k: number, v: Vector): Vector {
   return vector(k * v.x, k * v.y);
 }
 
-export function rot(alpha: number, v: Vector): Vector {
-  const a = (alpha * Math.PI) / 180;
+export function rot(v: Vector, theta: number): Vector {
+  const a = (theta * Math.PI) / 180;
   return vector(
     v.x * Math.cos(a) - v.y * Math.sin(a),
     v.x * Math.sin(a) + v.y * Math.cos(a)
