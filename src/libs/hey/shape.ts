@@ -168,17 +168,15 @@ export class Parallelogram extends Shape {
   }
 
   getBox(rotation: number): Box {
-    const { x: w1, y: h1 } = rot(
+    const diagonal1 = rot(
       vector(this.base + Math.abs(this.offset), this.height),
       this.rotation + rotation
     );
-    const { x: w2, y: h2 } = rot(
-      vector(-Math.abs(this.base - this.offset),
-      this.height),
+    const diagonal2 = rot(
+      vector(-Math.abs(this.base - this.offset), this.height),
       this.rotation + rotation
     );
-    const width = maxAbs(w1, w2);
-    const height = maxAbs(h1, h2);
+    const { x: width, y: height } = maxAbs(diagonal1, diagonal2);
     return {
       x: -width / 2,
       y: -height / 2,
@@ -217,8 +215,15 @@ export class Square extends Shape {
   }
 }
 
-function maxAbs(...values: number[]) {
-  return Math.max(...values.map(Math.abs))
+function maxAbs<T extends number | Vector>(value: T, ...others: T[]): T {
+  if (isVector(value)) {
+    const v = others as Vector[];
+    const x = v.map((v) => v.x);
+    const y = v.map((v) => v.y);
+    return vector(maxAbs(value.x, ...x), maxAbs(value.y, ...y)) as T;
+  }
+  const v = others as number[];
+  return Math.max(Math.abs(value), ...v.map(Math.abs)) as T;
 }
 
 export function round4<
