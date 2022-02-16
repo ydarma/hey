@@ -56,7 +56,7 @@ test("Square", (t) => {
   t.end();
 });
 
-test("Merge", (t) => {
+test("Assemble", (t) => {
   const sq1 = actions.square(new TestContext(), 58, "red");
   const sq2 = actions.square(new TestContext(), 40, "green", 45);
   const result = actions.assemble(new TestContext(), sq1, sq2);

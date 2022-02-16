@@ -7,6 +7,12 @@ type Transform = {
   rotation: number;
 };
 
+function isTransform(o: unknown): o is Transform {
+  if (typeof o != "object") return false;
+  const b = o as Transform;
+  return typeof b.rotation == "number";
+}
+
 type Box = {
   x?: number;
   y?: number;
@@ -114,7 +120,7 @@ export class Composite extends Shape {
   }
 
   getTransform(): Transform {
-    return { rotation: this.rotation };
+    return { rotation: -this.rotation };
   }
 
   private getWH(angle: number) {
@@ -150,6 +156,48 @@ export class Composite extends Shape {
   }
 }
 
+export class Triangle extends Shape {
+  constructor(
+    private base: number,
+    private height: number,
+    private offset: number,
+    private color: string,
+    private rotation = 0
+  ) {
+    super("triangle");
+  }
+
+  render(): Cash {
+    const box = round4(this.getBox(-this.rotation));
+    if (this.offset > 0) box.x = (box.x ?? 0) + this.offset;
+    return $("<path/>")
+      .attr(
+        "d",
+        `m ${box.x} ${box.y} ` +
+          `l ${this.base - this.offset} ${this.height} h ${-this.base} z`
+      )
+      .attr("fill", this.color);
+  }
+
+  getBox(rotation: number): Box {
+    const theta = this.rotation + rotation;
+    const side1 = rot(vector(this.base, 0), theta);
+    const side2 = rot(vector(this.offset, this.height), theta);
+    const side3 = rot(vector(this.offset - this.base, this.height), theta);
+    const { x: width, y: height } = maxAbs(side1, side2, side3);
+    return {
+      x: -width / 2,
+      y: -height / 2,
+      width,
+      height,
+    };
+  }
+
+  getTransform(): Transform {
+    return { rotation: -this.rotation };
+  }
+}
+
 export class Parallelogram extends Shape {
   constructor(
     private base: number,
@@ -162,12 +210,12 @@ export class Parallelogram extends Shape {
   }
 
   render(): Cash {
-    const box = round4(this.getBox(-this.rotation));
-    if (this.offset > 0) box.x = (box.x ?? 0) + this.offset;
+    const { x, y } = round4(this.getBox(-this.rotation));
+    const ox = this.offset > 0 ? (x ?? 0) + this.offset : x;
     return $("<path/>")
       .attr(
         "d",
-        `m ${box.x} ${box.y} h ${this.base} ` +
+        `m ${ox} ${y} h ${this.base} ` +
           `l ${-this.offset} ${this.height} h ${-this.base} z`
       )
       .attr("fill", this.color);
@@ -175,11 +223,11 @@ export class Parallelogram extends Shape {
 
   getBox(rotation: number): Box {
     const diagonal1 = rot(
-      vector(this.base + Math.abs(this.offset), this.height),
+      vector(this.offset + this.base, this.height),
       this.rotation + rotation
     );
     const diagonal2 = rot(
-      vector(-Math.abs(this.base - this.offset), this.height),
+      vector(this.offset - this.base, this.height),
       this.rotation + rotation
     );
     const { x: width, y: height } = maxAbs(diagonal1, diagonal2);
@@ -228,12 +276,12 @@ function maxAbs<T extends number | Vector>(value: T, ...others: T[]): T {
     const y = v.map((v) => v.y);
     return vector(maxAbs(value.x, ...x), maxAbs(value.y, ...y)) as T;
   }
+  const n = value as number;
   const v = others as number[];
-  return Math.max(Math.abs(value), ...v.map(Math.abs)) as T;
+  return Math.max(Math.abs(n), ...v.map(Math.abs)) as T;
 }
 
 export function round4<T extends Box | Transform | Vector | number>(v: T): T {
-  if (typeof v == "number") return (Math.round(v * 10000) / 10000) as T;
   if (isVector(v)) return vector(round4(v.x), round4(v.y)) as T;
   if (isBox(v))
     return {
@@ -242,9 +290,11 @@ export function round4<T extends Box | Transform | Vector | number>(v: T): T {
       width: round4(v.width),
       height: round4(v.height),
     } as T;
-  return {
-    ...(v.dx ? { dx: round4(v.dx) } : {}),
-    ...(v.dy ? { dy: round4(v.dy) } : {}),
-    rotation: round4(v.rotation),
-  } as T;
+  if (isTransform(v))
+    return {
+      ...(v.dx ? { dx: round4(v.dx) } : {}),
+      ...(v.dy ? { dy: round4(v.dy) } : {}),
+      rotation: round4(v.rotation),
+    } as T;
+  return (Math.round((v as number) * 10000) / 10000) as T;
 }

@@ -1,9 +1,10 @@
 import test from "tape";
-import { Composite, Parallelogram, Square } from "./shape";
+import { Composite, Parallelogram, Square, Triangle } from "./shape";
 import fs from "fs";
 import path from "path";
 import { heyLoader } from "./hey";
 import { HeyError } from ".";
+import { Vector } from "./vector";
 
 function localLoader() {
   const heyFile = path.join(__dirname, "../../../public/hey.ohm");
@@ -402,7 +403,7 @@ def sq2 square(40 "green" 45)
 assemble(sq1 sq2)
 `;
 
-test("Merge", async (t) => {
+test("Assemble", async (t) => {
   const result = await hey(assembleTestProg);
   if (result instanceof Composite) {
     t.equal(result.name, "composite");
@@ -419,7 +420,7 @@ c(vector(3 4) v(4 3))
 `;
 
 test("Vector", async (t) => {
-  const result = (await hey(vectorTestProg)) as ((k: "x" | "y") => number)[];
+  const result = (await hey(vectorTestProg)) as Vector[];
   t.equal(result[0].x, 3);
   t.equal(result[0].y, 4);
   t.equal(result[1].x, 4);
@@ -437,8 +438,16 @@ parall(50 30 -20 green)
 
 test("Parall", async (t) => {
   const result = await hey(parallParTest);
-  if (result instanceof Parallelogram) {
-    t.equal(result.name, "parallelogram");
-  } else t.fail();
+  t.ok(result instanceof Parallelogram);
+  t.end();
+});
+
+const triangleParTest = `
+triangle(50 30 20 green)
+`;
+
+test("Triangle", async (t) => {
+  const result = await hey(triangleParTest);
+  t.ok(result instanceof Triangle);
   t.end();
 });

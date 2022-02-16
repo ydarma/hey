@@ -5,12 +5,13 @@ HeyGrammar {
 
   Result = Call (lpar Val* rpar)*
     
-  Call = Range | AdaLovelace | Square | Parallelogram | Merge | Concat | Repeat | Slice | Vector | Function | Known
+  Call = Range | AdaLovelace | Square | Parallelogram | Triangle | Assemble | Concat | Repeat | Slice | Vector | Function | Known
   Range = #("range" ~nameEnd)
   AdaLovelace = #("ada-lovelace" ~nameEnd)
   Square = #("square" ~nameEnd)
   Parallelogram = #("parall" ~nameEnd)
-  Merge = #("assemble" ~nameEnd)
+  Triangle = #("triangle" ~nameEnd)
+  Assemble = #("assemble" ~nameEnd)
   Concat = #(("concat" | "c") ~nameEnd)
   Repeat = #(("repeat" | "r") ~nameEnd)
   Slice = #(("slice" | "s") ~nameEnd)
@@ -31,7 +32,7 @@ HeyGrammar {
   colon = ":"
   arrow = "->" | ":"
   reserved = ("def" | "fun" | builtin | color) ~nameEnd
-  builtin = ("range" | "ada-lovelace" | "square" | "parall" | "assemble" | "concat" | "c" | "repeat" | "r" | "slice" | "s" | "vector" | "v" ) ~nameEnd
+  builtin = ("range" | "ada-lovelace" | "square" | "parall" | "triangle" | "assemble" | "concat" | "c" | "repeat" | "r" | "slice" | "s" | "vector" | "v" ) ~nameEnd
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol
   eol = "\n" | "\r" | "\u2028" | "\u2029"

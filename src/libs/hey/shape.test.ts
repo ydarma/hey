@@ -45,7 +45,7 @@ test("Composite with rotation", (t) => {
   const shape2 = new Square(40, "blue");
   const shape = new Composite(shape1, shape2, vector(58, 0), 45);
   const svg = shape.toString();
-  t.ok(svg.includes('<g transform="translate(0 0) rotate(45)">'));
+  t.ok(svg.includes('<g transform="translate(0 0) rotate(-45)">'));
   t.end();
 });
 
