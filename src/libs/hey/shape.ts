@@ -156,71 +156,6 @@ export class Composite extends Shape {
   }
 }
 
-export class Triangle extends Shape {
-  private readonly parallelogram;
-  constructor(
-    private base: number,
-    private height: number,
-    private offset: number,
-    private color: string,
-    private rotation = 0
-  ) {
-    super("triangle");
-    this.parallelogram = new Parallelogram(
-      base,
-      height,
-      offset,
-      color,
-      rotation
-    );
-    Object.defineProperty(this, "parallelogram", { enumerable: false });
-  }
-
-  readonly sides = [
-    vector(this.base, 0),
-    vector(this.offset, this.height),
-    vector(this.offset - this.base, this.height),
-  ];
-
-  render(): Cash {
-    const box = round4(this.getBox(-this.rotation));
-    if (this.offset > 0) box.x = (box.x ?? 0) + this.offset;
-    return $("<path/>")
-      .attr(
-        "d",
-        `m ${box.x} ${box.y} ` +
-          `l ${this.base - this.offset} ${this.height} h ${-this.base} z`
-      )
-      .attr("fill", this.color);
-  }
-
-  getBox(rotation: number): Box {
-    const theta = this.rotation + rotation;
-    const pbox = this.parallelogram.getBox(rotation);
-    const s0 = rot(this.sides[0], theta);
-    const s1 = rot(this.sides[1], theta);
-    const d0 = rot(this.parallelogram.diagonals[0], theta);
-    const dwidth = this.trunc(d0.x, s0.x, s1.x);
-    const dheight = this.trunc(-d0.y, -s0.y, -s1.y);
-    return {
-      x: pbox.x - (dwidth < 0 ? dwidth : 0),
-      y: pbox.y - (dheight < 0 ? dheight : 0),
-      width: pbox.width - Math.abs(dwidth),
-      height: pbox.height - Math.abs(dheight),
-    };
-  }
-
-  private trunc(d: number, s0: number, s1: number) {
-    if (d > s1 && d > s0) return Math.min(d - s0, d - s1);
-    else if (d < s0 && d < s1) return Math.max(d - s0, d - s1);
-    return 0;
-  }
-
-  getTransform(): Transform {
-    return { rotation: -this.rotation };
-  }
-}
-
 export class Parallelogram extends Shape {
   constructor(
     private base: number,
@@ -230,7 +165,11 @@ export class Parallelogram extends Shape {
     private rotation = 0
   ) {
     super("parallelogram");
+    Object.defineProperty(this, "diagonals", { enumerable: false });
+    Object.defineProperty(this, "sides", { enumerable: false });
   }
+
+  readonly sides = [vector(this.base, 0), vector(this.offset, this.height)];
 
   readonly diagonals = [
     vector(this.offset + this.base, this.height),
@@ -268,16 +207,22 @@ export class Parallelogram extends Shape {
 }
 
 export class Square extends Shape {
-  private readonly parallelogram;
   constructor(
     private size: number,
     private color: string,
     private rotation = 0
   ) {
     super("square");
-    this.parallelogram = new Parallelogram(size, size, 0, color, rotation);
     Object.defineProperty(this, "parallelogram", { enumerable: false });
   }
+
+  readonly parallelogram = new Parallelogram(
+    this.size,
+    this.size,
+    0,
+    this.color,
+    this.rotation
+  );
 
   render(): Cash {
     return this.parallelogram.render();
@@ -289,6 +234,77 @@ export class Square extends Shape {
 
   getTransform(): Transform {
     return this.parallelogram.getTransform();
+  }
+}
+
+export class Triangle extends Shape {
+  constructor(
+    private base: number,
+    private height: number,
+    private offset: number,
+    private color: string,
+    private rotation = 0
+  ) {
+    super("triangle");
+    Object.defineProperty(this, "parallelogram", { enumerable: false });
+    Object.defineProperty(this, "sides", { enumerable: false });
+  }
+
+  private readonly parallelogram = new Parallelogram(
+    this.base,
+    this.height,
+    this.offset,
+    this.color,
+    this.rotation
+  );
+
+  readonly sides = [
+    vector(this.base, 0),
+    vector(this.offset, this.height),
+    vector(this.offset - this.base, this.height),
+  ];
+
+  render(): Cash {
+    const box = round4(this.getBox(-this.rotation));
+    if (this.offset > 0) box.x = (box.x ?? 0) + this.offset;
+    return $("<path/>")
+      .attr(
+        "d",
+        `m ${box.x} ${box.y} ` +
+          `l ${this.base - this.offset} ${this.height} h ${-this.base} z`
+      )
+      .attr("fill", this.color);
+  }
+
+  getBox(rotation: number): Box {
+    const theta = this.rotation + rotation;
+    const pbox = this.parallelogram.getBox(rotation);
+    const s0 = rot(this.sides[0], theta);
+    const s1 = rot(this.sides[1], theta);
+    const d0 = rot(this.parallelogram.diagonals[0], theta);
+    const { dwidth, dheight } = this.truncParallelogram(d0, s0, s1);
+    return {
+      x: pbox.x - (dwidth > 0 ? 0 : dwidth),
+      y: pbox.y - (dheight > 0 ? 0 : dheight),
+      width: pbox.width - Math.abs(dwidth),
+      height: pbox.height - Math.abs(dheight),
+    };
+  }
+
+  private truncParallelogram(d: Vector, s0: Vector, s1: Vector) {
+    const dwidth = this.trunc(d.x, s0.x, s1.x);
+    const dheight = this.trunc(-d.y, -s0.y, -s1.y);
+    return { dwidth, dheight };
+  }
+
+  private trunc(d: number, s0: number, s1: number) {
+    if (d > s1 && d > s0) return Math.min(d - s0, d - s1);
+    else if (d < s0 && d < s1) return Math.max(d - s0, d - s1);
+    return 0;
+  }
+
+  getTransform(): Transform {
+    return { rotation: -this.rotation };
   }
 }
 
