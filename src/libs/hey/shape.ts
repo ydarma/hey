@@ -14,8 +14,8 @@ function isTransform(o: unknown): o is Transform {
 }
 
 type Box = {
-  x?: number;
-  y?: number;
+  x: number;
+  y: number;
   width: number;
   height: number;
 };
@@ -42,7 +42,7 @@ export abstract class Shape {
   }
 
   private getViewBox(x: number, y: number, width: number, height: number) {
-    return `${x - 3} ${y - 3} ${width + 6} ${height + 6}`;
+    return `${x} ${y} ${width} ${height}`;
   }
 
   private svg(
@@ -157,6 +157,7 @@ export class Composite extends Shape {
 }
 
 export class Triangle extends Shape {
+  private readonly parallelogram;
   constructor(
     private base: number,
     private height: number,
@@ -165,7 +166,21 @@ export class Triangle extends Shape {
     private rotation = 0
   ) {
     super("triangle");
+    this.parallelogram = new Parallelogram(
+      base,
+      height,
+      offset,
+      color,
+      rotation
+    );
+    Object.defineProperty(this, "parallelogram", { enumerable: false });
   }
+
+  readonly sides = [
+    vector(this.base, 0),
+    vector(this.offset, this.height),
+    vector(this.offset - this.base, this.height),
+  ];
 
   render(): Cash {
     const box = round4(this.getBox(-this.rotation));
@@ -181,16 +196,24 @@ export class Triangle extends Shape {
 
   getBox(rotation: number): Box {
     const theta = this.rotation + rotation;
-    const side1 = rot(vector(this.base, 0), theta);
-    const side2 = rot(vector(this.offset, this.height), theta);
-    const side3 = rot(vector(this.offset - this.base, this.height), theta);
-    const { x: width, y: height } = maxAbs(side1, side2, side3);
+    const pbox = this.parallelogram.getBox(rotation);
+    const s0 = rot(this.sides[0], theta);
+    const s1 = rot(this.sides[1], theta);
+    const d0 = rot(this.parallelogram.diagonals[0], theta);
+    const dwidth = this.trunc(d0.x, s0.x, s1.x);
+    const dheight = this.trunc(-d0.y, -s0.y, -s1.y);
     return {
-      x: -width / 2,
-      y: -height / 2,
-      width,
-      height,
+      x: pbox.x - (dwidth < 0 ? dwidth : 0),
+      y: pbox.y - (dheight < 0 ? dheight : 0),
+      width: pbox.width - Math.abs(dwidth),
+      height: pbox.height - Math.abs(dheight),
     };
+  }
+
+  private trunc(d: number, s0: number, s1: number) {
+    if (d > s1 && d > s0) return Math.min(d - s0, d - s1);
+    else if (d < s0 && d < s1) return Math.max(d - s0, d - s1);
+    return 0;
   }
 
   getTransform(): Transform {
@@ -209,6 +232,11 @@ export class Parallelogram extends Shape {
     super("parallelogram");
   }
 
+  readonly diagonals = [
+    vector(this.offset + this.base, this.height),
+    vector(this.offset - this.base, this.height),
+  ];
+
   render(): Cash {
     const { x, y } = round4(this.getBox(-this.rotation));
     const ox = this.offset > 0 ? (x ?? 0) + this.offset : x;
@@ -222,15 +250,10 @@ export class Parallelogram extends Shape {
   }
 
   getBox(rotation: number): Box {
-    const diagonal1 = rot(
-      vector(this.offset + this.base, this.height),
-      this.rotation + rotation
-    );
-    const diagonal2 = rot(
-      vector(this.offset - this.base, this.height),
-      this.rotation + rotation
-    );
-    const { x: width, y: height } = maxAbs(diagonal1, diagonal2);
+    const theta = this.rotation + rotation;
+    const d0 = rot(this.diagonals[0], theta);
+    const d1 = rot(this.diagonals[1], theta);
+    const { x: width, y: height } = maxAbs(d0, d1);
     return {
       x: -width / 2,
       y: -height / 2,
