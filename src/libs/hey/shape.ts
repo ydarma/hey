@@ -265,7 +265,7 @@ export class Triangle extends Shape {
   ];
 
   render(): Cash {
-    const box = round4(this.getBox(-this.rotation));
+    const box = round4(this.getWH(-this.rotation));
     if (this.offset > 0) box.x = (box.x ?? 0) + this.offset;
     return $("<path/>")
       .attr(
@@ -277,6 +277,16 @@ export class Triangle extends Shape {
   }
 
   getBox(rotation: number): Box {
+    const { width, height } = this.getWH(rotation);
+    return {
+      x: -width / 2,
+      y: -height / 2,
+      width,
+      height,
+    };
+  }
+
+  private getWH(rotation: number): Box {
     const theta = this.rotation + rotation;
     const pbox = this.parallelogram.getBox(rotation);
     const s0 = rot(this.sides[0], theta);
@@ -304,7 +314,12 @@ export class Triangle extends Shape {
   }
 
   getTransform(): Transform {
-    return { rotation: -this.rotation };
+    const { x, y, width, height } = this.getWH(0);
+    return {
+      dx: -x - width / 2,
+      dy: -y - height / 2,
+      rotation: -this.rotation,
+    };
   }
 }
 
