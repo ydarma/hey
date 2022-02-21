@@ -2,8 +2,6 @@ import $, { Cash } from "cash-dom";
 import { add, isVector, rot, vector, Vector } from "./vector";
 
 type Transform = {
-  dx?: number;
-  dy?: number;
   rotation: number;
 };
 
@@ -26,17 +24,29 @@ function isBox(o: unknown): o is Box {
   return typeof b.width == "number" && typeof b.height == "number";
 }
 
+function rotate(shape: Cash, rotation: number) {
+  const transform = shape.attr("transform") ?? "";
+  return shape.attr("transform", `${transform} rotate(${-rotation})`.trim());
+}
+
+function translate(shape: Cash, trCenter: Vector) {
+  const transform = shape.attr("transform") ?? "";
+  return shape.attr(
+    "transform",
+    `${transform} translate(${trCenter.x} ${trCenter.y})`.trim()
+  );
+}
+
 export abstract class Shape {
-  constructor(readonly name: string) {}
+  constructor(readonly name: string, readonly rotation: number) {}
 
   abstract render(): Cash;
   abstract getBox(rotation: number): Box;
-  abstract getTransform(): Transform;
 
   toString(): string {
     const { x, y, width, height } = round4(this.getBox(0));
     const viewBox = this.getViewBox(x ?? 0, y ?? 0, width, height);
-    const transformed = this.transform(vector(0, 0));
+    const transformed = rotate(this.render(), this.rotation);
     const svg = this.svg(viewBox, width, height, transformed);
     return svg[0]?.outerHTML ?? "";
   }
@@ -57,35 +67,6 @@ export abstract class Shape {
       .height(height + 6)
       .append(transformed);
   }
-
-  private transform(v: Vector) {
-    const shape = this.render();
-    const { dx, dy, rotation } = round4(this.getTransform());
-    const transformed = this.transformSvg(
-      shape,
-      rotation,
-      dx ?? 0 + v.x,
-      dy ?? 0 + v.y
-    );
-    return transformed;
-  }
-
-  protected transformSvg(
-    shape: Cash,
-    rotation: number,
-    dx: number,
-    dy: number
-  ): Cash {
-    const tr = shape.attr("transform") ?? "";
-    return shape.attr(
-      "transform",
-      `${tr} translate(${dx} ${dy}) rotate(${rotation})`.trim()
-    );
-  }
-
-  protected t(other: Shape, vect?: Vector): Cash {
-    return other.transform(vect ? round4(vect) : vector(0, 0));
-  }
 }
 
 type VectorLike = Vector | "center" | "above" | "beside" | "top" | "left";
@@ -97,34 +78,34 @@ export class Composite extends Shape {
     private shape1: Shape,
     private shape2: Shape,
     vect: VectorLike = "center",
-    private rotation = 0
+    rotation = 0
   ) {
-    super("composite");
+    super("composite", rotation);
     const box1 = this.shape1.getBox(0);
     const box2 = this.shape2.getBox(0);
     this.vector = toVector(vect, box1, box2);
   }
 
   render(): Cash {
-    const { trCenter1, trCenter2 } = this.getTranslations(-this.rotation);
+    const { tr1, tr2 } = this.getTranslations(-this.rotation);
     return $("<g>")
-      .append(super.t(this.shape1, trCenter1))
-      .append(super.t(this.shape2, trCenter2));
+      .append(
+        rotate(translate(this.shape1.render(), tr1), this.shape1.rotation)
+      )
+      .append(
+        rotate(translate(this.shape2.render(), tr2), this.shape2.rotation)
+      );
   }
 
   getBox(rotation: number): Box {
     const { width, height } = this.getWH(rotation);
-    const { trOrigin1, trOrigin2 } = this.getTranslations(rotation);
+    const { origin1, origin2 } = this.getTranslations(rotation);
     return {
-      x: Math.min(trOrigin1.x, trOrigin2.x),
-      y: Math.min(trOrigin1.y, trOrigin2.y),
+      x: Math.min(origin1.x, origin2.x),
+      y: Math.min(origin1.y, origin2.y),
       width,
       height,
     };
-  }
-
-  getTransform(): Transform {
-    return { rotation: -this.rotation };
   }
 
   private getWH(angle: number) {
@@ -144,11 +125,11 @@ export class Composite extends Shape {
     const a = w1 / (w1 + w2);
     const b = h1 / (h1 + h2);
     const r = rot(this.vector, theta);
-    const trCenter1 = vector(r.x * (a - 1), -r.y * (b - 1));
-    const trCenter2 = vector(r.x * a, -r.y * b);
-    const trOrigin1 = add(vector(x1 ?? 0, y1 ?? 0), trCenter1);
-    const trOrigin2 = add(vector(x2 ?? 0, y2 ?? 0), trCenter2);
-    return { trCenter1, trCenter2, trOrigin1, trOrigin2 };
+    const tr1 = vector(r.x * (a - 1), -r.y * (b - 1));
+    const tr2 = vector(r.x * a, -r.y * b);
+    const origin1 = add(vector(x1 ?? 0, y1 ?? 0), tr1);
+    const origin2 = add(vector(x2 ?? 0, y2 ?? 0), tr2);
+    return { tr1, tr2, origin1, origin2 };
   }
 
   private computeWidth(width1: number, width2: number, d: number) {
@@ -162,13 +143,13 @@ export class Composite extends Shape {
 
 export class Parallelogram extends Shape {
   constructor(
-    private base: number,
-    private height: number,
-    private offset: number,
-    private color: string,
-    private rotation = 0
+    readonly base: number,
+    readonly height: number,
+    readonly offset: number,
+    readonly color: string,
+    rotation = 0
   ) {
-    super("parallelogram");
+    super("parallelogram", rotation);
     Object.defineProperty(this, "diagonals", { enumerable: false });
     Object.defineProperty(this, "sides", { enumerable: false });
   }
@@ -211,12 +192,8 @@ export class Parallelogram extends Shape {
 }
 
 export class Square extends Shape {
-  constructor(
-    private size: number,
-    private color: string,
-    private rotation = 0
-  ) {
-    super("square");
+  constructor(readonly size: number, readonly color: string, rotation = 0) {
+    super("square", rotation);
     Object.defineProperty(this, "parallelogram", { enumerable: false });
   }
 
@@ -243,13 +220,13 @@ export class Square extends Shape {
 
 export class Triangle extends Shape {
   constructor(
-    private base: number,
-    private height: number,
-    private offset: number,
-    private color: string,
-    private rotation = 0
+    readonly base: number,
+    readonly height: number,
+    readonly offset: number,
+    readonly color: string,
+    rotation = 0
   ) {
-    super("triangle");
+    super("triangle", rotation);
     Object.defineProperty(this, "parallelogram", { enumerable: false });
     Object.defineProperty(this, "sides", { enumerable: false });
   }
@@ -269,13 +246,18 @@ export class Triangle extends Shape {
   ];
 
   render(): Cash {
-    const box = round4(this.getWH(-this.rotation));
+    const box = this.getWH(-this.rotation);
     if (this.offset > 0) box.x = (box.x ?? 0) + this.offset;
+    const tr = this.getWH(0);
     return $("<path/>")
       .attr(
         "d",
         `m ${box.x} ${box.y} ` +
           `l ${this.base - this.offset} ${this.height} h ${-this.base} z`
+      )
+      .attr(
+        "transform",
+        `translate(${-tr.x - tr.width / 2} ${-tr.y - tr.height / 2})`
       )
       .attr("fill", this.color);
   }
@@ -318,12 +300,7 @@ export class Triangle extends Shape {
   }
 
   getTransform(): Transform {
-    const { x, y, width, height } = this.getWH(0);
-    return {
-      dx: -x - width / 2,
-      dy: -y - height / 2,
-      rotation: -this.rotation,
-    };
+    return { rotation: -this.rotation };
   }
 }
 
@@ -343,15 +320,13 @@ export function round4<T extends Box | Transform | Vector | number>(v: T): T {
   if (isVector(v)) return vector(round4(v.x), round4(v.y)) as T;
   if (isBox(v))
     return {
-      ...(v.x ? { x: round4(v.x) } : {}),
-      ...(v.y ? { y: round4(v.y) } : {}),
+      x: round4(v.x),
+      y: round4(v.y),
       width: round4(v.width),
       height: round4(v.height),
     } as T;
   if (isTransform(v))
     return {
-      ...(v.dx ? { dx: round4(v.dx) } : {}),
-      ...(v.dy ? { dy: round4(v.dy) } : {}),
       rotation: round4(v.rotation),
     } as T;
   return (Math.round((v as number) * 10000) / 10000) as T;

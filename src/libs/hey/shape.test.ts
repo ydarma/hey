@@ -16,7 +16,7 @@ test("Composite", (t) => {
   const svg = shape.toString();
   t.ok(
     svg.includes(
-      '<g transform="translate(0 0) rotate(0)"><path d="m -29 -29 h 58 l 0 58 h -58 z" fill="green" transform="translate(0 0) rotate(0)"></path><path d="m -20 -20 h 40 l 0 40 h -40 z" fill="blue" transform="translate(0 0) rotate(-45)"></path></g>'
+      '<g transform="rotate(0)"><path d="m -29 -29 h 58 l 0 58 h -58 z" fill="green" transform="translate(0 0) rotate(0)"></path><path d="m -20 -20 h 40 l 0 40 h -40 z" fill="blue" transform="translate(0 0) rotate(-45)"></path></g>'
     )
   );
   t.end();
@@ -45,7 +45,7 @@ test("Composite with rotation", (t) => {
   const shape2 = new Square(40, "blue");
   const shape = new Composite(shape1, shape2, vector(58, 0), 45);
   const svg = shape.toString();
-  t.ok(svg.includes('<g transform="translate(0 0) rotate(-45)">'));
+  t.ok(svg.includes('<g transform="rotate(-45)">'));
   t.end();
 });
 
