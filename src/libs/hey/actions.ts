@@ -12,7 +12,14 @@ import {
   shapeError,
   vectorError,
 } from "./error";
-import { Composite, Parallelogram, Shape, Square, Triangle } from "./shape";
+import {
+  Composite,
+  isVectorLike,
+  Parallelogram,
+  Shape,
+  Square,
+  Triangle,
+} from "./shape";
 import { vector, Vector } from "./vector";
 
 export interface IContext {
@@ -262,5 +269,5 @@ function isShape(shape: V<Shape>): shape is Shape {
 }
 
 function isVector(vector: V<Vector | "center">): vector is Vector | "center" {
-  return typeof vector == "function" || vector === "center";
+  return isVectorLike(vector);
 }

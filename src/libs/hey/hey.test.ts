@@ -451,3 +451,15 @@ test("Triangle", async (t) => {
   t.ok(result instanceof Triangle);
   t.end();
 });
+
+const assembleTranslateTest = `
+def bati square(40 black)
+def toit triangle(40 20 20 red)
+assemble(bati toit v(0 20))
+`;
+
+test("Assemble with translation", async (t) => {
+  const result = await hey(assembleTranslateTest);
+  t.ok(result instanceof Composite);
+  t.end();
+});

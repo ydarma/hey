@@ -37,9 +37,3 @@ export function isVector(o: unknown): o is Vector {
   }
   return true;
 }
-
-type VectorPos = Vector | "center";
-
-export function toVector(v: VectorPos): Vector {
-  return isVector(v) ? v : vector(0, 0);
-}

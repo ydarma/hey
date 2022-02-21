@@ -1,5 +1,5 @@
 import $, { Cash } from "cash-dom";
-import { add, isVector, rot, toVector, vector, Vector } from "./vector";
+import { add, isVector, rot, vector, Vector } from "./vector";
 
 type Transform = {
   dx?: number;
@@ -88,17 +88,21 @@ export abstract class Shape {
   }
 }
 
+type VectorLike = Vector | "center" | "above";
+
 export class Composite extends Shape {
   private readonly vector: Vector;
 
   constructor(
     private shape1: Shape,
     private shape2: Shape,
-    vect: Vector | "center" = "center",
+    vect: VectorLike = "center",
     private rotation = 0
   ) {
     super("composite");
-    this.vector = toVector(vect);
+    const box1 = this.shape1.getBox(0);
+    const box2 = this.shape2.getBox(0);
+    this.vector = toVector(vect, box1, box2);
   }
 
   render(): Cash {
@@ -129,7 +133,7 @@ export class Composite extends Shape {
     const box1 = this.shape1.getBox(theta);
     const box2 = this.shape2.getBox(theta);
     const width = this.computeWidth(box1.width, box2.width, v.x);
-    const height = this.computeHeight(box1.height, box2.height, v.y);
+    const height = this.computeHeight(box1.height, box2.height, -v.y);
     return { width, height };
   }
 
@@ -140,8 +144,8 @@ export class Composite extends Shape {
     const a = w1 / (w1 + w2);
     const b = h1 / (h1 + h2);
     const r = rot(this.vector, theta);
-    const trCenter1 = vector(r.x * (a - 1), r.y * (b - 1));
-    const trCenter2 = vector(r.x * a, r.y * b);
+    const trCenter1 = vector(r.x * (a - 1), -r.y * (b - 1));
+    const trCenter2 = vector(r.x * a, -r.y * b);
     const trOrigin1 = add(vector(x1 ?? 0, y1 ?? 0), trCenter1);
     const trOrigin2 = add(vector(x2 ?? 0, y2 ?? 0), trCenter2);
     return { trCenter1, trCenter2, trOrigin1, trOrigin2 };
@@ -351,4 +355,21 @@ export function round4<T extends Box | Transform | Vector | number>(v: T): T {
       rotation: round4(v.rotation),
     } as T;
   return (Math.round((v as number) * 10000) / 10000) as T;
+}
+
+export function toVector(v: VectorLike, b1: Box, b2: Box): Vector {
+  switch (v) {
+    case "center":
+      return vector(0, 0);
+    case "above":
+      return vector(0, (b1.height + b2.height) / 2);
+    default:
+      return v;
+  }
+}
+
+export function isVectorLike(v: unknown): v is VectorLike {
+  return (
+    isVector(v) || (typeof v == "string" && ["center", "above"].includes(v))
+  );
 }
