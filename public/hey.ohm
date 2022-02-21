@@ -18,7 +18,7 @@ HeyGrammar {
   Vector = #(("vector" | "v") ~nameEnd)
   Function = "fun" lpar identifier* rpar arrow? Prog "."?
 
-  Literal = number | string | color 
+  Literal = number | string | color | position
   Known = identifier | builtin
     
   identifier = ~reserved name
@@ -27,11 +27,12 @@ HeyGrammar {
   number = sign? digit+
   sign = "+" | "-"
   color = ("green" | "blue" | "yellow" | "red" | "purple" | "grey" | "black" | "white" | "orange") ~nameEnd
+  position = ("center" | "above" | "beside" | "top" | "left")
   lpar = "("
   rpar = ")"
   colon = ":"
   arrow = "->" | ":"
-  reserved = ("def" | "fun" | builtin | color) ~nameEnd
+  reserved = ("def" | "fun" | builtin | color | position) ~nameEnd
   builtin = ("range" | "ada-lovelace" | "square" | "parall" | "triangle" | "assemble" | "concat" | "c" | "repeat" | "r" | "slice" | "s" | "vector" | "v" ) ~nameEnd
   string = "\"" (~"\"" any | "\"\"")* "\""
   comment = ";" (~eol any)* eol

@@ -88,7 +88,7 @@ export abstract class Shape {
   }
 }
 
-type VectorLike = Vector | "center" | "above";
+type VectorLike = Vector | "center" | "above" | "beside" | "top" | "left";
 
 export class Composite extends Shape {
   private readonly vector: Vector;
@@ -363,6 +363,12 @@ export function toVector(v: VectorLike, b1: Box, b2: Box): Vector {
       return vector(0, 0);
     case "above":
       return vector(0, (b1.height + b2.height) / 2);
+    case "beside":
+      return vector((b1.width + b2.width) / 2, 0);
+    case "top":
+      return vector(0, (b1.height - b2.height) / 2);
+    case "left":
+      return vector((b1.width - b2.width) / 2, 0);
     default:
       return v;
   }
@@ -370,6 +376,8 @@ export function toVector(v: VectorLike, b1: Box, b2: Box): Vector {
 
 export function isVectorLike(v: unknown): v is VectorLike {
   return (
-    isVector(v) || (typeof v == "string" && ["center", "above"].includes(v))
+    isVector(v) ||
+    (typeof v == "string" &&
+      ["center", "above", "beside", "top", "left"].includes(v))
   );
 }

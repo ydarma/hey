@@ -181,6 +181,8 @@ function getActions(
 
     color: (n) => n.sourceString,
 
+    position: (n) => n.sourceString,
+
     string: (rquotes, s, lquotes) => s.sourceString.replace(/""/g, '"'),
 
     identifier: (id) => id.sourceString,
